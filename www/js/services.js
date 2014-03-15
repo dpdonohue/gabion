@@ -7,6 +7,18 @@ angular.module('gabi.services', [])
     }
 })
 
+.factory('Lookup', ['$http', function($http){
+    var url   = "lookup/en-US_es-ES.csv";
+    var terms = $http.get(url).then(function(response){
+        return csvParser(response.data);
+    });
+    return {
+        getTerms: function() {
+            return terms;
+        }
+    }
+}])
+
 /**
  * A simple example service that returns some data.
  */

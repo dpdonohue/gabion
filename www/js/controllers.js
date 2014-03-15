@@ -1,8 +1,9 @@
 angular.module('gabi.controllers', [])
 
-.controller('TranslateCtrl', function($scope, AndroidSpeechRecognizer, Settings) {
+.controller('TranslateCtrl', function($scope, AndroidSpeechRecognizer, Settings, Lookup) {
     $scope.settings = Settings;
     $scope.recognizedSpeech = "";
+        $scope.lookup = Lookup;
 
     $scope.receiveRecognizedSpeech = function(text) {
         $scope.recognizedSpeech = text;
@@ -12,6 +13,7 @@ angular.module('gabi.controllers', [])
     $scope.record = function() {
         AndroidSpeechRecognizer.recognizeSpeech($scope.receiveRecognizedSpeech, Settings.targetLanguage);
     }
+        alert('lookup=' + Lookup);
 })
 
 .controller('InfoCtrl', function($scope, AndroidSpeechRecognizer, Settings) {
