@@ -3,33 +3,59 @@
 -->
 <ion-view title="'Translate'">
   <ion-content has-header="true" has-tabs="true" padding="true">
-      <div class="card" padding="true">
-          <h3 padding="true">
-              Click the button and say a phrase in: {{settings.targetLanguage}}
-          </h3>
-          <h4>{{getNativeTerm()}}</h4>
-          <div class="panel, centered">
-            <a class="button icon ion-ios7-mic" ng-click="record()" padding="true"></a>
+      <!--<div class="card">-->
+          <h5 padding="true" class="gabi-centered gabi-thinheader">
+              Click the button and say this in: {{settings.targetLanguage}}
+          </h5>
+          <h3 class="gabi-centered">"{{getNativeTerm()}}"</h3>
+          <div class="panel gabi-centered">
+            <a class="button gabi-centered gabi-recordbutton" ng-click="record()" padding="true"><img src="img/mic-black-96.png"/></a>
+          </div>
+          <div class="gabi-navbuttonrow gabi-centered">
+              <div class="row">
+
+                  <div class="col">
+                      <img src="img/leftarrow-blue-64.png" ng-click="previousTerm()" width="64" height="64" border="0"/>
+                  </div>
+
+                  <div ng-switch on="getCorrect()" class="col">
+                       <img ng-switch-when="correct" src="img/check-green-64.png" width="64" height="64"/>
+                       <img ng-switch-when="incorrect" src="img/x-red-64.png" width="64" height="64"/>
+                       <img ng-switch-default src="img/check-green-64.png" width="64" height="64" border="0" class="gabi-hidden"/>
+                  </div>
+
+                  <div class="col">
+                      <img src="img/rightarrow-blue-64.png" ng-click="nextTerm()" width="64" height="64" border="0"/>
+                  </div>
+              </div>
           </div>
 
-          <h3 padding="true">
-              This is what I heard
-          </h3>
-          <div padding="true">
-              {{recognizedSpeech}}
+          <div ng-switch on="getCorrect()">
+              <div ng-switch-when="incorrect" class="gabi-centered">
+                  {{getTargetTerms()}}
+              </div>
           </div>
 
-          <div padding="true">
-              {{recognizedSpeech}}
-          </div>
+          <div>
+              <a href="#" ng-model="collapsed" ng-click="collapsed=!collapsed">Advanced</a>
+              <div ng-show="collapsed">
+                  <h4 padding="true" class="gabi-centered">
+                      This is what I heard
+                  </h4>
+                  <div padding="true" class="gabi-centered">
+                      {{recognizedSpeech}}
+                  </div>
 
-          <span ng-switch on="getCorrect()">
-               <img ng-switch-when="correct" src='img/check-green-32.png'/>
-               <img ng-switch-when="incorrect" src='img/x-red-32.png'/>
-              <span ng-switch-default></span>
-            </span>
+                  <h4 padding="true" class="gabi-centered">
+                      This is what I am looking for
+                  </h4>
+                  <div padding="true" class="gabi-centered">
+                      {{getTargetTerms()}}
+                  </div>
+             </div>
+          </div>
       </div>
 
-    </div>
+    <!--</div>-->
   </ion-content>
 </ion-view>

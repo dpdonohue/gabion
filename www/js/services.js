@@ -99,7 +99,7 @@ angular.module('gabi.services', [])
         getTerms: function(callback) {
             $http.get(url).then(function(response){
             terms = response.data;
-            alert('read file: ' + response.data);
+//            alert('read file: ' + response.data);
             callback(csvToArray(response.data, ";"));
         });
       }

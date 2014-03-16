@@ -7,6 +7,38 @@
   height: 96px;
 }
 
-.centered {
-    margin-left: auto; margin-right: auto;
+.gabi-centered {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    align: center;
+    text-align: center;
 }
+
+.gabi-hidden {
+    visibility: hidden;
+}
+
+.gabi-vertically-centered {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.gabi-recordbutton {
+    margin-top: 10px;
+    padding-top: 10px;
+    padding-bottom: -5px;
+}
+
+.gabi-thinheader {
+    margin: -0px 0px -6px 0px;
+}
+
+.gabi-navbuttonrow {
+    margin-top: 10px;
+}
+
+.gabi-bottomaligned {
+    position:absolute; bottom:20;
+}
+

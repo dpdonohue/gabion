@@ -2,7 +2,7 @@ angular.module('gabi.controllers', [])
 
 .controller('TranslateCtrl', function($scope, AndroidSpeechRecognizer, Settings, Lookup) {
     $scope.settings = Settings;
-    $scope.recognizedSpeech = "";
+    $scope.recognizedSpeech = [];
     $scope.lookup = Lookup;
     var termIndex = 0;
     var currentTerm = [];
@@ -17,8 +17,25 @@ angular.module('gabi.controllers', [])
     }
 
     $scope.nextTerm = function() {
+        termIndex++;
         if (termIndex >= $scope.settings.terms.length) termIndex=0;
         currentTerm = $scope.settings.terms[termIndex];
+
+        //for now clear previous answer but in future remember given answers
+        $scope.recognizedSpeech = [];
+
+        $scope.$apply();
+    }
+
+    $scope.previousTerm = function() {
+        termIndex--;
+        if (termIndex < 0) termIndex = $scope.settings.terms.length - 1;
+        currentTerm = $scope.settings.terms[termIndex];
+
+        //for now clear previous answer but in future remember given answers
+        $scope.recognizedSpeech = [];
+
+        $scope.$apply();
     }
 
     $scope.receiveTerms = function(terms) {
@@ -28,8 +45,11 @@ angular.module('gabi.controllers', [])
     }
 
     $scope.getTargetTerms = function() {
-        var targetTerms = new Array(currentTerm);
-        return targetTerms.shift();
+        var targetTerms = new Array();
+        for (var i=1; i<currentTerm.length; i++) {
+            targetTerms.push(currentTerm[i]);
+        }
+        return targetTerms;
     }
 
     $scope.getNativeTerm = function() {
@@ -37,13 +57,18 @@ angular.module('gabi.controllers', [])
     }
 
         $scope.getCorrect = function() {
-            if (! $scope.recognizedSpeech) return "";
-            if (! $scope.getNativeTerm()) return "";
-            if (! $scope.getTargetTerms()) return "";
+//            alert('getCorrect(): $scope.recognizedSpeech=' + $scope.recognizedSpeech.length + '; $scope.getNativeTerm()=' + $scope.getNativeTerm() + '; $scope.getTargetTerms()=' + $scope.getTargetTerms().length);
+            if (! $scope.recognizedSpeech || $scope.recognizedSpeech.length==0) return "";
+            var nativeTerm = $scope.getNativeTerm();
+            if (! nativeTerm) return "";
+            var targetTerms = $scope.getTargetTerms();
+            if (! targetTerms) return "";
             var correct = false;
-            for (var t=0; t<$scope.getTargetTerms().length; t++) {
+            for (var t=0; t<targetTerms.length; t++) {
                 for (var s=0; s<$scope.recognizedSpeech.length; s++) {
-                    if ($scope.getTargetTerms().equals($scope.recognizedSpeech.toLowerCase())) {
+                    if (correct) break;
+//                    alert(targetTerms[t] + ' == ' + $scope.recognizedSpeech[s].toLowerCase() + '? ' + (targetTerms[t] == $scope.recognizedSpeech[s].toLowerCase()))
+                    if (targetTerms[t] == $scope.recognizedSpeech[s].toLowerCase()) {
                         correct = true;
                         break;
                     }
