@@ -25,9 +25,9 @@
 }
 
 .gabi-recordbutton {
-    margin-top: 10px;
+    margin-top: 15px;
     padding-top: 10px;
-    padding-bottom: -5px;
+    padding-bottom: -8px;
 }
 
 .gabi-thinheader {
@@ -42,3 +42,6 @@
     position:absolute; bottom:20;
 }
 
+.gabi-advancedlink {
+    margin-top: 12px;
+}

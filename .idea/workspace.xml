@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/www/js/controllers.js" line="96" />
+    <bookmark url="file://$PROJECT_DIR$/www/js/controllers.js" line="117" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="babc0f30-1f9c-46a6-b6a3-a36d6caecaee" name="Default" comment="" />
@@ -29,7 +29,16 @@
       <file leaf-file-name="index.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/www/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="19" column="0" selection-start="677" selection-end="677" vertical-scroll-proportion="-11.875" vertical-offset="0" max-vertical-offset="885">
+            <state line="19" column="7" selection-start="680" selection-end="680" vertical-scroll-proportion="-11.875" vertical-offset="0" max-vertical-offset="900">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="README.md" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="7" column="0" selection-start="164" selection-end="291" vertical-scroll-proportion="0.16746412" vertical-offset="0" max-vertical-offset="627">
               <folding />
             </state>
           </provider>
@@ -56,16 +65,16 @@
       <file leaf-file-name="controllers.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/www/js/controllers.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="26" column="24" selection-start="868" selection-end="868" vertical-scroll-proportion="-15.0" vertical-offset="0" max-vertical-offset="1590">
+            <state line="72" column="19" selection-start="2139" selection-end="2139" vertical-scroll-proportion="-18.961538" vertical-offset="587" max-vertical-offset="1905">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="en-US_es-ES.csv" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="en-US_es-ES.csv" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/www/lookup/en-US_es-ES.csv">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="8" column="0" selection-start="164" selection-end="164" vertical-scroll-proportion="0.18404908" vertical-offset="0" max-vertical-offset="652">
+            <state line="8" column="0" selection-start="164" selection-end="164" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="210">
               <folding />
             </state>
           </provider>
@@ -74,7 +83,7 @@
       <file leaf-file-name="app.css" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/www/css/app.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="42" column="1" selection-start="644" selection-end="644" vertical-scroll-proportion="0.0" vertical-offset="60" max-vertical-offset="750">
+            <state line="45" column="18" selection-start="685" selection-end="685" vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="795">
               <folding />
             </state>
           </provider>
@@ -92,7 +101,7 @@
       <file leaf-file-name="translate.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/www/templates/translate.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="38" column="14" selection-start="1739" selection-end="1739" vertical-scroll-proportion="-2.9358974" vertical-offset="341" max-vertical-offset="1005">
+            <state line="55" column="50" selection-start="2525" selection-end="2543" vertical-scroll-proportion="-7.8" vertical-offset="435" max-vertical-offset="1080">
               <folding />
             </state>
           </provider>
@@ -102,15 +111,6 @@
         <entry file="file://$PROJECT_DIR$/www/templates/info.html">
           <provider selected="true" editor-type-id="text-editor">
             <state line="6" column="60" selection-start="257" selection-end="257" vertical-scroll-proportion="-3.75" vertical-offset="0" max-vertical-offset="360">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="settings.html" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/www/templates/settings.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="39" selection-start="1043" selection-end="1043" vertical-scroll-proportion="-16.875" vertical-offset="0" max-vertical-offset="645">
               <folding />
             </state>
           </provider>
@@ -133,11 +133,12 @@
         <option value="$PROJECT_DIR$/www/templates/settings.html" />
         <option value="$PROJECT_DIR$/www/lookup/en-US_es-ES.tsv" />
         <option value="$PROJECT_DIR$/www/js/services.js" />
-        <option value="$PROJECT_DIR$/www/index.html" />
-        <option value="$PROJECT_DIR$/www/js/controllers.js" />
+        <option value="$PROJECT_DIR$/www/lookup/en-US_es-ES.csv" />
         <option value="$PROJECT_DIR$/www/css/app.css" />
         <option value="$PROJECT_DIR$/www/templates/translate.html" />
-        <option value="$PROJECT_DIR$/www/lookup/en-US_es-ES.csv" />
+        <option value="$PROJECT_DIR$/www/js/controllers.js" />
+        <option value="$PROJECT_DIR$/www/index.html" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
@@ -221,6 +222,28 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="android" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gabion" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gabion" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="platforms" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="android" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ant-build" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -357,13 +380,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/www/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="0" selection-start="677" selection-end="677" vertical-scroll-proportion="-11.875" vertical-offset="0" max-vertical-offset="885">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/www/js/app.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="31" column="30" selection-start="1121" selection-end="1121" vertical-scroll-proportion="-10.538462" vertical-offset="191" max-vertical-offset="855">
@@ -378,30 +394,44 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/www/js/controllers.js">
+    <entry file="file://$PROJECT_DIR$/www/lookup/en-US_es-ES.csv">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="24" selection-start="868" selection-end="868" vertical-scroll-proportion="-15.0" vertical-offset="0" max-vertical-offset="1590">
+        <state line="8" column="0" selection-start="164" selection-end="164" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="210">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/www/css/app.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="42" column="1" selection-start="644" selection-end="644" vertical-scroll-proportion="0.0" vertical-offset="60" max-vertical-offset="750">
+        <state line="45" column="18" selection-start="685" selection-end="685" vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="795">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/www/js/controllers.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="72" column="19" selection-start="2139" selection-end="2139" vertical-scroll-proportion="-18.961538" vertical-offset="587" max-vertical-offset="1905">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/www/templates/translate.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="14" selection-start="1739" selection-end="1739" vertical-scroll-proportion="-2.9358974" vertical-offset="341" max-vertical-offset="1005">
+        <state line="55" column="50" selection-start="2525" selection-end="2543" vertical-scroll-proportion="-7.8" vertical-offset="435" max-vertical-offset="1080">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/www/lookup/en-US_es-ES.csv">
+    <entry file="file://$PROJECT_DIR$/www/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="0" selection-start="164" selection-end="164" vertical-scroll-proportion="0.18404908" vertical-offset="0" max-vertical-offset="652">
+        <state line="19" column="7" selection-start="680" selection-end="680" vertical-scroll-proportion="-11.875" vertical-offset="0" max-vertical-offset="900">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="0" selection-start="164" selection-end="291" vertical-scroll-proportion="0.16746412" vertical-offset="0" max-vertical-offset="627">
           <folding />
         </state>
       </provider>

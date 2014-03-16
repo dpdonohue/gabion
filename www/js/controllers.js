@@ -40,6 +40,7 @@ angular.module('gabi.controllers', [])
 
     $scope.receiveTerms = function(terms) {
         $scope.settings.terms = terms;
+        termIndex = -1;
         $scope.nextTerm();
         $scope.$apply();
     }
@@ -50,6 +51,26 @@ angular.module('gabi.controllers', [])
             targetTerms.push(currentTerm[i]);
         }
         return targetTerms;
+    }
+
+    $scope.displayTargetTerms = function() {
+        var terms = $scope.getTargetTerms();
+        var str = "";
+        for (var i=0; i < terms.length; i++) {
+            if (str.length > 0) str += ", ";
+            str += terms[i];
+        }
+        return str;
+    }
+
+    $scope.displayRecognizedSpeech = function() {
+        var terms = $scope.recognizedSpeech;
+        var str = "";
+        for (var i=0; i < terms.length; i++) {
+            if (str.length > 0) str += ", ";
+            str += terms[i];
+        }
+        return str;
     }
 
     $scope.getNativeTerm = function() {

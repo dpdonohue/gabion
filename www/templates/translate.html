@@ -32,25 +32,30 @@
 
           <div ng-switch on="getCorrect()">
               <div ng-switch-when="incorrect" class="gabi-centered">
-                  {{getTargetTerms()}}
+                  {{displayTargetTerms()}}
               </div>
           </div>
 
           <div>
-              <a href="#" ng-model="collapsed" ng-click="collapsed=!collapsed">Advanced</a>
+              <a href="#" ng-model="collapsed" ng-click="collapsed=!collapsed" class="gabi-advancedlink">Advanced</a>
               <div ng-show="collapsed">
-                  <h4 padding="true" class="gabi-centered">
-                      This is what I heard
-                  </h4>
-                  <div padding="true" class="gabi-centered">
-                      {{recognizedSpeech}}
-                  </div>
-
-                  <h4 padding="true" class="gabi-centered">
-                      This is what I am looking for
-                  </h4>
-                  <div padding="true" class="gabi-centered">
-                      {{getTargetTerms()}}
+                  <div class="panel">
+                      <div class="row">
+                          <div class="col col-33">
+                              Recognized
+                          </div>
+                          <div class="col col-67">
+                              {{displayRecognizedSpeech()}}
+                          </div>
+                      </div>
+                      <div class="row">
+                          <div class="col col-33">
+                              Expected
+                          </div>
+                          <div class="col col-67">
+                              {{displayTargetTerms()}}
+                          </div>
+                      </div>
                   </div>
              </div>
           </div>
