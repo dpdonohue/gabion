@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/www/js/controllers.js" line="30" />
+    <bookmark url="file://$PROJECT_DIR$/www/js/controllers.js" line="71" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="babc0f30-1f9c-46a6-b6a3-a36d6caecaee" name="Default" comment="" />
@@ -47,7 +47,7 @@
       <file leaf-file-name="services.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/www/js/services.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="39" selection-start="212" selection-end="212" vertical-scroll-proportion="-0.5769231" vertical-offset="135" max-vertical-offset="1005">
+            <state line="102" column="52" selection-start="3076" selection-end="3076" vertical-scroll-proportion="-8.307693" vertical-offset="1314" max-vertical-offset="2445">
               <folding />
             </state>
           </provider>
@@ -56,7 +56,7 @@
       <file leaf-file-name="controllers.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/www/js/controllers.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="34" selection-start="535" selection-end="535" vertical-scroll-proportion="0.35942492" vertical-offset="0" max-vertical-offset="626">
+            <state line="52" column="31" selection-start="1736" selection-end="1736" vertical-scroll-proportion="0.8801917" vertical-offset="229" max-vertical-offset="1215">
               <folding />
             </state>
           </provider>
@@ -65,7 +65,7 @@
       <file leaf-file-name="en-US_es-ES.csv" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/www/lookup/en-US_es-ES.csv">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="10" selection-start="10" selection-end="10" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="105">
+            <state line="1" column="13" selection-start="36" selection-end="36" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="105">
               <folding />
             </state>
           </provider>
@@ -92,7 +92,7 @@
       <file leaf-file-name="translate.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/www/templates/translate.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="77" selection-start="309" selection-end="309" vertical-scroll-proportion="-4.375" vertical-offset="0" max-vertical-offset="450">
+            <state line="25" column="40" selection-start="792" selection-end="802" vertical-scroll-proportion="-15.625" vertical-offset="0" max-vertical-offset="615">
               <folding />
             </state>
           </provider>
@@ -131,12 +131,12 @@
         <option value="$PROJECT_DIR$/www/css/app.css" />
         <option value="$PROJECT_DIR$/www/templates/tabs.html" />
         <option value="$PROJECT_DIR$/www/templates/info.html" />
-        <option value="$PROJECT_DIR$/www/templates/translate.html" />
         <option value="$PROJECT_DIR$/www/js/app.js" />
         <option value="$PROJECT_DIR$/www/templates/settings.html" />
         <option value="$PROJECT_DIR$/www/lookup/en-US_es-ES.tsv" />
         <option value="$PROJECT_DIR$/www/js/services.js" />
         <option value="$PROJECT_DIR$/www/lookup/en-US_es-ES.csv" />
+        <option value="$PROJECT_DIR$/www/templates/translate.html" />
         <option value="$PROJECT_DIR$/www/js/controllers.js" />
       </list>
     </option>
@@ -274,7 +274,57 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="img" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gabion" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gabion" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="www" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="css" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gabion" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gabion" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="platforms" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gabion" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gabion" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="platforms" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="android" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -287,7 +337,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/www/lookup" />
       <recent name="$PROJECT_DIR$/www/templates" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/www/img" />
     </key>
   </component>
   <component name="RunManager">
@@ -413,13 +467,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/www/templates/translate.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="77" selection-start="309" selection-end="309" vertical-scroll-proportion="-4.375" vertical-offset="0" max-vertical-offset="450">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/www/js/app.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="31" column="30" selection-start="1121" selection-end="1121" vertical-scroll-proportion="-10.538462" vertical-offset="191" max-vertical-offset="855">
@@ -436,21 +483,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/www/js/services.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="39" selection-start="212" selection-end="212" vertical-scroll-proportion="-0.5769231" vertical-offset="135" max-vertical-offset="1005">
+        <state line="102" column="52" selection-start="3076" selection-end="3076" vertical-scroll-proportion="-8.307693" vertical-offset="1314" max-vertical-offset="2445">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/www/lookup/en-US_es-ES.csv">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="10" selection-start="10" selection-end="10" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="105">
+        <state line="1" column="13" selection-start="36" selection-end="36" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="105">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/www/templates/translate.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="40" selection-start="792" selection-end="802" vertical-scroll-proportion="-15.625" vertical-offset="0" max-vertical-offset="615">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/www/js/controllers.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="34" selection-start="535" selection-end="535" vertical-scroll-proportion="0.35942492" vertical-offset="0" max-vertical-offset="626">
+        <state line="52" column="31" selection-start="1736" selection-end="1736" vertical-scroll-proportion="0.8801917" vertical-offset="229" max-vertical-offset="1215">
           <folding />
         </state>
       </provider>

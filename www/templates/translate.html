@@ -7,6 +7,7 @@
           <h3 padding="true">
               Click the button and say a phrase in: {{settings.targetLanguage}}
           </h3>
+          <h4>{{getNativeTerm()}}</h4>
           <div class="panel, centered">
             <a class="button icon ion-ios7-mic" ng-click="record()" padding="true"></a>
           </div>
@@ -17,6 +18,16 @@
           <div padding="true">
               {{recognizedSpeech}}
           </div>
+
+          <div padding="true">
+              {{recognizedSpeech}}
+          </div>
+
+          <span ng-switch on="getCorrect()">
+               <img ng-switch-when="correct" src='img/check-green-32.png'/>
+               <img ng-switch-when="incorrect" src='img/x-red-32.png'/>
+              <span ng-switch-default></span>
+            </span>
       </div>
 
     </div>
