@@ -23,15 +23,15 @@ npm install -g ionic
 5. Install Git
 http://git-scm.com/book/en/Getting-Started-Installing-Git
 
-6. Get the Gabi code base from GitHub
-cd to your workspace directory and run
+6. Get the Gabi code base from GitHub.  You will need a GitHub account, and to be added to the gabion project.
+Create a directory "gabion" within your workspace directory.  cd into the gabion directory.  Next, run
 git clone https://github.com/dpdonohue/gabion.git
 
 7. On your Android device, go to Settings and turn on USB Debugging
 
 8. Connect your Android device to your computer via USB
 
-9. Run it.  From within your workspace/gabion directory, run
+9. Run it.  From within your gabion directory, run
 ionic run android
 
 10. To distribute it, your must sign it.
@@ -44,12 +44,12 @@ jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore gabi-release-ke
 
 
 How to commit changes to GitHub
-From your workspace/gabion directory, run these commands
+From your gabion directory, run these commands
 git add .
-git commint -m "my message here"
+git commit -m "my message here"
 git push
 
 
 How to pull changes from GitHub
-In your workspace/gabion directory, run this
+In your gabion directory, run this
 git pull
