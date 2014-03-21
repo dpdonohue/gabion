@@ -41,3 +41,15 @@ keytool -genkey -v -keystore gabi-release-key.keystore -alias gabi -keyalg RSA -
 Then copy the file StarterApp-release-unsigned.apk into the same directory as the generated gabi-release-key.keystore file
 Then run this
 jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore gabi-release-key.keystore StarterApp-release-unsigned.apk gabi
+
+
+How to commit changes to GitHub
+From your workspace/gabion directory, run these commands
+git add .
+git commint -m "my message here"
+git push
+
+
+How to pull changes from GitHub
+In your workspace/gabion directory, run this
+git pull
