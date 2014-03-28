@@ -1,20 +1,48 @@
 angular.module('gabi.controllers', [])
 
-.controller('TranslateCtrl', function($scope, AndroidSpeechRecognizer, Settings, Lookup) {
+.controller('TranslateCtrl', function($scope, AndroidSpeechRecognizer, GoogleTextToSpeech, GoogleTranslator, Settings, Lookup) {
     $scope.settings = Settings;
     $scope.recognizedSpeech = [];
     $scope.lookup = Lookup;
     var termIndex = 0;
     var currentTerm = [];
 
+//    $scope.audioUrl = "";
+
+//    $scope.audio = document.createElement('audio');
+//    $scope.audio.type = "audio/mpeg";
+
+        var audioSucceeded = function() {
+
+        };
+
+        var audioFailed = function() {
+
+        }
+
+    $scope.playAudio = function(text, language) {
+//        alert('playing audio ' + language + ': ' + text + '; audio=' + audio);
+//        $scope.audio.src = GoogleTextToSpeech.getUrl(text, language);
+//        alert('$scope.audio.src=' + $scope.audio.src);
+//        $scope.audio.load();
+//        $scope.audio.play();
+        var src = GoogleTextToSpeech.getUrl(text, language);
+        var my_media = new Media(src, audioSucceeded, audioFailed);
+
+        // Play audio
+        my_media.play();
+    };
+
     $scope.receiveRecognizedSpeech = function(text) {
         $scope.recognizedSpeech = text;
+        $scope.playAudio(currentTerm[1], Settings.targetLanguage);
         $scope.$apply();
-    }
+    };
 
     $scope.record = function() {
         AndroidSpeechRecognizer.recognizeSpeech($scope.receiveRecognizedSpeech, Settings.targetLanguage);
-    }
+    };
+
 
     $scope.nextTerm = function() {
         termIndex++;
@@ -25,7 +53,7 @@ angular.module('gabi.controllers', [])
         $scope.recognizedSpeech = [];
 
         $scope.$apply();
-    }
+    };
 
     $scope.previousTerm = function() {
         termIndex--;
@@ -36,14 +64,14 @@ angular.module('gabi.controllers', [])
         $scope.recognizedSpeech = [];
 
         $scope.$apply();
-    }
+    };
 
     $scope.receiveTerms = function(terms) {
         $scope.settings.terms = terms;
         termIndex = -1;
         $scope.nextTerm();
         $scope.$apply();
-    }
+    };
 
     $scope.getTargetTerms = function() {
         var targetTerms = new Array();
@@ -51,7 +79,7 @@ angular.module('gabi.controllers', [])
             targetTerms.push(currentTerm[i]);
         }
         return targetTerms;
-    }
+    };
 
     $scope.displayTargetTerms = function() {
         var terms = $scope.getTargetTerms();
@@ -61,7 +89,7 @@ angular.module('gabi.controllers', [])
             str += terms[i];
         }
         return str;
-    }
+    };
 
     $scope.displayRecognizedSpeech = function() {
         var terms = $scope.recognizedSpeech;
@@ -71,33 +99,41 @@ angular.module('gabi.controllers', [])
             str += terms[i];
         }
         return str;
-    }
+    };
 
     $scope.getNativeTerm = function() {
         return currentTerm[0];
-    }
+    };
 
-        $scope.getCorrect = function() {
+    $scope.getCorrect = function() {
 //            alert('getCorrect(): $scope.recognizedSpeech=' + $scope.recognizedSpeech.length + '; $scope.getNativeTerm()=' + $scope.getNativeTerm() + '; $scope.getTargetTerms()=' + $scope.getTargetTerms().length);
-            if (! $scope.recognizedSpeech || $scope.recognizedSpeech.length==0) return "";
-            var nativeTerm = $scope.getNativeTerm();
-            if (! nativeTerm) return "";
-            var targetTerms = $scope.getTargetTerms();
-            if (! targetTerms) return "";
-            var correct = false;
-            for (var t=0; t<targetTerms.length; t++) {
-                for (var s=0; s<$scope.recognizedSpeech.length; s++) {
-                    if (correct) break;
+        if (! $scope.recognizedSpeech || $scope.recognizedSpeech.length==0) return "";
+        var nativeTerm = $scope.getNativeTerm();
+        if (! nativeTerm) return "";
+        var targetTerms = $scope.getTargetTerms();
+        if (! targetTerms) return "";
+        var correct = false;
+        for (var t=0; t<targetTerms.length; t++) {
+            for (var s=0; s<$scope.recognizedSpeech.length; s++) {
+                if (correct) break;
 //                    alert(targetTerms[t] + ' == ' + $scope.recognizedSpeech[s].toLowerCase() + '? ' + (targetTerms[t] == $scope.recognizedSpeech[s].toLowerCase()))
-                    if (targetTerms[t] == $scope.recognizedSpeech[s].toLowerCase()) {
-                        correct = true;
-                        break;
-                    }
+                if (targetTerms[t] == $scope.recognizedSpeech[s].toLowerCase()) {
+                    correct = true;
+                    break;
                 }
             }
-            if (correct) return "correct";
-            return "incorrect";
         }
+        if (correct) return "correct";
+        return "incorrect";
+    };
+
+//    $scope.speak = function(text) {
+//        AndroidTextToSpeech.setLanguage($scope.settings.targetLanguage, function(success) {
+//            if (success) {
+//                AndroidTextToSpeech.speak(text);
+//            }
+//        });
+//    };
 
     Lookup.getTerms($scope.receiveTerms);
 
