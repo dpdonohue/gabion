@@ -18,14 +18,24 @@ angular.module('gabi.controllers', [])
 
         var audioFailed = function() {
 
-        }
+        };
+
+        var handleTranslation = function(response, _termIndex) {
+            var translations = response.data.translations;
+            var translationsArr = new Array();
+            var termToUpdate = $scope.settings.terms[_termIndex];
+//            alert('_termIndex=' + _termIndex);
+            for (var i=0; i < translations.length; i++) {
+                var translationObj = translations[i];
+                translationsArr.push(translationObj.translatedText);
+                termToUpdate.push(translationObj.translatedText);
+//                if (termIndex == _termIndex) currentTerm.push(translationObj.translatedText);
+            };
+            $scope.$apply();
+//            alert('Received translation: ' + JSON.stringify(translationsArr));
+        };
 
     $scope.playAudio = function(text, language) {
-//        alert('playing audio ' + language + ': ' + text + '; audio=' + audio);
-//        $scope.audio.src = GoogleTextToSpeech.getUrl(text, language);
-//        alert('$scope.audio.src=' + $scope.audio.src);
-//        $scope.audio.load();
-//        $scope.audio.play();
         var src = GoogleTextToSpeech.getUrl(text, language);
         var my_media = new Media(src, audioSucceeded, audioFailed);
 
@@ -43,12 +53,18 @@ angular.module('gabi.controllers', [])
         AndroidSpeechRecognizer.recognizeSpeech($scope.receiveRecognizedSpeech, Settings.targetLanguage);
     };
 
+    $scope.translateTerm = function(currentTerm, termIndex) {
+        GoogleTranslator.translate(handleTranslation, currentTerm, termIndex, Settings.nativeLanguage, Settings.targetLanguage);
+    };
 
     $scope.nextTerm = function() {
         termIndex++;
         if (termIndex >= $scope.settings.terms.length) termIndex=0;
         currentTerm = $scope.settings.terms[termIndex];
 
+        if (currentTerm.length < 2) {
+            $scope.translateTerm(currentTerm, termIndex);
+        }
         //for now clear previous answer but in future remember given answers
         $scope.recognizedSpeech = [];
 

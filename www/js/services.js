@@ -292,22 +292,24 @@ angular.module("gabi.services", [])
                 }
             },
 
-            translate: function(callback, text, inputLanguage, targetLanguage) {
+            translate: function(callback, text, termIndex, fromLanguage, toLanguage) {
                 var request = gapi.client.request({
                     path: '/language/translate/v2',
                     method: 'GET',
                     params: {
                         q: text,
-                        target: targetLanguage,
-                        source: inputLanguage
+                        target:  toLanguage.substring(0,2),
+                        source: fromLanguage.substring(0,2)
                     }
                 });
-                request.execute(function(response) {
-                    console.log(request);
-                    callback(response);
-                }, function(errorMessage){
-                    alert("Error message: " + errorMessage);
-                });
+                request.execute(function(jsonResp, rawResp) {
+//                    alert('response=' + JSON.stringify(rawResp));
+                    callback(jsonResp, termIndex);
+                }
+//                    , function(errorMessage){
+//                    alert("Error message: " + errorMessage);
+//                }
+                );
             },
 
             detectLanguage: function(callback, text) {
