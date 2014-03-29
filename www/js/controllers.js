@@ -32,7 +32,6 @@ angular.module('gabi.controllers', [])
                 var simplifiedTranslation = translationObj.translatedText;
 //                translationsArr.push(simplifiedTranslation);
                 termToUpdate.push(simplifiedTranslation);
-                alert('translationObj.translatedText=' + translationObj.translatedText + '; simplifiedTranslation=' + simplifiedTranslation)
             };
             $scope.$apply();
         };
