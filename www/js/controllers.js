@@ -22,15 +22,17 @@ angular.module('gabi.controllers', [])
 
         var handleTranslation = function(response, _termIndex) {
             var translations = response.data.translations;
-            var translationsArr = new Array();
+//            var translationsArr = new Array();
             var termToUpdate = $scope.settings.terms[_termIndex];
 //            alert('_termIndex=' + _termIndex);
             for (var i=0; i < translations.length; i++) {
                 var translationObj = translations[i];
 //                var simplifiedTranslation = translationObj.translatedText.replace(/[^\w\s]|_/g, "").replace(/\s+/g, " ");
-                var simplifiedTranslation = Util.stripPunctuation(translationObj);
-                translationsArr.push(simplifiedTranslation);
+//                var simplifiedTranslation = Util.stripPunctuation(translationObj.translatedText);
+                var simplifiedTranslation = translationObj.translatedText;
+//                translationsArr.push(simplifiedTranslation);
                 termToUpdate.push(simplifiedTranslation);
+                alert('translationObj.translatedText=' + translationObj.translatedText + '; simplifiedTranslation=' + simplifiedTranslation)
             };
             $scope.$apply();
         };
@@ -133,7 +135,7 @@ angular.module('gabi.controllers', [])
             for (var s=0; s<$scope.recognizedSpeech.length; s++) {
                 if (correct) break;
 //                    alert(targetTerms[t] + ' == ' + $scope.recognizedSpeech[s].toLowerCase() + '? ' + (targetTerms[t] == $scope.recognizedSpeech[s].toLowerCase()))
-                if (targetTerms[t].toLowerCase() == $scope.recognizedSpeech[s].toLowerCase()) {
+                if (Util.stripPunctuation(targetTerms[t].toLowerCase()) == Util.stripPunctuation($scope.recognizedSpeech[s].toLowerCase())) {
                     correct = true;
                     break;
                 }
