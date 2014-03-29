@@ -1,6 +1,6 @@
 angular.module('gabi.controllers', [])
 
-.controller('TranslateCtrl', function($scope, AndroidSpeechRecognizer, GoogleTextToSpeech, GoogleTranslator, Settings, Lookup) {
+.controller('TranslateCtrl', function($scope, AndroidSpeechRecognizer, GoogleTextToSpeech, GoogleTranslator, Settings, Lookup, Util) {
     $scope.settings = Settings;
     $scope.recognizedSpeech = [];
     $scope.lookup = Lookup;
@@ -27,12 +27,13 @@ angular.module('gabi.controllers', [])
 //            alert('_termIndex=' + _termIndex);
             for (var i=0; i < translations.length; i++) {
                 var translationObj = translations[i];
-                translationsArr.push(translationObj.translatedText);
-                termToUpdate.push(translationObj.translatedText);
-//                if (termIndex == _termIndex) currentTerm.push(translationObj.translatedText);
+//                var simplifiedTranslation = translationObj.translatedText.replace(/[^\w\s]|_/g, "").replace(/\s+/g, " ");
+                var simplifiedTranslation = Util.stripNonAlphanumeric(translationObj);
+                translationsArr.push(simplifiedTranslation);
+                termToUpdate.push(simplifiedTranslation);
+//                adds it a second time: if (termIndex == _termIndex) currentTerm.push(translationObj.translatedText);
             };
             $scope.$apply();
-//            alert('Received translation: ' + JSON.stringify(translationsArr));
         };
 
     $scope.playAudio = function(text, language) {
@@ -133,7 +134,11 @@ angular.module('gabi.controllers', [])
             for (var s=0; s<$scope.recognizedSpeech.length; s++) {
                 if (correct) break;
 //                    alert(targetTerms[t] + ' == ' + $scope.recognizedSpeech[s].toLowerCase() + '? ' + (targetTerms[t] == $scope.recognizedSpeech[s].toLowerCase()))
-                if (targetTerms[t] == $scope.recognizedSpeech[s].toLowerCase()) {
+                if (targetTerms[t].toLowerCase() == $scope.recognizedSpeech[s].toLowerCase()) {
+                    correct = true;
+                    break;
+                }
+                if (Util.soundex(targetTerms[t]) == Util.soundex($scope.recognizedSpeech[s])) {
                     correct = true;
                     break;
                 }
