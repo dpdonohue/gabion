@@ -28,10 +28,9 @@ angular.module('gabi.controllers', [])
             for (var i=0; i < translations.length; i++) {
                 var translationObj = translations[i];
 //                var simplifiedTranslation = translationObj.translatedText.replace(/[^\w\s]|_/g, "").replace(/\s+/g, " ");
-                var simplifiedTranslation = Util.stripNonAlphanumeric(translationObj);
+                var simplifiedTranslation = Util.stripPunctuation(translationObj);
                 translationsArr.push(simplifiedTranslation);
                 termToUpdate.push(simplifiedTranslation);
-//                adds it a second time: if (termIndex == _termIndex) currentTerm.push(translationObj.translatedText);
             };
             $scope.$apply();
         };
