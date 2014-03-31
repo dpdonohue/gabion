@@ -1,34 +1,97 @@
-angular.module('gabi.controllers', [])
+angular.module("gabi.controllers", [])
 
-.controller('TranslateCtrl', function($scope, AndroidSpeechRecognizer, GoogleTextToSpeech, GoogleTranslator, Settings, Lookup, Util) {
+.controller("TranslateCtrl", function($scope, AndroidSpeechRecognizer, GoogleTextToSpeech, GoogleTranslator, Settings, Lookup, Util) {
     $scope.settings = Settings;
     $scope.recognizedSpeech = [];
     $scope.lookup = Lookup;
     var termIndex = 0;
     var currentTerm = [];
 
-        var fileSystem;
-        var documentRoot;
+        var audioFiles = [];
 
-        function gotFS(_fileSystem) {
-            fileSystem = _fileSystem;
-            documentRoot = fileSystem.root.fullPath;
-            alert('got FS:' + documentRoot);
+//        $scope.fileSystem;
+//        var documentRoot;
+
+//        var gotFS = function(_fileSystem) {
+//            alert("gotFS:" + JSON.stringify(_fileSystem));
+//            $scope.fileSystem = _fileSystem;
+//        };
+//            window.resolveLocalFileSystemURI("file:///data/data/io.gablab.gabi/",
+//                function(_dir) {
+////                    documentRoot = _fs.root.fullPath;
+//                    documentRoot = _dir.;
+//                    alert("got FS:" + documentRoot);
+//                },
+//                function(err) {
+//                    alert("Failed to requestFileSystem: " + JSON.stringify(err));
+//                }
+//            );
+//            fileSystem = _fileSystem;
+
+        var playAudio = function(src) {
+            var my_media = new Media(src, audioSucceeded, audioFailed);
+            my_media.play();
+        };
+
+        var storeAndPlayAudio = function(src, index) {
+//            if (audioFiles.length < termIndex) {
+//                audioFiles.push(src);
+//            }
+            audioFiles[index] = src;
+            playAudio(src);
         }
 
-        var downloadFile = function(url, fileName) {
-            var ft = new FileTransfer();
-            ft.download(
-                url,
-                documentRoot + fileName,
-                function(entry) {
-                    alert('File Downloaded: ' + fileName + '; entry=' + JSON.stringify(entry));
-                },
-                function(error) {
-                    alert('ERROR downloading File: ' + fileName + '; error=' + JSON.stringify(error));
-                }
-            );
-        }
+        var downloadFile = function(url, fileName, callback, _index) {
+            try {
+                var fileTransfer = new FileTransfer();
+//                alert("downloadFile:fileName=" + fileName + "; url=" + url);
+                window.requestFileSystem(
+                    LocalFileSystem.TEMPORARY,
+                    0,
+                    function (fileSystem) {
+//                        alert("requestFileSystem: fileSystem=" + fileSystem + "; location.href=" + location.href + "; fileSystem.name=" + fileSystem.name + "; fileSystem.root.fullPath=" + fileSystem.root.fullPath);
+//                        fileSystem.root.getDirectory("temp", {create: true, exclusive: false},
+//                            function (entry) {
+//                                alert("entry.fullPath=" + entry.fullPath);
+//                                fileTransfer.download(
+//                                    url,
+//                                    "file://" + entry.fullPath + "/" + fileName,
+//                                    function (entry) {
+//                                        alert("File Downloaded: " + fileName + "; entry=" + entry);
+//                                    },
+//                                    function (error) {
+//                                        alert("ERROR downloading File: " + fileName + "; error=" + JSON.stringify(error));
+//                                    }
+//                                );
+//                            },
+//                            function (error) {
+//                                alert("ERROR getting File: " + fileName + "; error=" + JSON.stringify(error));
+//                            }
+//                        );
+
+                        var downloadToDir = fileSystem.root.toURL();
+                        var filePath = downloadToDir + fileName;
+//                        alert("downloadToDir=" + downloadToDir);
+                        fileTransfer.download(
+                            url,
+                            filePath,
+                            function (entry) {
+//                                alert("File Downloaded: " + filePath + "; entry=" + entry);
+                                if (callback) callback(filePath, _index);
+                            },
+                            function (error) {
+                                alert("ERROR downloading File: " + filePath + "; error=" + error);
+                            }
+                        );
+                    },
+                    function (err) {
+                        alert("Failed to requestFileSystem: " + err);
+                    }
+                );
+            } catch (e) {
+                alert("error in downloadFile: " + e);
+            }
+        };
 
         var audioSucceeded = function() {
 
@@ -42,7 +105,7 @@ angular.module('gabi.controllers', [])
             var translations = response.data.translations;
 //            var translationsArr = new Array();
             var termToUpdate = $scope.settings.terms[_termIndex];
-//            alert('_termIndex=' + _termIndex);
+//            alert("_termIndex=" + _termIndex);
             for (var i=0; i < translations.length; i++) {
                 var translationObj = translations[i];
 //                var simplifiedTranslation = translationObj.translatedText.replace(/[^\w\s]|_/g, "").replace(/\s+/g, " ");
@@ -59,12 +122,16 @@ angular.module('gabi.controllers', [])
 
 
     $scope.playAudio = function(text, language) {
+        if (audioFiles && audioFiles.length > termIndex && audioFiles[termIndex] != null) {
+            playAudio(audioFiles[termIndex]);
+//            alert('replaying from: ' + audioFiles[termIndex]);
+            return;
+        }
         var src = GoogleTextToSpeech.getUrl(text, language);
-        downloadFile(src, 'GabiTTS-' + termIndex);
-        var my_media = new Media(src, audioSucceeded, audioFailed);
 
-        // Play audio
-        my_media.play();
+        //download
+        downloadFile(src, "GabiTTS-" + termIndex, storeAndPlayAudio, termIndex);
+
     };
 
     $scope.receiveRecognizedSpeech = function(text) {
@@ -146,7 +213,7 @@ angular.module('gabi.controllers', [])
     };
 
     $scope.getCorrect = function() {
-//            alert('getCorrect(): $scope.recognizedSpeech=' + $scope.recognizedSpeech.length + '; $scope.getNativeTerm()=' + $scope.getNativeTerm() + '; $scope.getTargetTerms()=' + $scope.getTargetTerms().length);
+//            alert("getCorrect(): $scope.recognizedSpeech=" + $scope.recognizedSpeech.length + "; $scope.getNativeTerm()=" + $scope.getNativeTerm() + "; $scope.getTargetTerms()=" + $scope.getTargetTerms().length);
         if (! $scope.recognizedSpeech || $scope.recognizedSpeech.length==0) return "";
         var nativeTerm = $scope.getNativeTerm();
         if (! nativeTerm) return "";
@@ -156,7 +223,7 @@ angular.module('gabi.controllers', [])
         for (var t=0; t<targetTerms.length; t++) {
             for (var s=0; s<$scope.recognizedSpeech.length; s++) {
                 if (correct) break;
-//                    alert(targetTerms[t] + ' == ' + $scope.recognizedSpeech[s].toLowerCase() + '? ' + (targetTerms[t] == $scope.recognizedSpeech[s].toLowerCase()))
+//                    alert(targetTerms[t] + " == " + $scope.recognizedSpeech[s].toLowerCase() + "? " + (targetTerms[t] == $scope.recognizedSpeech[s].toLowerCase()))
                 if (Util.stripPunctuation(targetTerms[t].toLowerCase()) == Util.stripPunctuation($scope.recognizedSpeech[s].toLowerCase())) {
                     correct = true;
                     break;
@@ -180,16 +247,17 @@ angular.module('gabi.controllers', [])
 //    };
 
     Lookup.getTerms($scope.receiveTerms);
+
 //    window.requestFileSystem(LocalFileSystem.TEMPORARY, 0, gotFS, function(err) {
-//        alert('Failed to requestFileSystem: ' + JSON.stringify(err));
+//        alert("Failed to requestFileSystem: " + JSON.stringify(err));
 //    });
-        window.resolveLocalFileSystemURI("file:///data/data/io.gablab.gabi", gotFS, function(err) {
-            alert('Failed to requestFileSystem: ' + JSON.stringify(err));
-        });
+//        window.resolveLocalFileSystemURI("file:///data/data/io.gablab.gabi", gotFS, function(err) {
+//            alert("Failed to requestFileSystem: " + JSON.stringify(err));
+//        });
 
 })
 
-.controller('InfoCtrl', function($scope, AndroidSpeechRecognizer, Settings) {
+.controller("InfoCtrl", function($scope, AndroidSpeechRecognizer, Settings) {
 
     $scope.settings = Settings;
 

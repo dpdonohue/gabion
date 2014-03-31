@@ -16,30 +16,34 @@ https://developer.android.com/sdk/installing/index.html
 #### 3. Install NodeJS from here: ####
 http://nodejs.org/
 
-#### 4. Follow the steps on the Ionic website: ####
+#### 4. Install Apache Ant ####
+On Mac, this might be already installed.  If not easy enough.  On Windows, see here:
+http://wiki.apache.org/ant/AntOnWindows
+
+#### 5. Follow the steps on the Ionic website: ####
 http://ionicframework.com/getting-started/  Specifically, run these 2 commands
 ```
     npm install -g cordova
     npm install -g ionic
 ```
 
-#### 5. Install Git: ####
+#### 6. Install Git: ####
 http://git-scm.com/book/en/Getting-Started-Installing-Git
 
-#### 6. Get the Gabi code base from GitHub.  You will need a GitHub account, and to be added to the gabion project. ####
+#### 7. Get the Gabi code base from GitHub.  You will need a GitHub account, and to be added to the gabion project. ####
 Create a directory "gabion" within your workspace directory.  cd into the gabion directory.  Next, run:
 ```
     git clone https://github.com/dpdonohue/gabion.git
 ```
 
-#### 7. On your Android device, go to Settings and turn on USB Debugging ####
+#### 8. On your Android device, go to Settings and turn on USB Debugging ####
 
-#### 8. Connect your Android device to your computer via USB ####
+#### 9. Connect your Android device to your computer via USB ####
 
-#### 9. Run it.  From within your gabion directory, run: ####
+#### 10. Run it.  From within your gabion directory, run: ####
 ``` ionic run android ```
 
-#### 10. To distribute it, your must sign it. ####
+#### 11. To distribute it, your must sign it. ####
 * (a) First install Java JDK 7
 * (b) Next generate the private key in some safe directory where you can always find it, and remember the password
 ```
