@@ -45,10 +45,14 @@ Create a directory "gabion" within your workspace directory.  cd into the gabion
 ```
     keytool -genkey -v -keystore gabi-release-key.keystore -alias gabi -keyalg RSA -keysize 2048 -validity 10000
 ```
-* (c) Then copy the file StarterApp-release-unsigned.apk into the same directory as the generated gabi-release-key.keystore file
-* (d) Then run this:
+* (c) Build it
 ```
-    jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore gabi-release-key.keystore StarterApp-release-unsigned.apk gabi
+    cordova build --release android
+```
+* (d) Then copy the file Gabi-release-unsigned.apk into the same directory as the generated gabi-release-key.keystore file
+* (e) Then run this:
+```
+    jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore gabi-release-key.keystore Gabi-release-unsigned.apk gabi
 ```
 
 How to commit changes to GitHub:
@@ -70,3 +74,6 @@ git pull
 cordova plugin add https://github.com/poiuytrez/SpeechRecognizer
 ### Cordova media plugin (for playing audio files from Google TTS) ###
 cordova plugin add https://git-wip-us.apache.org/repos/asf/cordova-plugin-media.git
+### File plugin ###
+cordova plugin add https://git-wip-us.apache.org/repos/asf/cordova-plugin-file.git
+cordova plugin add https://git-wip-us.apache.org/repos/asf/cordova-plugin-file-transfer.git

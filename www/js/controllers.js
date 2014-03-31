@@ -7,10 +7,28 @@ angular.module('gabi.controllers', [])
     var termIndex = 0;
     var currentTerm = [];
 
-//    $scope.audioUrl = "";
+        var fileSystem;
+        var documentRoot;
 
-//    $scope.audio = document.createElement('audio');
-//    $scope.audio.type = "audio/mpeg";
+        function gotFS(_fileSystem) {
+            fileSystem = _fileSystem;
+            documentRoot = fileSystem.root.fullPath;
+            alert('got FS:' + documentRoot);
+        }
+
+        var downloadFile = function(url, fileName) {
+            var ft = new FileTransfer();
+            ft.download(
+                url,
+                documentRoot + fileName,
+                function(entry) {
+                    alert('File Downloaded: ' + fileName + '; entry=' + JSON.stringify(entry));
+                },
+                function(error) {
+                    alert('ERROR downloading File: ' + fileName + '; error=' + JSON.stringify(error));
+                }
+            );
+        }
 
         var audioSucceeded = function() {
 
@@ -36,8 +54,13 @@ angular.module('gabi.controllers', [])
             $scope.$apply();
         };
 
+
+
+
+
     $scope.playAudio = function(text, language) {
         var src = GoogleTextToSpeech.getUrl(text, language);
+        downloadFile(src, 'GabiTTS-' + termIndex);
         var my_media = new Media(src, audioSucceeded, audioFailed);
 
         // Play audio
@@ -157,6 +180,12 @@ angular.module('gabi.controllers', [])
 //    };
 
     Lookup.getTerms($scope.receiveTerms);
+//    window.requestFileSystem(LocalFileSystem.TEMPORARY, 0, gotFS, function(err) {
+//        alert('Failed to requestFileSystem: ' + JSON.stringify(err));
+//    });
+        window.resolveLocalFileSystemURI("file:///data/data/io.gablab.gabi", gotFS, function(err) {
+            alert('Failed to requestFileSystem: ' + JSON.stringify(err));
+        });
 
 })
 
