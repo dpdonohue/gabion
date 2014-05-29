@@ -8,6 +8,7 @@ angular.module("gabi.services", [])
         googleApiKey: "AIzaSyBiP5o_Zvty1wte0P8BzVsDmW9hlJxVcz4",
         terms: [],
         currentPlay: "trip1.txt",
+        playList: [],
         play: {},
         getTargetLanguage: function() {
             return this.targetLocale.substring(0,2);

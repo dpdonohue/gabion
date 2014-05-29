@@ -34,6 +34,16 @@ angular.module('gabi', ['ionic', 'gabi.services', 'gabi.controllers'])
           }
       })
 
+      .state('tab.letsgo', {
+          url: '/letsgo',
+          views: {
+              'letsgo-tab': {
+                  templateUrl: 'templates/letsgo.html',
+                  controller: 'LetsgoCtrl'
+              }
+          }
+      })
+
       .state('tab.settings', {
           url: '/settings',
           views: {
