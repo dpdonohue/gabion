@@ -3,13 +3,24 @@ angular.module("gabi.services", [])
 .factory("Settings", function() {
 
     return {
-        targetLanguage: "es-US",
-        nativeLanguage: "en-US",
+        targetLocale: "es-US",
+        nativeLocale: "en-US",
         googleApiKey: "AIzaSyBiP5o_Zvty1wte0P8BzVsDmW9hlJxVcz4",
-        terms: []
+        terms: [],
+        currentPlay: "trip1.txt",
+        play: {},
+        getTargetLanguage: function() {
+            return this.targetLocale.substring(0,2);
+        },
+
+        getNativeLanguage: function() {
+            return this.nativeLocale.substring(0,2);
+        }
+
     }
 })
 
+/** Lookup terms from local CSV file (LEGACY) */
 .factory("Lookup", ["$http", function($http){
     var url   = "lookup/terms-en.csv";
     var terms = new Array();
@@ -108,7 +119,7 @@ angular.module("gabi.services", [])
 }])
 
 /**
- * A simple example service that returns some data.
+ * Perform Android-based speech recognition
  */
 .factory("AndroidSpeechRecognizer", function() {
 
@@ -211,7 +222,9 @@ angular.module("gabi.services", [])
     }
 })
 
-
+/**
+ * Soundex and other text functions
+ */
 .factory("Util", function() {
     return {
         soundex: function(str) {
@@ -430,4 +443,34 @@ angular.module("gabi.services", [])
         }
     }
 })
+
+/* DB Operations */
+.factory("DeviceDB", function () {
+    var db = window.openDatabase("gablabdb", "1.0", "Gablab Database", 2000000);
+    return {
+        ensureCreated: function() {
+            tx.executeSql('CREATE TABLE IF NOT EXISTS DEMO (id unique, data)');
+        }
+    }
+})
+
+/* Client for the Gabs web service */
+.factory("GabsClient", function() {
+    return {
+        listPlays: function(lan, callback) {
+            $http.get("http://localhost:3000/play/list?lan=" + lan).then(function(result) {
+                var payload = result.data;
+                callback(payload.plays);
+            });
+        },
+
+        getPlay: function(playid, nlo, nla, tlo, tla, callback) {
+            $http.get("http://localhost:3000/play/load/" + playid + "?nlo=" + nlo + "&nla=" + nla + "&tlo=" + tlo + "&tla=" + tla).then(function(result) {
+                var payload = result.data;
+                callback(payload);
+            });
+        }
+    }
+})
+
 ;
