@@ -10,6 +10,8 @@ angular.module("gabi.services", [])
         currentPlay: "trip1.txt",
         playList: [],
         play: {},
+        targetTranslation: {},
+        nativeTranslation: {},
         getTargetLanguage: function() {
             return this.targetLocale.substring(0,2);
         },
@@ -456,17 +458,17 @@ angular.module("gabi.services", [])
 })
 
 /* Client for the Gabs web service */
-.factory("GabsClient", function() {
+.factory("GabsClient", function($http) {
     return {
         listPlays: function(lan, callback) {
-            $http.get("http://localhost:3000/play/list?lan=" + lan).then(function(result) {
+            $http.get("http://gabs-gablabio.rhcloud.com/play/list?lan=" + lan).then(function(result) {
                 var payload = result.data;
                 callback(payload.plays);
             });
         },
 
         getPlay: function(playid, nlo, nla, tlo, tla, callback) {
-            $http.get("http://localhost:3000/play/load/" + playid + "?nlo=" + nlo + "&nla=" + nla + "&tlo=" + tlo + "&tla=" + tla).then(function(result) {
+            $http.get("http://gabs-gablabio.rhcloud.com/play/load/" + playid + "?nlo=" + nlo + "&nla=" + nla + "&tlo=" + tlo + "&tla=" + tla).then(function(result) {
                 var payload = result.data;
                 callback(payload);
             });

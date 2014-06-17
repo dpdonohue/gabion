@@ -42,6 +42,9 @@ Create a directory "gabion" within your workspace directory.  cd into the gabion
 
 #### 10. Run it.  From within your gabion directory, run: ####
 ``` ionic run android ```
+This will run it on a connected device or (if nothing connected) on the Android emulator
+``` ionic emulate android ```
+This will run it on the Android emulator.
 
 #### 11. To distribute it, your must sign it. ####
 * (a) First install Java JDK 7

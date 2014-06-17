@@ -127,7 +127,7 @@ angular.module("gabi.controllers", [])
         };
 
         $scope.getTargetTerms = function() {
-            var targetTerms = new Array();
+            var targetTerms = [];
             for (var i=1; i<currentTerm.length; i++) {
                 targetTerms.push(currentTerm[i]);
             }
@@ -195,40 +195,81 @@ angular.module("gabi.controllers", [])
 
     })
 
-    .controller("InfoCtrl", function($scope, AndroidSpeechRecognizer, Settings) {
+.controller("InfoCtrl", function($scope, AndroidSpeechRecognizer, Settings) {
 
-        $scope.settings = Settings;
-
-        $scope.supportedLanguages = [];
-
-        $scope.receiveLanguages = function(languages) {
-            $scope.supportedLanguages = languages;
-            $scope.$apply();
-        }
-
-        loadSupportedLanguages = function() {
-            AndroidSpeechRecognizer.getSupportedLanguages($scope.receiveLanguages);
-        };
-
-        loadSupportedLanguages();
-    })
-
-    .controller("LetsgoCtrl", function($scope, Settings, Util, GabsClient) {
-        $scope.playList = Settings.playList;
-        GabsClient.listPlays(Settings.getNativeLanguage(), function(playList)) {
-            $scope.playList = playList;
-            $scope.$apply();
-        }
-}
-
-.controller("PlayCtrl", function($scope, AndroidSpeechRecognizer, GoogleTextToSpeech, Settings, Util, GabsClient) {
     $scope.settings = Settings;
+
+    $scope.supportedLanguages = [];
+
+    $scope.receiveLanguages = function(languages) {
+        $scope.supportedLanguages = languages;
+        $scope.$apply();
+    }
+
+    loadSupportedLanguages = function() {
+        AndroidSpeechRecognizer.getSupportedLanguages($scope.receiveLanguages);
+    };
+
+    loadSupportedLanguages();
+})
+
+
+
+
+
+
+
+
+
+.controller("LetsgoCtrl", function($scope, $state, Settings, Util, GabsClient) {
+    $scope.playList = Settings.playList;
+    GabsClient.listPlays(Settings.getNativeLanguage(), function(playList) {
+        Settings.playList = playList;
+        $scope.playList = playList;
+        $scope.$apply();
+    });
+
+    $scope.goToPlay = function(playid) {
+        GabsClient.getPlay(playid, Settings.nativeLocale, Settings.getNativeLanguage(), Settings.targetLocale, Settings.getTargetLanguage(), function(payload) {
+            Settings.play = payload.play;
+            if (payload.nativeTranslation) {
+                Settings.nativeTranslation = payload.nativeTranslation;
+            } else {
+                Settings.nativeTranslation = {};
+            }
+            Settings.targetTranslation = payload.targetTranslation;
+            $state.go("tab.play");
+        });
+    }
+})
+
+
+
+
+
+
+
+
+
+
+
+.controller("PlayCtrl", function($scope, AndroidSpeechRecognizer, GoogleTextToSpeech, Settings, Util) {
+    $scope.settings = Settings;
+    $scope.native = Settings.nativeTranslation;
+    $scope.target = Settings.targetTranslation;
+    $scope.play = Settings.play;
+
     $scope.recognizedSpeech = [];
     var pageIndex = 0;
     var audioFiles = [];
+    var preparedLines = [];
+
+//    var showNative = function() {
+//        return JSON.stringify($scope.native);
+//    };
 
     var playAudio = function(src) {
-        var my_media = new Media(src, audioSucceeded, audioFailed);
+        var my_media = new Media(src, function(){}, function(){});
         my_media.play();
     };
 
@@ -249,7 +290,7 @@ angular.module("gabi.controllers", [])
 
     $scope.nextPage = function() {
         pageIndex++;
-        if (pageIndex >= $scope.settings.play.pages.length) pageIndex = $scope.settings.play.pages.length - 1;
+        if (pageIndex >= Settings.play.pages.length) pageIndex = $scope.settings.play.pages.length - 1;
 
         //TODO for now clear previous answer but in future remember given answers
         $scope.recognizedSpeech = [];
@@ -267,29 +308,41 @@ angular.module("gabi.controllers", [])
         $scope.$apply();
     };
 
-    $scope.receivePlay = function(play) {
-        $scope.settings.play = play;
-        pageIndex = -1;
-        $scope.nextPage();
-        $scope.$apply();
-    };
+    $scope.getLines = function() {
+        if (preparedLines && preparedLines.length > 0) return preparedLines;
+        if (!Settings.play) return;
 
-    $scope.getTargetTerms = function() {
-        var targetTerms = new Array();
-        for (var i=1; i<currentTerm.length; i++) {
-            targetTerms.push(currentTerm[i]);
-        }
-        return targetTerms;
-    };
+        var page = Settings.play.pages[pageIndex];
+        alert("getLines(): page=" + JSON.stringify(page));
 
-    $scope.displayTargetTerms = function() {
-        var terms = $scope.getTargetTerms();
-        var str = "";
-        for (var i=0; i < terms.length; i++) {
-            if (str.length > 0) str += ", ";
-            str += terms[i];
+        var lines = [];
+        var startLine = page.sln;
+        var endLine = page.eln;
+        alert("Settings.native=" + JSON.stringify(Settings.native))
+        for (var lineIndex=startLine; lineIndex <= endLine; lineIndex++) {
+            var actorIndex = Settings.play.lines[lineIndex].act;
+            var actorLabel = Settings.play.actors[actorIndex].lbl.toUpperCase();
+            alert("line #" + lineIndex + ": " + nativeActor);
+            var nativeActor = Settings.native.actors[actorIndex].txt[0];
+
+            if (! nativeActor) nativeActor = actorLabel;
+            var targetActor = Settings.target.actors[actorIndex].txt[0];
+            if (! targetActor) targetActor = actorLabel;
+            var actorImg = Settings.play.actors[actorIndex].img;
+            var nativeText = Settings.nativeTranslation.lines[lineIndex].txt[0];
+            var targetText = Settings.targetTranslation.lines[lineIndex].txt[0];
+            var line = {
+                nativeActor: nativeActor,
+                targetActor: targetActor,
+                nativeText: nativeText,
+                targetText: targetText,
+                actorImg: actorImg
+            };
+            lines.push(line);
         }
-        return str;
+        preparedLines = lines;
+        alert("Lines=" + lines);
+        return lines;
     };
 
     $scope.displayRecognizedSpeech = function() {
@@ -330,14 +383,4 @@ angular.module("gabi.controllers", [])
         if (correct) return "correct";
         return "incorrect";
     };
-
-//    $scope.speak = function(text) {
-//        AndroidTextToSpeech.setLanguage($scope.settings.targetLocale, function(success) {
-//            if (success) {
-//                AndroidTextToSpeech.speak(text);
-//            }
-//        });
-//    };
-
-    Lookup.getTerms($scope.receiveTerms);
 });
