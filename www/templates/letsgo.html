@@ -6,9 +6,9 @@
                 Select a Simulation
             </div>
 
-            <a class="item" ng-repeat="play in playList" href="#/{{ play._id }}" ng-click="goToPlay(play._id)">
+            <a class="item item-thumbnail-left" ng-repeat="play in playList" href="#/{{ play._id }}" ng-click="goToPlay(play._id)">
                 <img src="{{ play.img }}">
-                <h3>{{ play.txt }} / {{ play.img }}</h3>
+                <h2>{{ play.txt }}</h2>
             </a>
 
         </div>

@@ -232,7 +232,7 @@ angular.module("gabi.controllers", [])
     $scope.goToPlay = function(playid) {
 //        alert("goToPlay...");
         GabsClient.getPlay(playid, Settings.nativeLocale, Settings.getNativeLanguage(), Settings.targetLocale, Settings.getTargetLanguage(), function(payload) {
-//            alert("goToPlay received: " + JSON.stringify(payload))
+//            alert("goToPlay received: " + JSON.stringify(payload.play))
             Settings.play = payload.play;
             if (payload.nativeTranslation) {
                 Settings.nativeTranslation = payload.nativeTranslation;
@@ -333,7 +333,7 @@ angular.module("gabi.controllers", [])
             var nativeText = Settings.nativeTranslation.lines[lineIndex].txt[0];
             var targetText = Settings.targetTranslation.lines[lineIndex].txt[0];
             if ( (actorLabel=="YOU") && !actorImg) {
-                actorImg = "http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/128/Emotes-face-smile-icon.png";
+                actorImg = "http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/64/Emotes-face-smile-icon.png";
             }
             var line = {
                 isYou: actorLabel=="YOU",
@@ -347,7 +347,6 @@ angular.module("gabi.controllers", [])
             lines.push(line);
         }
         preparedLines = lines;
-        alert("Lines=" + lines);
         return lines;
     };
 

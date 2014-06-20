@@ -29,6 +29,10 @@
     text-align: right;
 }
 
+.gabi-float-right {
+    float: right;
+}
+
 .gabi-hidden {
     visibility: hidden;
 }
@@ -58,4 +62,18 @@
 
 .gabi-advancedlink {
     margin-top: 12px;
+}
+
+.gabi-narrowbottom {
+    margin-bottom: -6px;
+}
+
+.gabi-minusbottom {
+    margin-bottom: -30px;
+    padding-bottom: -20px;
+}
+
+.gabi-superminusbottom {
+    margin-bottom: -40px;
+    padding-bottom: -20px;
 }
