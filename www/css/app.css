@@ -15,6 +15,20 @@
     text-align: center;
 }
 
+.gabi-left {
+    display: block;
+    margin-left: 0px;
+    align: left;
+    text-align: left;
+}
+
+.gabi-right {
+    display: block;
+    margin-right: 0px;
+    align: right;
+    text-align: right;
+}
+
 .gabi-hidden {
     visibility: hidden;
 }

@@ -467,8 +467,10 @@ angular.module("gabi.services", [])
             });
         },
 
+        //TODO support locale
         getPlay: function(playid, nlo, nla, tlo, tla, callback) {
-            $http.get("http://gabs-gablabio.rhcloud.com/play/load/" + playid + "?nlo=" + nlo + "&nla=" + nla + "&tlo=" + tlo + "&tla=" + tla).then(function(result) {
+//            $http.get("http://gabs-gablabio.rhcloud.com/play/load/" + playid + "?nlo=" + nlo + "&nla=" + nla + "&tlo=" + tlo + "&tla=" + tla).then(function(result) {
+            $http.get("http://gabs-gablabio.rhcloud.com/play/load/" + playid + "?nlo=" + nlo + "&nla=" + nla + "&tla=" + tla).then(function(result) {
                 var payload = result.data;
                 callback(payload);
             });

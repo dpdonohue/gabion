@@ -230,7 +230,9 @@ angular.module("gabi.controllers", [])
     });
 
     $scope.goToPlay = function(playid) {
+//        alert("goToPlay...");
         GabsClient.getPlay(playid, Settings.nativeLocale, Settings.getNativeLanguage(), Settings.targetLocale, Settings.getTargetLanguage(), function(payload) {
+//            alert("goToPlay received: " + JSON.stringify(payload))
             Settings.play = payload.play;
             if (payload.nativeTranslation) {
                 Settings.nativeTranslation = payload.nativeTranslation;
@@ -313,31 +315,35 @@ angular.module("gabi.controllers", [])
         if (!Settings.play) return;
 
         var page = Settings.play.pages[pageIndex];
-        alert("getLines(): page=" + JSON.stringify(page));
+//        alert("getLines(): page=" + JSON.stringify(page));
 
         var lines = [];
         var startLine = page.sln;
         var endLine = page.eln;
-        alert("Settings.native=" + JSON.stringify(Settings.native))
+//        alert("Settings.targetTranslation=" + JSON.stringify(Settings.targetTranslation))
         for (var lineIndex=startLine; lineIndex <= endLine; lineIndex++) {
             var actorIndex = Settings.play.lines[lineIndex].act;
             var actorLabel = Settings.play.actors[actorIndex].lbl.toUpperCase();
-            alert("line #" + lineIndex + ": " + nativeActor);
-            var nativeActor = Settings.native.actors[actorIndex].txt[0];
-
+            var nativeActor = Settings.nativeTranslation.actors[actorIndex].txt[0];
             if (! nativeActor) nativeActor = actorLabel;
-            var targetActor = Settings.target.actors[actorIndex].txt[0];
+            //ERROR BELOW SOMEWHERE
+            var targetActor = Settings.targetTranslation.actors[actorIndex].txt[0];
             if (! targetActor) targetActor = actorLabel;
             var actorImg = Settings.play.actors[actorIndex].img;
             var nativeText = Settings.nativeTranslation.lines[lineIndex].txt[0];
             var targetText = Settings.targetTranslation.lines[lineIndex].txt[0];
+            if ( (actorLabel=="YOU") && !actorImg) {
+                actorImg = "http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/128/Emotes-face-smile-icon.png";
+            }
             var line = {
+                isYou: actorLabel=="YOU",
                 nativeActor: nativeActor,
                 targetActor: targetActor,
                 nativeText: nativeText,
                 targetText: targetText,
                 actorImg: actorImg
             };
+//            alert("line #" + lineIndex + ": " + JSON.stringify(line));
             lines.push(line);
         }
         preparedLines = lines;

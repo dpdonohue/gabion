@@ -7,8 +7,8 @@
             </div>
 
             <a class="item" ng-repeat="play in playList" href="#/{{ play._id }}" ng-click="goToPlay(play._id)">
-                <img ng-src="{{ play.img }}">
-                <h3>{{ play.txt }}</h3>
+                <img src="{{ play.img }}">
+                <h3>{{ play.txt }} / {{ play.img }}</h3>
             </a>
 
         </div>

@@ -7,27 +7,37 @@
 
 
       <div ng-repeat="line in getLines()">
-          <div ng-switch on="line.actor">
-              <div ng-switch-when="YOU">
-                  <div class="row responsive-sm">
-                      <div class="col col-75 col-offset-25 button-balanced">
-                          {{ line.nativeActor }}: {{ line.nativeText }}
+          <!--<div class="row responsive-sm">-->
+              <div ng-switch on="line.isYou">
+
+                  <!-- YOU -->
+                  <div ng-switch-when="true">
+                      <div class="row responsive-sm">
+                          <div class="col col-75 col-offset-25 button-balanced">
+                              {{ line.nativeActor }}: {{ line.nativeText }}
+                          </div>
+                          <div class="item-thumbnail-right"> <!--col col-10 col-offset-90-->
+                              <img src="{{ line.actorImg }}" />
+                              <a class="button" ng-click="record()" padding="true"><i class="icon ion-android-microphone"></i></a>
+                          </div>
                       </div>
-                      <div class="item-thumbnail-right"> <!--col col-10 col-offset-90-->
-                          <img src="{{ line.actorImg }}" />
-                          <a class="button" ng-click="record()" padding="true"><i class="icon ion-android-microphone"></i></a>
+                  </div>
+
+                  <!-- OTHER PERSON -->
+                  <div ng-switch-default>
+                      <div class="row responsive-sm">
+                          <div class="col col-75 button-calm gabi-left">
+                              {{ line.nativeActor }}: {{ line.targetText }}
+                          </div>
+                      </div>
+                      <div class="row responsive-sm">
+                          <div class="col col-25 gabi-left"> <!--col col-10-->
+                              <img src="{{ line.actorImg }}" />
+                          </div>
                       </div>
                   </div>
               </div>
-              <div ng-switch-default>
-                  <div class="col col-75 button-calm">
-                      {{ line.targetActor }}: {{ line.targetText }}
-                  </div>
-                  <div class="item-thumbnail-left"> <!--col col-10-->
-                      <img src="{{ line.actorImg }}" />
-                  </div>
-              </div>
-          </div>
+          <!--</div>-->
     </div>
   </ion-content>
 
