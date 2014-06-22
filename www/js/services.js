@@ -19,7 +19,6 @@ angular.module("gabi.services", [])
         getNativeLanguage: function() {
             return this.nativeLocale.substring(0,2);
         }
-
     }
 })
 
@@ -146,12 +145,12 @@ angular.module("gabi.services", [])
         }
     },
 
-    recognizeSpeech: function(callback, language) {
+    recognizeSpeech: function(text, language, callback, arg) {
         var maxMatches = 5;
-        var promptString = "Say it in " + language; // optional
+        var promptString = 'Say in ' + language + ': "' + text + '"'; // optional
         if (window.plugins && window.plugins.speechrecognizer ) {
             window.plugins.speechrecognizer.startRecognize(function(result){
-                callback(result);
+                callback(result, arg);
             }, function(errorMessage){
                 alert("Error message: " + errorMessage);
             }, maxMatches, promptString, language);
@@ -311,6 +310,88 @@ angular.module("gabi.services", [])
                 var num = parseInt(numStr, 10); // read num as normal number
                 return String.fromCharCode(num);
             });
+        },
+
+        hashCode : function(str) {
+            var hash = 0, i, chr, len;
+            if (str.length == 0) return hash;
+            for (i = 0, len = str.length; i < len; i++) {
+                chr   = str.charCodeAt(i);
+                hash  = ((hash << 5) - hash) + chr;
+                hash |= 0; // Convert to 32bit integer
+            }
+            return hash;
+        },
+
+        downloadFile : function(url, filename, callback) {
+            try {
+                var fileTransfer = new FileTransfer();
+                window.requestFileSystem(
+                    LocalFileSystem.TEMPORARY,
+                    0,
+                    function (fileSystem) {
+
+                        var downloadToDir = fileSystem.root.toURL();
+                        var filePath = downloadToDir + filename;
+                        alert("download to " + filePath);
+                        fileTransfer.download(
+                            url,
+                            filePath,
+//                            function (entry) {
+//                                if (callback) callback(filePath);
+//                            },
+//                            callback,
+                            function() {
+                                callback(filePath);
+                            },
+                            function (error) {
+                                alert("ERROR downloading File: " + filePath + "; error=" + error);
+                            }
+                        );
+                    },
+                    function (err) {
+                        alert("Failed to requestFileSystem: " + err);
+                    }
+                );
+            } catch (e) {
+                alert("error in downloadFile: " + e);
+            }
+        },
+
+        //if the file exists, pass the file path to the callback
+        fileExists: function(filename, callbackFileExists, callbackFileNotExists) {
+            window.requestFileSystem(LocalFileSystem.TEMPORARY, 0, function (fileSystem) {
+                var downloadToDir = fileSystem.root.toURL();
+                var path = downloadToDir + filename;
+                alert("testing path: " + filename);
+                fileSystem.root.getFile(filename, { create: false }, function() {
+                    callbackFileExists(path);
+                }, callbackFileNotExists);
+            }, function (evt) {
+                console.log(evt.target.error.code);
+            }); //of requestFileSystem
+        },
+
+        //Untested; get the full filepath and return it to the callback function
+        getFilepath : function(filename, callback) {
+            try {
+                var fileTransfer = new FileTransfer();
+                window.requestFileSystem(
+                    LocalFileSystem.TEMPORARY,
+                    0,
+                    function (fileSystem) {
+
+                        var rootDir = fileSystem.root.toURL();
+                        var filepath = rootDir + filename;
+                        callback(filepath);
+                    },
+                    function (err) {
+                        return alert("Failed to requestFileSystem: " + err);
+                    }
+                );
+            } catch (e) {
+                alert("error in downloadFile: " + e);
+            }
         }
     }
 })

@@ -7,49 +7,61 @@
 
 
       <div ng-repeat="line in getLines()">
-          <!--<div class="row responsive-sm">-->
-              <div ng-switch on="line.isYou">
+          <!--<div ng-switch on="lineIndex >= line.index">-->
+              <!--<div ng-switch-when="true"></div>-->
+                  <div ng-switch on="line.isYou">
 
-                  <!-- YOU -->
-                  <div ng-switch-when="true">
-                      <div class="row responsive-sm gabi-superminusbottom">
-                          <div class="col col-75 col-offset-25 gabi-right">
-                              <button class="button button-block button-assertive" ng-click="record()">
-                                {{ line.nativeText }}
-                                <i class="icon ion-android-microphone gabi-float-right"></i>
-                              </button>
-                          </div>
-                      </div>
-                      <div class="row responsive-sm gabi-minusbottom">
-                          <div class="col col-25 col-offset-75 gabi-right"> <!--col col-10 col-offset-90-->
-                              <div class="gabi-centered">
-                                  <img src="{{ line.actorImg }}" class="gabi-narrowbottom"/><br/>
-                                  {{ line.nativeActor }}
+                      <!-- YOU -->
+                      <div ng-switch-when="true">
+                          <div class="row responsive-sm gabi-superminusbottom">
+                              <div class="col col-75 col-offset-25 gabi-right">
+                                  <div ng-switch on="line.currentStatus">
+                                      <button ng-switch-when="1" class="button button-block button-balanced" ng-click="record(line.index)">
+                                          {{ line.targetText }}
+                                            <i class="icon ion-checkmark-circled gabi-float-right"></i>
+                                      </button>
+                                      <button ng-switch-when="0" class="button button-block button-energized" ng-click="record(line.index)">
+                                          {{ line.nativeText }}
+                                          <i class="icon ion-android-microphone gabi-float-right"></i>
+                                      </button>
+                                      <button ng-switch-when="-1" class="button button-block button-assertive" ng-click="record(line.index)">
+                                          {{ line.nativeText }}
+                                          <i class="icon ion-close-circled gabi-float-right"></i>
+                                      </button>
+                                  </div>
                               </div>
-                              <!--<a class="button" ng-click="record()" padding="true"><i class="icon ion-android-microphone"></i></a>-->
                           </div>
-                      </div>
-                  </div>
-
-                  <!-- OTHER PERSON -->
-                  <div ng-switch-default>
-                      <div class="row responsive-sm gabi-superminusbottom">
-                          <div class="col col-75 button-calm gabi-left">
-                              <button class="button button-block button-calm">
-                                    {{ line.targetText }}
-                              </button>
-                          </div>
-                      </div>
-                      <div class="row responsive-sm gabi-minusbottom">
-                          <div class="col col-25 gabi-left"> <!--col col-10-->
-                              <div class="gabi-centered">
-                                <img src="{{ line.actorImg }}" class="gabi-narrowbottom" /><br/>
-                                  {{ line.nativeActor }}
+                          <div class="row responsive-sm gabi-minusbottom">
+                              <div class="col col-25 col-offset-75 gabi-right"> <!--col col-10 col-offset-90-->
+                                  <div class="gabi-centered">
+                                      <img src="{{ getMyIcon(line.index) }}" class="gabi-narrowbottom"/><br/>
+                                      {{ line.nativeActor }}
+                                  </div>
+                                  <!--<a class="button" ng-click="record()" padding="true"><i class="icon ion-android-microphone"></i></a>-->
                               </div>
                           </div>
                       </div>
+
+                      <!-- OTHER PERSON -->
+                      <div ng-switch-default>
+                          <div class="row responsive-sm gabi-superminusbottom">
+                              <div class="col col-75 button-calm gabi-left">
+                                  <button class="button button-block button-calm">
+                                        {{ line.targetText }}
+                                  </button>
+                              </div>
+                          </div>
+                          <div class="row responsive-sm gabi-minusbottom">
+                              <div class="col col-25 gabi-left"> <!--col col-10-->
+                                  <div class="gabi-centered">
+                                    <img src="{{ line.actorImg }}" class="gabi-narrowbottom" /><br/>
+                                      {{ line.nativeActor }}
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
                   </div>
-              </div>
+              <!--</div>-->
           <!--</div>-->
     </div>
   </ion-content>
