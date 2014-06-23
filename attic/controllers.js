@@ -228,6 +228,7 @@ angular.module("gabi.controllers", [])
 
 
 .controller("LetsgoCtrl", function($scope, $state, Settings, Util, GabsClient) {
+        alert("LetsgoCtrl...");
     $scope.playList = Settings.playList;
     GabsClient.listPlays(Settings.getNativeLanguage(), function(playList) {
         Settings.playList = playList;
@@ -283,7 +284,7 @@ angular.module("gabi.controllers", [])
     var playAudio = function(file, callback) {
         var src = file;
         if (file.fullPath) src = file.fullPath;
-//        alert("playAudio: " + src);
+        alert("playAudio: " + src);
         my_media = new Media(src, audioSucceeded, audioFailed);
         my_media.play();
         if (callback) callback();
@@ -307,7 +308,7 @@ angular.module("gabi.controllers", [])
         var url = GoogleTextToSpeech.getUrl(text, language);
         var hashedUrl = Util.hashCode(url);
         var filename = "gablab/TTS/tts" + hashedUrl + ".mpeg";
-//        alert("playOrDownloadAudio: url=" + url + "; filename=" + filename);
+        alert("playOrDownloadAudio: url=" + url + "; filename=" + filename);
         //if the file exists, play it.  If not, download it then play it
         Util.fileExists(
             filename,
@@ -315,7 +316,7 @@ angular.module("gabi.controllers", [])
                 playAudio(file, callback);
             },
             function() {
-//                alert("file does NOT exist: download and play it");
+                alert("file does NOT exist: download and play it");
 //                Util.downloadFile(url, filename, playAudio);
                 Util.downloadFile(url, filename, function(file) {
                     playAudio(file, callback);
@@ -351,12 +352,6 @@ angular.module("gabi.controllers", [])
         playOrDownloadAudio(lines[index].targetText, Settings.targetLocale, callback);
     };
 
-    var playTargetAndAdvance = function(index) {
-        playTarget(index, function() {
-            advanceLine();
-        });
-    };
-
     $scope.record = function(index) {
         AndroidSpeechRecognizer.recognizeSpeech(lines[index].nativeText, Settings.targetLocale, receiveRecognizedSpeech, index);
     };
@@ -389,7 +384,11 @@ angular.module("gabi.controllers", [])
 //        alert("getLines(): page=" + JSON.stringify(page));
 
         var startLine = page.sln;
-        var endLine = page.eln;
+        var endLine = $scope.lineIndex;
+        if ($scope.lineIndex > page.eln) {
+            endLine = page.eln;
+        }
+
 
 //        alert("Settings.targetTranslation=" + JSON.stringify(Settings.targetTranslation))
         var index = 0;
@@ -466,17 +465,19 @@ angular.module("gabi.controllers", [])
         line.currentStatus = 1;
         $scope.lineIndex++;
         $scope.$apply();
-        if ($scope.lineIndex < lines.length) {
+        if ($scope.lineIndex < lines.size) {
             var newline = lines[$scope.lineIndex];
             if (! newline.isYou) {
-                $timeout(playTargetAndAdvance($scope.lineIndex), 2000);
+                playTarget($scope.lineIndex, function() {
+                    advanceLine();
+                })
             }
         }
     };
 
     //iheard can be a string or an array of strings
     var checkResponse = function(iheard, index) {
-//        alert("checkResponse(): iheard=" + iheard + "; index=" + index);
+        alert("checkResponse(): iheard=" + iheard + "; index=" + index);
         var line = lines[index];
         if (! iheard || iheard.length==0) {
             return;
@@ -504,22 +505,13 @@ angular.module("gabi.controllers", [])
                 }
             }
         }
+        alert("correct? " + correct);
 
         if (correct) {
-            if (index >= $scope.lineIndex) {
-                return $timeout(advanceLine(), 2000);
-            } else {
-                line.success++;
-                line.currentStatus = 1;
-                $scope.$apply();
-            }
+            return advanceLine();
         } else {
             line.fail++;
             line.currentStatus = -1;
         }
     };
-
-    //initialize
-    $scope.getLines();
-    playTargetAndAdvance($scope.lineIndex);
 });

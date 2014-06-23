@@ -23,102 +23,102 @@ angular.module("gabi.services", [])
 })
 
 /** Lookup terms from local CSV file (LEGACY) */
-.factory("Lookup", ["$http", function($http){
-    var url   = "lookup/terms-en.csv";
-    var terms = new Array();
-
-    function csvToArray( strData, strDelimiter ){
-        // Check to see if the delimiter is defined. If not,
-        // then default to comma.
-        strDelimiter = (strDelimiter || ",");
-
-        // Create a regular expression to parse the CSV values.
-        var objPattern = new RegExp(
-            (
-                // Delimiters.
-                "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
-
-                    // Quoted fields.
-                    "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
-
-                    // Standard fields.
-                    "([^\"\\" + strDelimiter + "\\r\\n]*))"
-                ),
-            "gi"
-        );
-
-
-        // Create an array to hold our data. Give the array
-        // a default empty first row.
-        var arrData = [[]];
-
-        // Create an array to hold our individual pattern
-        // matching groups.
-        var arrMatches = null;
-
-
-        // Keep looping over the regular expression matches
-        // until we can no longer find a match.
-        while (arrMatches = objPattern.exec( strData )){
-
-            // Get the delimiter that was found.
-            var strMatchedDelimiter = arrMatches[ 1 ];
-
-            // Check to see if the given delimiter has a length
-            // (is not the start of string) and if it matches
-            // field delimiter. If id does not, then we know
-            // that this delimiter is a row delimiter.
-            if (
-                strMatchedDelimiter.length &&
-                    (strMatchedDelimiter != strDelimiter)
-                ){
-
-                // Since we have reached a new row of data,
-                // add an empty row to our data array.
-                arrData.push( [] );
-
-            }
-
-
-            // Now that we have our delimiter out of the way,
-            // let"s check to see which kind of value we
-            // captured (quoted or unquoted).
-            if (arrMatches[ 2 ]){
-
-                // We found a quoted value. When we capture
-                // this value, unescape any double quotes.
-                var strMatchedValue = arrMatches[ 2 ].replace(
-                    new RegExp( "\"\"", "g" ),
-                    "\""
-                );
-
-            } else {
-
-                // We found a non-quoted value.
-                var strMatchedValue = arrMatches[ 3 ];
-
-            }
-
-
-            // Now that we have our value string, let"s add
-            // it to the data array.
-            arrData[ arrData.length - 1 ].push( strMatchedValue );
-        }
-
-        // Return the parsed data.
-        return( arrData );
-    }
-
-    return {
-        getTerms: function(callback) {
-            $http.get(url).then(function(response){
-            terms = response.data;
-//            alert("read file: " + response.data);
-            callback(csvToArray(response.data, ";"));
-        });
-      }
-    }
-}])
+//.factory("Lookup", ["$http", function($http){
+//    var url   = "lookup/terms-en.csv";
+//    var terms = new Array();
+//
+//    function csvToArray( strData, strDelimiter ){
+//        // Check to see if the delimiter is defined. If not,
+//        // then default to comma.
+//        strDelimiter = (strDelimiter || ",");
+//
+//        // Create a regular expression to parse the CSV values.
+//        var objPattern = new RegExp(
+//            (
+//                // Delimiters.
+//                "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+//
+//                    // Quoted fields.
+//                    "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+//
+//                    // Standard fields.
+//                    "([^\"\\" + strDelimiter + "\\r\\n]*))"
+//                ),
+//            "gi"
+//        );
+//
+//
+//        // Create an array to hold our data. Give the array
+//        // a default empty first row.
+//        var arrData = [[]];
+//
+//        // Create an array to hold our individual pattern
+//        // matching groups.
+//        var arrMatches = null;
+//
+//
+//        // Keep looping over the regular expression matches
+//        // until we can no longer find a match.
+//        while (arrMatches = objPattern.exec( strData )){
+//
+//            // Get the delimiter that was found.
+//            var strMatchedDelimiter = arrMatches[ 1 ];
+//
+//            // Check to see if the given delimiter has a length
+//            // (is not the start of string) and if it matches
+//            // field delimiter. If id does not, then we know
+//            // that this delimiter is a row delimiter.
+//            if (
+//                strMatchedDelimiter.length &&
+//                    (strMatchedDelimiter != strDelimiter)
+//                ){
+//
+//                // Since we have reached a new row of data,
+//                // add an empty row to our data array.
+//                arrData.push( [] );
+//
+//            }
+//
+//
+//            // Now that we have our delimiter out of the way,
+//            // let"s check to see which kind of value we
+//            // captured (quoted or unquoted).
+//            if (arrMatches[ 2 ]){
+//
+//                // We found a quoted value. When we capture
+//                // this value, unescape any double quotes.
+//                var strMatchedValue = arrMatches[ 2 ].replace(
+//                    new RegExp( "\"\"", "g" ),
+//                    "\""
+//                );
+//
+//            } else {
+//
+//                // We found a non-quoted value.
+//                var strMatchedValue = arrMatches[ 3 ];
+//
+//            }
+//
+//
+//            // Now that we have our value string, let"s add
+//            // it to the data array.
+//            arrData[ arrData.length - 1 ].push( strMatchedValue );
+//        }
+//
+//        // Return the parsed data.
+//        return( arrData );
+//    }
+//
+//    return {
+//        getTerms: function(callback) {
+//            $http.get(url).then(function(response){
+//            terms = response.data;
+////            alert("read file: " + response.data);
+//            callback(csvToArray(response.data, ";"));
+//        });
+//      }
+//    }
+//}])
 
 /**
  * Perform Android-based speech recognition
@@ -170,13 +170,14 @@ angular.module("gabi.services", [])
     var initialized=false;
 
     return {
+        //TODO: NOT USED?
         init: function() {
             if (initialized) return;
-            alert('cordova=' + cordova);
+//            alert('cordova=' + cordova);
             var tts;
             try {
                 tts = cordova.require("cordova/plugin/tts");
-                alert('tts=' + tts + '; window.plugins=' + JSON.stringify(window.plugins));
+//                alert('tts=' + tts + '; window.plugins=' + JSON.stringify(window.plugins));
             } catch (e) {
                 alert("Error: " + e);
             }
@@ -333,7 +334,7 @@ angular.module("gabi.services", [])
 
                         var downloadToDir = fileSystem.root.toURL();
                         var filePath = downloadToDir + filename;
-                        alert("download to " + filePath);
+//                        alert("download to " + filePath);
                         fileTransfer.download(
                             url,
                             filePath,
@@ -363,7 +364,7 @@ angular.module("gabi.services", [])
             window.requestFileSystem(LocalFileSystem.TEMPORARY, 0, function (fileSystem) {
                 var downloadToDir = fileSystem.root.toURL();
                 var path = downloadToDir + filename;
-                alert("testing path: " + filename);
+//                alert("testing path: " + filename);
                 fileSystem.root.getFile(filename, { create: false }, function() {
                     callbackFileExists(path);
                 }, callbackFileNotExists);
@@ -398,117 +399,117 @@ angular.module("gabi.services", [])
 
 
 /* Google OAuth2 - not tested*/
-.service('GoogleLogin', ['$http', '$rootScope', '$q', function ($http, $rootScope, $q) {
-    var clientId = '{MY CLIENT ID}',
-        apiKey = '{MY API KEY}',
-        scopes = 'https://www.googleapis.com/auth/userinfo.email https://www.google.com/m8/feeds',
-        domain = '{MY COMPANY DOMAIN}',
-        userEmail,
-        deferred = $q.defer();
+//.service('GoogleLogin', ['$http', '$rootScope', '$q', function ($http, $rootScope, $q) {
+//    var clientId = '{MY CLIENT ID}',
+//        apiKey = '{MY API KEY}',
+//        scopes = 'https://www.googleapis.com/auth/userinfo.email https://www.google.com/m8/feeds',
+//        domain = '{MY COMPANY DOMAIN}',
+//        userEmail,
+//        deferred = $q.defer();
+//
+//    this.login = function () {
+//        gapi.auth.authorize({ client_id: clientId, scope: scopes, immediate: false, hd: domain }, this.handleAuthResult);
+//
+//        return deferred.promise;
+//    }
+//
+//    this.handleClientLoad = function () {
+//        gapi.client.setApiKey(apiKey);
+//        gapi.auth.init(function () { });
+//        window.setTimeout(checkAuth, 1);
+//    };
+//
+//    this.checkAuth = function() {
+//        gapi.auth.authorize({ client_id: clientId, scope: scopes, immediate: true, hd: domain }, this.handleAuthResult );
+//    };
+//
+//    this.handleAuthResult = function(authResult) {
+//        if (authResult && !authResult.error) {
+//            var data = {};
+//            gapi.client.load('oauth2', 'v2', function () {
+//                var request = gapi.client.oauth2.userinfo.get();
+//                request.execute(function (resp) {
+//                    $rootScope.$apply(function () {
+//                        data.email = resp.email;
+//                    });
+//                });
+//            });
+//            deferred.resolve(data);
+//        } else {
+//            deferred.reject('error');
+//        }
+//    };
+//
+//    this.handleAuthClick = function (event) {
+//        gapi.auth.authorize({ client_id: clientId, scope: scopes, immediate: false, hd: domain }, this.handleAuthResult );
+//        return false;
+//    };
+//
+//}])
 
-    this.login = function () {
-        gapi.auth.authorize({ client_id: clientId, scope: scopes, immediate: false, hd: domain }, this.handleAuthResult);
 
-        return deferred.promise;
-    }
-
-    this.handleClientLoad = function () {
-        gapi.client.setApiKey(apiKey);
-        gapi.auth.init(function () { });
-        window.setTimeout(checkAuth, 1);
-    };
-
-    this.checkAuth = function() {
-        gapi.auth.authorize({ client_id: clientId, scope: scopes, immediate: true, hd: domain }, this.handleAuthResult );
-    };
-
-    this.handleAuthResult = function(authResult) {
-        if (authResult && !authResult.error) {
-            var data = {};
-            gapi.client.load('oauth2', 'v2', function () {
-                var request = gapi.client.oauth2.userinfo.get();
-                request.execute(function (resp) {
-                    $rootScope.$apply(function () {
-                        data.email = resp.email;
-                    });
-                });
-            });
-            deferred.resolve(data);
-        } else {
-            deferred.reject('error');
-        }
-    };
-
-    this.handleAuthClick = function (event) {
-        gapi.auth.authorize({ client_id: clientId, scope: scopes, immediate: false, hd: domain }, this.handleAuthResult );
-        return false;
-    };
-
-}])
-
-
-/* Google Translator */
-.factory("GoogleTranslator", function() {
-    var languages = new Array();
-    return {
-        getSupportedLanguages: function(callback) {
-            if (languages.length > 0) {
-                callback(languages);
-            } else {
-                var request = gapi.client.request({
-                    path: '/language/languages/v2',
-                    method: 'GET',
-                    params: {
-
-                    }
-                });
-                request.execute(function(response) {
-                    console.log(request);
-                    languages = response.data;
-                    callback(response.data);
-                }, function(errorMessage){
-                    alert("Error message: " + errorMessage);
-                });
-            }
-        },
-
-        translate: function(callback, text, termIndex, fromLanguage, toLanguage) {
-            var request = gapi.client.request({
-                path: '/language/translate/v2',
-                method: 'GET',
-                params: {
-                    q: text,
-                    target:  toLanguage.substring(0,2),
-                    source: fromLanguage.substring(0,2)
-                }
-            });
-            request.execute(function(jsonResp, rawResp) {
-//                    alert('response=' + JSON.stringify(rawResp));
-                callback(jsonResp, termIndex);
-            }
-//                    , function(errorMessage){
+///* Google Translator */
+//.factory("GoogleTranslator", function() {
+//    var languages = new Array();
+//    return {
+//        getSupportedLanguages: function(callback) {
+//            if (languages.length > 0) {
+//                callback(languages);
+//            } else {
+//                var request = gapi.client.request({
+//                    path: '/language/languages/v2',
+//                    method: 'GET',
+//                    params: {
+//
+//                    }
+//                });
+//                request.execute(function(response) {
+//                    console.log(request);
+//                    languages = response.data;
+//                    callback(response.data);
+//                }, function(errorMessage){
 //                    alert("Error message: " + errorMessage);
+//                });
+//            }
+//        },
+//
+//        translate: function(callback, text, termIndex, fromLanguage, toLanguage) {
+//            var request = gapi.client.request({
+//                path: '/language/translate/v2',
+//                method: 'GET',
+//                params: {
+//                    q: text,
+//                    target:  toLanguage.substring(0,2),
+//                    source: fromLanguage.substring(0,2)
 //                }
-            );
-        },
-
-        detectLanguage: function(callback, text) {
-            var request = gapi.client.request({
-                path: '/language/detection/v2',
-                method: 'GET',
-                params: {
-                    q: text
-                }
-            });
-            request.execute(function(response) {
-                console.log(request);
-                callback(response);
-            }, function(errorMessage){
-                alert("Error message: " + errorMessage);
-            });
-        }
-    }
-})
+//            });
+//            request.execute(function(jsonResp, rawResp) {
+////                    alert('response=' + JSON.stringify(rawResp));
+//                callback(jsonResp, termIndex);
+//            }
+////                    , function(errorMessage){
+////                    alert("Error message: " + errorMessage);
+////                }
+//            );
+//        },
+//
+//        detectLanguage: function(callback, text) {
+//            var request = gapi.client.request({
+//                path: '/language/detection/v2',
+//                method: 'GET',
+//                params: {
+//                    q: text
+//                }
+//            });
+//            request.execute(function(response) {
+//                console.log(request);
+//                callback(response);
+//            }, function(errorMessage){
+//                alert("Error message: " + errorMessage);
+//            });
+//        }
+//    }
+//})
 
 /* Google TTS http://translate.google.com/translate_tts?ie=UTF-8&tl=en&q= */
 .factory("GoogleTextToSpeech", function() {
@@ -528,15 +529,15 @@ angular.module("gabi.services", [])
     }
 })
 
-/* DB Operations */
-.factory("DeviceDB", function () {
-    var db = window.openDatabase("gablabdb", "1.0", "Gablab Database", 2000000);
-    return {
-        ensureCreated: function() {
-            tx.executeSql('CREATE TABLE IF NOT EXISTS DEMO (id unique, data)');
-        }
-    }
-})
+///* DB Operations */
+//.factory("DeviceDB", function () {
+//    var db = window.openDatabase("gablabdb", "1.0", "Gablab Database", 2000000);
+//    return {
+//        ensureCreated: function() {
+//            tx.executeSql('CREATE TABLE IF NOT EXISTS DEMO (id unique, data)');
+//        }
+//    }
+//})
 
 /* Client for the Gabs web service */
 .factory("GabsClient", function($http) {

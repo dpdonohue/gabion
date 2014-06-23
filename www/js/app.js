@@ -68,4 +68,3 @@ angular.module('gabi', ['ionic', 'ui.router', 'gabi.services', 'gabi.controllers
         $urlRouterProvider.otherwise('/tab/letsgo');
 
     });
-
