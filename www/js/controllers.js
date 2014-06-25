@@ -1,4 +1,4 @@
-angular.module("gabi.controllers", [])
+angular.module("gabi.controllers", ["ionic"])
 
     //LEGACY!
 //    .controller("TranslateCtrl", function($scope, AndroidSpeechRecognizer, GoogleTextToSpeech, GoogleTranslator, Settings, Lookup, Util) {
@@ -261,7 +261,7 @@ angular.module("gabi.controllers", [])
 
 
 
-.controller("PlayCtrl", function($scope, AndroidSpeechRecognizer, GoogleTextToSpeech, Settings, Util) {
+.controller("PlayCtrl", function($scope, $timeout, $ionicPopup, AndroidSpeechRecognizer, GoogleTextToSpeech, Settings, Util) {
     $scope.settings = Settings;
     $scope.native = Settings.nativeTranslation;
     $scope.target = Settings.targetTranslation;
@@ -331,6 +331,33 @@ angular.module("gabi.controllers", [])
         $scope.$apply();
     };
 
+    // An alert dialog
+    $scope.showTargetTexts = function(index, callback) {
+        var targetTexts = lines[index].targetTexts;
+        var message = "";
+        for (var ti in targetTexts) {
+            var txt = targetTexts[ti];
+            message += "<p>\"" + txt + "\"</p>";
+        }
+        var confirmPopup = $ionicPopup.confirm({
+            title: lines[index].nativeText,
+            template: message,
+            cancelText: "Skip",
+            okText: "Try Again"
+        });
+        confirmPopup.then(function(res) {
+            if(res) {
+                if (callback) callback();
+            } else {
+                if (index >= $scope.lineIndex) {
+                    playTarget(index, function() {
+                        advanceLine(-1);
+                    });
+                }
+            }
+        });
+    };
+
     $scope.getPageTitleNative = function() {
         var page = Settings.nativeTranslation.pages[pageIndex];
         if (! page || ! page.txt || page.txt.length == 0) {
@@ -351,14 +378,21 @@ angular.module("gabi.controllers", [])
         playOrDownloadAudio(lines[index].targetText, Settings.targetLocale, callback);
     };
 
-    var playTargetAndAdvance = function(index) {
+    var playTargetAndAdvance = function(index, answerStatus) {
         playTarget(index, function() {
-            advanceLine();
+            advanceLine(answerStatus);
         });
     };
 
     $scope.record = function(index) {
-        AndroidSpeechRecognizer.recognizeSpeech(lines[index].nativeText, Settings.targetLocale, receiveRecognizedSpeech, index);
+        var line = lines[index];
+        if (line.fail >= 2) {
+            $scope.showTargetTexts(index, function() {
+                AndroidSpeechRecognizer.recognizeSpeech(line.nativeText, Settings.targetLocale, receiveRecognizedSpeech, index);
+            })
+        } else {
+            AndroidSpeechRecognizer.recognizeSpeech(line.nativeText, Settings.targetLocale, receiveRecognizedSpeech, index);
+        }
     };
 
     $scope.nextPage = function() {
@@ -460,16 +494,22 @@ angular.module("gabi.controllers", [])
         return str;
     };
 
-    var advanceLine = function() {
+    var advanceLine = function(successStatus) {
         var line = lines[$scope.lineIndex];
-        line.success++;
-        line.currentStatus = 1;
+        line.currentStatus = successStatus;
         $scope.lineIndex++;
+        if (successStatus > 0) {
+            line.success++;
+        }
+        if (successStatus < 0) {
+            line.fail++;
+        }
+
         $scope.$apply();
         if ($scope.lineIndex < lines.length) {
             var newline = lines[$scope.lineIndex];
             if (! newline.isYou) {
-                $timeout(playTargetAndAdvance($scope.lineIndex), 2000);
+                $timeout(function() {playTargetAndAdvance($scope.lineIndex, 0)}, 2000);
             }
         }
     };
@@ -507,7 +547,7 @@ angular.module("gabi.controllers", [])
 
         if (correct) {
             if (index >= $scope.lineIndex) {
-                return $timeout(advanceLine(), 2000);
+                return $timeout(function() {advanceLine(1)}, 2000);
             } else {
                 line.success++;
                 line.currentStatus = 1;
@@ -516,10 +556,17 @@ angular.module("gabi.controllers", [])
         } else {
             line.fail++;
             line.currentStatus = -1;
+            $scope.$apply();
+            //if repeated fails, advance
+//            if (line.fail > 3 && index >= $scope.lineIndex) {
+//                return $timeout(advanceLine(), 2000);
+//            }
         }
     };
 
     //initialize
     $scope.getLines();
-    playTargetAndAdvance($scope.lineIndex);
+    if (! lines[$scope.lineIndex].isYou) {
+        playTargetAndAdvance($scope.lineIndex, 0);
+    }
 });
