@@ -1,4 +1,4 @@
-angular.module("gabi.services", [])
+angular.module("gabi.services", ["ionic"])
 
 .factory("Settings", function() {
 
@@ -10,6 +10,7 @@ angular.module("gabi.services", [])
         currentPlay: "trip1.txt",
         playList: [],
         play: {},
+        pageIndex : 0,
         targetTranslation: {},
         nativeTranslation: {},
         getTargetLanguage: function() {
@@ -556,6 +557,17 @@ angular.module("gabi.services", [])
                 var payload = result.data;
                 callback(payload);
             });
+        }
+    }
+})
+
+.directive("swipePage", function($ionicGesture, $state) {
+    return {
+        restrict : 'A',
+        link : function(scope, elem, attr) {
+            $ionicGesture.on("swipeleft", scope.swipeLeft, elem);
+            $ionicGesture.on("swiperight", scope.swipeRight, elem);
+
         }
     }
 })
