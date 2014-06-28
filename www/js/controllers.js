@@ -285,7 +285,9 @@ angular.module("gabi.controllers", ["ionic"])
 //        alert("playAudio: " + src);
         my_media = new Media(src, audioSucceeded, audioFailed);
         my_media.play();
-        if (callback) callback();
+        if (callback) {
+            $timeout(function(){callback()}, 2000);
+        }
     };
 
 //        var storeAndPlayAudio = function(filename, key) {
@@ -337,7 +339,6 @@ angular.module("gabi.controllers", ["ionic"])
             $scope.$apply();
         }
         playOrDownloadAudio(lines[index].targetText, Settings.targetLocale, function() {
-            alert("Correct? " + correct + "; ")
             if (correct && index >= $scope.lineIndex) {
                 return advanceLine();
             }
@@ -530,6 +531,7 @@ angular.module("gabi.controllers", ["ionic"])
     var advanceLine = function() {
         if ($scope.lineIndex < lines.length) {
             $scope.lineIndex++;
+            $scope.$apply();
             var newline = lines[$scope.lineIndex];
             if (! newline.isYou) {
                 $timeout(function() {playTargetAndAdvance($scope.lineIndex)}, 1000);

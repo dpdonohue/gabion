@@ -8,7 +8,7 @@
 }
 
 .gabi-centered {
-    display: block;
+    /*display: block;*/
     margin-left: auto;
     margin-right: auto;
     align: center;
@@ -16,14 +16,14 @@
 }
 
 .gabi-left {
-    display: block;
+    /*display: block;*/
     margin-left: 0px;
     align: left;
     text-align: left;
 }
 
 .gabi-right {
-    display: block;
+    /*display: block;*/
     margin-right: 0px;
     align: right;
     text-align: right;
@@ -69,7 +69,7 @@
 }
 
 .gabi-minusbottom {
-    margin-bottom: -30px;
+    margin-bottom: -25px;
     padding-bottom: -20px;
 }
 
