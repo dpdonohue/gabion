@@ -1,0 +1,79 @@
+/* Your app's CSS, go crazy, make it your own */
+
+.ionic-logo {
+    display: block;
+    margin: 15px auto;
+    width: 96px;
+    height: 96px;
+}
+
+.gabi-centered {
+    /*display: block;*/
+    margin-left: auto;
+    margin-right: auto;
+    align: center;
+    text-align: center;
+}
+
+.gabi-left {
+    /*display: block;*/
+    margin-left: 0px;
+    align: left;
+    text-align: left;
+}
+
+.gabi-right {
+    /*display: block;*/
+    margin-right: 0px;
+    align: right;
+    text-align: right;
+}
+
+.gabi-float-right {
+    float: right;
+}
+
+.gabi-hidden {
+    visibility: hidden;
+}
+
+.gabi-vertically-centered {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.gabi-recordbutton {
+    margin-top: 15px;
+    padding-top: 10px;
+    padding-bottom: -8px;
+}
+
+.gabi-thinheader {
+    margin: -0px 0px -6px 0px;
+}
+
+.gabi-navbuttonrow {
+    margin-top: 10px;
+}
+
+.gabi-bottomaligned {
+    position:absolute; bottom:20;
+}
+
+.gabi-advancedlink {
+    margin-top: 12px;
+}
+
+.gabi-narrowbottom {
+    margin-bottom: -6px;
+}
+
+.gabi-minusbottom {
+    margin-bottom: -25px;
+    padding-bottom: -20px;
+}
+
+.gabi-superminusbottom {
+    margin-bottom: -40px;
+    padding-bottom: -20px;
+}

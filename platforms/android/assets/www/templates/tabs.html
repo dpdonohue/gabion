@@ -1,0 +1,28 @@
+
+<!-- 
+  Create tabs with an icon and label, using the tabs-positive style. 
+  Each tab's child <ion-nav-view> directive will have its own 
+  navigation history that also transitions its views in and out.
+-->
+<ion-tabs class="tabs-icon-top tabs-default">
+
+    <!-- Translate Tab -->
+    <!--<ion-tab title="Translate" icon="icon ion-ios7-mic" href="#/tab/translate">-->
+        <!--<ion-nav-view name="translate-tab"></ion-nav-view>-->
+    <!--</ion-tab>-->
+
+    <!-- Info Tab -->
+    <ion-tab title="Ready" icon="icon ion-ios7-gear" href="#/tab/settings">
+        <ion-nav-view name="settings-tab" animation="slide-left-right"></ion-nav-view>
+    </ion-tab>
+
+    <!-- Lets Go -->
+    <ion-tab title="Set" icon="icon ion-plane" href="#/tab/letsgo">
+        <ion-nav-view name="letsgo-tab" animation="slide-left-right"></ion-nav-view>
+    </ion-tab>
+
+    <!-- Play -->
+    <ion-tab title="Gab" icon="icon ion-android-forums" href="#/tab/play">
+        <ion-nav-view name="play-tab" animation="slide-left-right"></ion-nav-view>
+    </ion-tab>
+</ion-tabs>
