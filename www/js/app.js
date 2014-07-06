@@ -1,5 +1,9 @@
 // Ionic Starter App
 
+//IonicModule.constant('$ionicNavViewConfig', {
+//    transition: 'slide-left-right-ios7'
+//});
+
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
@@ -39,7 +43,27 @@ angular.module('gabi', ['ionic', 'ui.router', 'gabi.services', 'gabi.controllers
                 views: {
                     'settings-tab': {
                         templateUrl: 'templates/settings.html',
-                        controller: 'InfoCtrl'
+                        controller: 'SettingsCtrl'
+                    }
+                }
+            })
+
+            .state('tab.settings-native', {
+                url: '/settings-native',
+                views: {
+                    'settings-tab': {
+                        templateUrl: 'templates/language-native.html',
+                        controller: 'SettingsCtrl'
+                    }
+                }
+            })
+
+            .state('tab.settings-target', {
+                url: '/settings-target',
+                views: {
+                    'settings-tab': {
+                        templateUrl: 'templates/language-target.html',
+                        controller: 'SettingsCtrl'
                     }
                 }
             })

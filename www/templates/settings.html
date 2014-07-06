@@ -1,37 +1,29 @@
 <!--
-  This template loads for the 'translate' state (app.js)
+  This template loads for the 'settings' state (app.js)
 -->
 <ion-view title="Settings">
   <ion-content has-header="true" has-tabs="true" padding="true">
-      <div class="card" padding="true">
-          <h3 padding="true">Select a language to learn</h3>
-          <form name="myForm">
+      <div class="list">
 
-              <!--
-              <div ng-repeat="lang in supportedLanguages" class="list">
-                  <label class="item item-radio">
-                  <input type="radio"
-                         name="selectedLang"
-                         value="{{lang}}"
-                         ng-model="settings.targetLocale"
-                         ng-change="emailSelectionChanged()">
-                    <div class="item-content">
-                        {{lang}}
-                  </div>
-                  <i class="radio-icon ion-checkmark"></i>
-                  </input>
-                  </label>
-              </div>
-              -->
 
-              <ion-radio ng-repeat="lang in supportedLanguages"
-                         ng-value="lang"
-                         ng-model="settings.targetLanguage">
-                  {{lang}}
-              </ion-radio>
+          <a class="item" ui-sref="tab.settings-native">
+              Your language: {{ displayNativeLocale() }}
+          </a>
 
-        </form>
+          <a class="item" ui-sref="tab.settings-target">
+              Learning: {{ displayTargetLocale() }}
+          </a>
 
+          <div class="item item-divider">
+              Skill Level in {{ displayTargetLocale() }}
+          </div>
+
+          <div class="item range range-positive">
+              <i class="icon ion-ios7-star-outline"></i>
+              <input type="range" name="skill" min="1" max="10" ng-model="settings.skillLevels[Settings.targetLocale]">
+              <i class="icon ion-ios7-star"></i>
+          </div>
     </div>
+
   </ion-content>
 </ion-view>

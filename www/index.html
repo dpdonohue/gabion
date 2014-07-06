@@ -24,6 +24,7 @@
 
     <!--<script>-->
         <!--function googleOnLoadCallback(){-->
+            <!--alert("googleOnLoadCallback()");-->
           <!--var apisToLoad = 1; // must match number of calls to gapi.client.load()-->
           <!--var gCallback = function() {-->
               <!--if (--apisToLoad == 0) {-->
@@ -38,22 +39,33 @@
     <!--</script>-->
     <!--&lt;!&ndash; See https://developers.google.com/api-client-library/javascript/samples/samples &ndash;&gt;-->
     <!--<script src="https://apis.google.com/js/client.js?onload=googleOnLoadCallback"></script>-->
+
   </head>
 
 
-  <!--<body ng-app="gabi" animation="slide-left-right-ios7">-->
   <body ng-app="gabi" animation="slide-left-right-ios7">
+  <!--<body>-->
 
     <!-- 
       The nav bar that will be updated as we navigate between views
       Additional attributes set its look, ion-nav-bar animation and icons
-      Icons provided by Ionicons: http://ionicons.com/ 
+      Icons provided by Ionicons: http://ionicons.com/
+
+      <nav-bar animation="nav-title-slide-ios7"
+             type="bar-positive"
+             back-button-type="button-icon"
+             back-button-icon="ion-arrow-left-c"></nav-bar>
     -->
 
-    <ion-nav-bar type="bar-positive" 
-             animation="nav-title-slide-ios7" 
-             back-button-type="button-icon button-clear" 
-             back-button-icon="ion-ios7-arrow-back"></ion-nav-bar>
+    <!--<ion-nav-bar type="bar-positive" -->
+             <!--animation="nav-title-slide-ios7" -->
+             <!--back-button-type="button-icon"-->
+             <!--back-button-icon="ion-ios7-arrow-back">-->
+    <ion-nav-bar class="bar-positive nav-title-slide-ios7">
+        <ion-nav-back-button class="button-icon">
+            <i class="ion-arrow-left-a"></i>
+        </ion-nav-back-button>
+     </ion-nav-bar>
 
     <!-- 
       The views will be rendered in the <ion-nav-view> directive below

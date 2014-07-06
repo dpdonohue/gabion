@@ -19,7 +19,8 @@ angular.module("gabi.services", ["ionic"])
 
         getNativeLanguage: function() {
             return this.nativeLocale.substring(0,2);
-        }
+        },
+        skillLevels: {}
     }
 })
 
@@ -449,19 +450,20 @@ angular.module("gabi.services", ["ionic"])
 //}])
 
 
-///* Google Translator */
-//.factory("GoogleTranslator", function() {
+/* Google Translator */
+//.factory("GoogleTranslator", function($http, Settings) {
 //    var languages = new Array();
 //    return {
-//        getSupportedLanguages: function(callback) {
+//        getSupportedLanguages: function(callback, targ) {
 //            if (languages.length > 0) {
 //                callback(languages);
 //            } else {
+//                alert("getSupportedLanguages for: " + targ);
 //                var request = gapi.client.request({
 //                    path: '/language/languages/v2',
 //                    method: 'GET',
 //                    params: {
-//
+////                        target: targ
 //                    }
 //                });
 //                request.execute(function(response) {
@@ -541,7 +543,7 @@ angular.module("gabi.services", ["ionic"])
 //})
 
 /* Client for the Gabs web service */
-.factory("GabsClient", function($http) {
+.factory("GabsClient", function($http, Settings) {
     return {
         listPlays: function(lan, callback) {
             $http.get("http://gabs-gablabio.rhcloud.com/play/list?lan=" + lan).then(function(result) {
@@ -557,9 +559,79 @@ angular.module("gabi.services", ["ionic"])
                 var payload = result.data;
                 callback(payload);
             });
+        },
+
+        //TODO load this from Gabs
+        getSupportedLanguages: function(targ, callback) {
+            var url = "https://www.googleapis.com/language/translate/v2/languages?key=" + Settings.googleApiKey + "&target=" + targ;
+            $http.get(url).then(function(result) {
+                var payload = result.data.data.languages;
+                callback(payload);
+            });
         }
     }
 })
+
+
+
+
+
+/* Client for the Gabs web service */
+.factory("LangUtil", function(GabsClient) {
+    var langMap = {};
+    var langArr = [];
+    return {
+
+        getLanguageArray: function(nativeLang, callback) {
+            if (langArr && langArr[nativeLang]) callback(langArr[nativeLang]);
+
+//            alert("getLanguageArray()...");
+            GabsClient.getSupportedLanguages(nativeLang, function(languages) {
+                langArr[nativeLang] = languages;
+//                alert("langArr[nativeLang]=" + JSON.stringify(langArr[nativeLang]));
+                callback(languages);
+            });
+        },
+
+        getLanguageMap: function(nativeLang, callback) {
+            if (langMap && langMap[nativeLang]) callback(langMap[nativeLang]);
+
+//            alert("getLanguageMap()...");
+            langMap[nativeLang] = {};
+            this.getLanguageArray(nativeLang, function(larr) {
+                for (langi in larr) {
+                    var langObj = larr[langi];
+//                    alert("langObj=" + JSON.stringify(langObj));
+                    var key = langObj.language;
+                    var name = langObj.name;
+                    langMap[nativeLang][key] = name;
+                }
+//                alert("langMap[nativeLang]=" + langMap[nativeLang]);
+                callback(langMap[nativeLang]);
+            });
+        },
+
+        //assumes we have already loaded the map for nativeLang
+        getLanguageName: function(nativeLang,languageId) {
+            if (langMap && langMap[nativeLang] && langMap[nativeLang][languageId]) return langMap[nativeLang][languageId];
+            console.log("Failed to look up the name for language: " + languageId + " in " + nativeLang);
+            return languageId;
+        },
+
+        //assumes we have already loaded the map for nativeLang
+        getLocaleDisplay: function(nativeLang,locale) {
+            var lang = locale.substring(0,2);
+            var country = locale.substr(3);
+            var langName = this.getLanguageName(nativeLang, lang);
+            var langDisplay = langName + " (" + country + ")";
+            return langDisplay;
+        }
+    }
+})
+
+
+
+
 
 .directive("swipePage", function($ionicGesture, $state) {
     return {

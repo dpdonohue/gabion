@@ -201,22 +201,78 @@ angular.module("gabi.controllers", ["ionic"])
 
 
 
-.controller("InfoCtrl", function($scope, AndroidSpeechRecognizer, Settings) {
-
+.controller("SettingsCtrl", function($scope, $state, AndroidSpeechRecognizer, Settings, LangUtil) {
     $scope.settings = Settings;
 
     $scope.supportedLanguages = [];
 
-    $scope.receiveLanguages = function(languages) {
-        $scope.supportedLanguages = languages;
-        $scope.$apply();
+//    var receiveLanguages = function(languages) {
+//        console.log("supported languages=" + JSON.stringify(languages));
+//        $scope.supportedLanguages = languages;
+////        $scope.$apply();
+//    };
+
+    var loadLanguageInfo = function() {
+        if ($scope.supportedLanguages && $scope.supportedLanguages[Settings.getNativeLanguage()]) return;
+
+        LangUtil.getLanguageMap(Settings.getNativeLanguage(), function(map) {
+//            alert("Loaded language map: " + JSON.stringify(map));
+
+            $scope.supportedLanguages[Settings.getNativeLanguage()] = [];
+            AndroidSpeechRecognizer.getSupportedLanguages(function(languages) {
+                for (langi in languages) {
+                    var locale = languages[langi];
+//                    var lang = locale.substring(0,2);
+//                    var country = locale.substr(3);
+//                    var langName = LangUtil.getLanguageName(Settings.getNativeLanguage(), lang);
+//                    var langDisplay = langName + " (" + country + ")";
+                    var langDisplay = LangUtil.getLocaleDisplay(Settings.nativeLocale, locale);
+                    $scope.supportedLanguages[Settings.getNativeLanguage()].push(
+                        {
+                            id: languages[langi],
+                            name: langDisplay
+                        }
+                    );
+                }
+//                alert("Loaded supportedLanguages= " + $scope.supportedLanguages[Settings.getNativeLanguage()]);
+//            LangUtil.getSupportedLanguages(Settings.getNativeLanguage(), receiveLanguages);
+            });
+        });
     };
 
-    var loadSupportedLanguages = function() {
-        AndroidSpeechRecognizer.getSupportedLanguages($scope.receiveLanguages);
+    $scope.listSupportedLanguages = function() {
+        return $scope.supportedLanguages[Settings.getNativeLanguage()];
+    }
+
+    $scope.displayNativeLanguage = function() {
+        return LangUtil.getLanguageName(Settings.getNativeLanguage(), Settings.getNativeLanguage());
     };
 
-    loadSupportedLanguages();
+    $scope.displayTargetLanguage = function() {
+        return LangUtil.getLanguageName(Settings.getNativeLanguage(), Settings.getTargetLanguage());
+    };
+
+    $scope.displayNativeLocale = function() {
+        return LangUtil.getLocaleDisplay(Settings.getNativeLanguage(), Settings.nativeLocale);
+    };
+
+    $scope.displayTargetLocale = function() {
+        return LangUtil.getLocaleDisplay(Settings.getNativeLanguage(), Settings.targetLocale);
+    };
+
+//        $scope.skillLevel = Settings.skillLevels[Settings.targetLocale];
+
+    $scope.goToNative = function() {
+        $state.go("tab.settings-native");
+    };
+
+    $scope.goToTarget = function() {
+        $state.go("tab.settings-target");
+    };
+
+//    Settings.skillLevels[Settings.targetLocale] = 1;
+
+    loadLanguageInfo();
 })
 
 
@@ -232,7 +288,7 @@ angular.module("gabi.controllers", ["ionic"])
     GabsClient.listPlays(Settings.getNativeLanguage(), function(playList) {
         Settings.playList = playList;
         $scope.playList = playList;
-        $scope.$apply();
+//        $scope.$apply();
     });
 
     $scope.goToPlay = function(playid) {
@@ -248,7 +304,9 @@ angular.module("gabi.controllers", ["ionic"])
             Settings.targetTranslation = payload.targetTranslation;
             $state.go("tab.play");
         });
-    }
+    };
+
+
 })
 
 

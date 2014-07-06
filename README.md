@@ -30,17 +30,17 @@ http://ionicframework.com/getting-started/  Specifically, run these 2 commands
 #### 6. Install Git: ####
 http://git-scm.com/book/en/Getting-Started-Installing-Git
 
-#### 7. Get the Gabi code base from GitHub.  You will need a GitHub account, and to be added to the gabi2 project. ####
-Create a directory "gabi2" within your workspace directory.  cd into the gabi2 directory.  Next, run:
+#### 7. Get the Gabi code base from GitHub.  You will need a GitHub account, and to be added to the gabion project. ####
+Create a directory "gabion" within your workspace directory.  cd into the gabion directory.  Next, run:
 ```
-    git clone https://github.com/dpdonohue/gabi2.git
+    git clone https://github.com/dpdonohue/gabion.git
 ```
 
 #### 8. On your Android device, go to Settings and turn on USB Debugging ####
 
 #### 9. Connect your Android device to your computer via USB ####
 
-#### 10. Run it.  From within your gabi2 directory, run: ####
+#### 10. Run it.  From within your gabion directory, run: ####
 ``` ionic serve ```
 This runs the app in a browser.  You can see the console output by clicking CMD-OPT-i (Mac) or CTRL-SHIFT-i (Windows).
 The other 2 ways of running the app do not provide much of a way  to see the console or much error info.
@@ -76,7 +76,7 @@ Next you can run this
 * (h) Testers should open this email on their Android device, and click "Download" button, then "Install"
 
 How to commit changes to GitHub:
-From your gabi2 directory, run these commands:
+From your gabion directory, run these commands:
 ```
     git add .
     git commit -m "my message here"
@@ -84,7 +84,7 @@ From your gabi2 directory, run these commands:
 ```
 
 ## How to pull changes from GitHub ##
-In your gabi2 directory, run this:
+In your gabion directory, run this:
 ```
 git pull
 ```
