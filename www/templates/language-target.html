@@ -1,7 +1,7 @@
-<ion-view title="Select Language">
-  <ion-content has-header="true" has-tabs="true" padding="true">
+<ion-view title="{{ ui.localize('Select Language') }}">
+  <ion-content has-header="true" has-tabs="true" padding="true" overflow-scroll="true">
       <!--<div class="card" padding="true">-->
-          <h3 padding="true">Select a language to learn</h3>
+          <h3 padding="true">{{ ui.localize("Select a language to learn") }}</h3>
           <form name="myForm">
 
               <!--
@@ -23,8 +23,7 @@
 
               <ion-radio ng-repeat="lang in listSupportedLanguages()"
                          ng-value="lang.id"
-                         ng-model="settings.targetLocale"
-                         ng->
+                         ng-model="settings.targetLocale" class="small">
                   {{lang.name}}
               </ion-radio>
 

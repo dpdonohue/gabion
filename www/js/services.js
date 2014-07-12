@@ -13,16 +13,30 @@ angular.module("gabi.services", ["ionic"])
         pageIndex : 0,
         targetTranslation: {},
         nativeTranslation: {},
+        parseLanguageId: function(loc) {
+            var divider = loc.lastIndexOf("-");
+            if (divider < 0) return loc;
+            var lang = loc.substring(0,divider);
+            return lang;
+        },
+        parseCountry: function(loc) {
+            var divider = loc.lastIndexOf("-");
+            if (divider < 0) return "";
+            var country = loc.substring(divider + 1);
+            return country;
+        },
         getTargetLanguage: function() {
-            return this.targetLocale.substring(0,2);
+            return this.parseLanguageId(this.targetLocale);
         },
 
         getNativeLanguage: function() {
-            return this.nativeLocale.substring(0,2);
+            return this.parseLanguageId(this.nativeLocale);
         },
-        skillLevels: {}
+        skillLevels: {},
+        supportedLanguages: []
     }
 })
+
 
 /** Lookup terms from local CSV file (LEGACY) */
 //.factory("Lookup", ["$http", function($http){
@@ -136,8 +150,18 @@ angular.module("gabi.services", ["ionic"])
         } else {
             if (window.plugins && window.plugins.speechrecognizer ) {
                 window.plugins.speechrecognizer.getSupportedLanguages(function(foundLanguages){
-                    languages = foundLanguages;
-                    callback(foundLanguages);
+//                    languages = foundLanguages;
+                    //remove langauges not supported by Google translate
+                    languages = [];
+                    for (languagei in foundLanguages) {
+//                        var languageObj = languages[languagei];
+                        if(["he-IL", "yue-Hant-HK"].indexOf(foundLanguages[languagei]) == -1) {
+                            languages.push(foundLanguages[languagei]);
+                        }
+                    }
+//                    delete languages["he-IL"];
+//                    delete languages["yue-Hant-HK"];
+                    callback(languages);
                 }, function(error){
                     alert("Could not retrieve the supported languages : " + error);
                 });
@@ -562,10 +586,13 @@ angular.module("gabi.services", ["ionic"])
         },
 
         //TODO load this from Gabs
+        //get languages supported by Google Translate
         getSupportedLanguages: function(targ, callback) {
             var url = "https://www.googleapis.com/language/translate/v2/languages?key=" + Settings.googleApiKey + "&target=" + targ;
             $http.get(url).then(function(result) {
                 var payload = result.data.data.languages;
+//                //remove langauges not supported by Google translate
+//                delete languages["he-IL"];
                 callback(payload);
             });
         }
@@ -575,10 +602,9 @@ angular.module("gabi.services", ["ionic"])
 
 
 
-
 /* Client for the Gabs web service */
-.factory("LangUtil", function(GabsClient) {
-    var langMap = {};
+.factory("LangUtil", function(GabsClient, Settings) {
+    var langMap = [];
     var langArr = [];
     return {
 
@@ -587,6 +613,7 @@ angular.module("gabi.services", ["ionic"])
 
 //            alert("getLanguageArray()...");
             GabsClient.getSupportedLanguages(nativeLang, function(languages) {
+
                 langArr[nativeLang] = languages;
 //                alert("langArr[nativeLang]=" + JSON.stringify(langArr[nativeLang]));
                 callback(languages);
@@ -594,10 +621,8 @@ angular.module("gabi.services", ["ionic"])
         },
 
         getLanguageMap: function(nativeLang, callback) {
-            if (langMap && langMap[nativeLang]) callback(langMap[nativeLang]);
-
-//            alert("getLanguageMap()...");
-            langMap[nativeLang] = {};
+            if (langMap && langMap[nativeLang]) return callback(langMap[nativeLang]);
+            langMap[nativeLang] = { };
             this.getLanguageArray(nativeLang, function(larr) {
                 for (langi in larr) {
                     var langObj = larr[langi];
@@ -619,10 +644,19 @@ angular.module("gabi.services", ["ionic"])
         },
 
         //assumes we have already loaded the map for nativeLang
-        getLocaleDisplay: function(nativeLang,locale) {
-            var lang = locale.substring(0,2);
-            var country = locale.substr(3);
+        getLocaleDisplay: function(nativeLang, locale) {
+//            var divider = locale.indexOf("-");
+//            var lang = locale.substring(0,divider);
+            var lang = Settings.parseLanguageId(locale);
+            var country = Settings.parseCountry(locale);
             var langName = this.getLanguageName(nativeLang, lang);
+            if (! langName || langName == lang) {
+                if (lang == "cmn-Hans") langName = this.getLanguageName(nativeLang, "zh");
+                if (lang == "cmn-Hant") langName = this.getLanguageName(nativeLang, "zh-TW");
+                if (lang == "fil") langName = this.getLanguageName(nativeLang, "tl");
+                if (lang == "nb") langName = this.getLanguageName(nativeLang, "no");
+            }
+            if (! country) return langName;
             var langDisplay = langName + " (" + country + ")";
             return langDisplay;
         }
@@ -630,7 +664,15 @@ angular.module("gabi.services", ["ionic"])
 })
 
 
+    .factory("UI", function($http, Settings, GabsClient) {
 
+        return {
+            //TODO implement this
+            localize: function(english) {
+                return english;
+            }
+        }
+    })
 
 
 .directive("swipePage", function($ionicGesture, $state) {

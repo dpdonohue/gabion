@@ -201,10 +201,11 @@ angular.module("gabi.controllers", ["ionic"])
 
 
 
-.controller("SettingsCtrl", function($scope, $state, AndroidSpeechRecognizer, Settings, LangUtil) {
+.controller("SettingsCtrl", function($scope, $state, AndroidSpeechRecognizer, Settings, LangUtil, UI) {
     $scope.settings = Settings;
+    $scope.ui = UI;
 
-    $scope.supportedLanguages = [];
+//    $scope.supportedLanguages = [];
 
 //    var receiveLanguages = function(languages) {
 //        console.log("supported languages=" + JSON.stringify(languages));
@@ -213,12 +214,12 @@ angular.module("gabi.controllers", ["ionic"])
 //    };
 
     var loadLanguageInfo = function() {
-        if ($scope.supportedLanguages && $scope.supportedLanguages[Settings.getNativeLanguage()]) return;
+        if (Settings.supportedLanguages && Settings.supportedLanguages[Settings.getNativeLanguage()]) return;
 
         LangUtil.getLanguageMap(Settings.getNativeLanguage(), function(map) {
 //            alert("Loaded language map: " + JSON.stringify(map));
 
-            $scope.supportedLanguages[Settings.getNativeLanguage()] = [];
+            Settings.supportedLanguages[Settings.getNativeLanguage()] = [];
             AndroidSpeechRecognizer.getSupportedLanguages(function(languages) {
                 for (langi in languages) {
                     var locale = languages[langi];
@@ -226,22 +227,29 @@ angular.module("gabi.controllers", ["ionic"])
 //                    var country = locale.substr(3);
 //                    var langName = LangUtil.getLanguageName(Settings.getNativeLanguage(), lang);
 //                    var langDisplay = langName + " (" + country + ")";
-                    var langDisplay = LangUtil.getLocaleDisplay(Settings.nativeLocale, locale);
-                    $scope.supportedLanguages[Settings.getNativeLanguage()].push(
+                    var langDisplay = LangUtil.getLocaleDisplay(Settings.getNativeLanguage(), locale);
+                    Settings.supportedLanguages[Settings.getNativeLanguage()].push(
                         {
                             id: languages[langi],
                             name: langDisplay
                         }
                     );
                 }
-//                alert("Loaded supportedLanguages= " + $scope.supportedLanguages[Settings.getNativeLanguage()]);
+
+                //sort the languages
+                Settings.supportedLanguages[Settings.getNativeLanguage()].sort(function(a, b) {
+                    var textA = a.name.toUpperCase();
+                    var textB = b.name.toUpperCase();
+                    return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                });
+//                alert("Loaded supportedLanguages= " + Settings.supportedLanguages[Settings.getNativeLanguage()]);
 //            LangUtil.getSupportedLanguages(Settings.getNativeLanguage(), receiveLanguages);
             });
         });
     };
 
     $scope.listSupportedLanguages = function() {
-        return $scope.supportedLanguages[Settings.getNativeLanguage()];
+        return Settings.supportedLanguages[Settings.getNativeLanguage()];
     }
 
     $scope.displayNativeLanguage = function() {
