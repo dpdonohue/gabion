@@ -139,7 +139,7 @@ angular.module("gabi.services", ["ionic"])
 /**
  * Perform Android-based speech recognition
  */
-.factory("AndroidSpeechRecognizer", function() {
+.factory("AndroidSpeechRecognizer", function(LangUtil, Settings) {
 
   var languages = new Array();
   return {
@@ -150,7 +150,6 @@ angular.module("gabi.services", ["ionic"])
         } else {
             if (window.plugins && window.plugins.speechrecognizer ) {
                 window.plugins.speechrecognizer.getSupportedLanguages(function(foundLanguages){
-//                    languages = foundLanguages;
                     //remove langauges not supported by Google translate
                     languages = [];
                     for (languagei in foundLanguages) {
@@ -159,8 +158,6 @@ angular.module("gabi.services", ["ionic"])
                             languages.push(foundLanguages[languagei]);
                         }
                     }
-//                    delete languages["he-IL"];
-//                    delete languages["yue-Hant-HK"];
                     callback(languages);
                 }, function(error){
                     alert("Could not retrieve the supported languages : " + error);
@@ -171,15 +168,16 @@ angular.module("gabi.services", ["ionic"])
         }
     },
 
-    recognizeSpeech: function(text, language, callback, arg) {
+    recognizeSpeech: function(text, locale, callback, arg) {
         var maxMatches = 5;
-        var promptString = 'Say in ' + language + ': "' + text + '"'; // optional
+
+        var promptString = 'Say in ' + LangUtil.getLocaleDisplay(Settings.getNativeLanguage(), locale) + ': "' + text + '"'; // optional
         if (window.plugins && window.plugins.speechrecognizer ) {
             window.plugins.speechrecognizer.startRecognize(function(result){
                 callback(result, arg);
             }, function(errorMessage){
                 alert("Error message: " + errorMessage);
-            }, maxMatches, promptString, language);
+            }, maxMatches, promptString, locale);
         } else {
             alert("SpeechRecognizer plugin is NOT active");
         }
