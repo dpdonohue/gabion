@@ -482,6 +482,14 @@ angular.module("gabi.controllers", ["ionic"])
         });
     };
 
+    $scope.playLine = function(index) {
+        playTarget(index, function() {
+            if (index >= $scope.lineIndex) {
+                return advanceLine();
+            }
+        });
+    };
+
     $scope.record = function(index) {
         var line = lines[index];
         if (line.fail >= 2) {
@@ -598,10 +606,11 @@ angular.module("gabi.controllers", ["ionic"])
         if ($scope.lineIndex < lines.length) {
             $scope.lineIndex++;
             $scope.$apply();
-            var newline = lines[$scope.lineIndex];
-            if (! newline.isYou) {
-                $timeout(function() {playTargetAndAdvance($scope.lineIndex)}, 1000);
-            }
+//            var newline = lines[$scope.lineIndex];
+            //Stop auto-advancing - comment out the below
+//            if (! newline.isYou) {
+//                $timeout(function() {playTargetAndAdvance($scope.lineIndex)}, 1000);
+//            }
         }
     };
 

@@ -29,6 +29,10 @@
     text-align: right;
 }
 
+.gabi-float-left {
+    float: left;
+}
+
 .gabi-float-right {
     float: right;
 }

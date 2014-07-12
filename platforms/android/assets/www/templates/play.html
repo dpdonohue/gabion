@@ -47,7 +47,8 @@
               <div ng-switch-default>
                   <div class="row gabi-minusbottom" ng-show="lineIndex >= line.index">
                       <div class="col col-75 button-calm gabi-left">
-                          <button class="button button-block button-calm">
+                          <button class="button button-block button-calm" ng-click="playLine(line.index)">
+                              <i class="icon ion-speakerphone gabi-float-left"></i>
                                 {{ line.targetText }}
                           </button>
                       </div>
