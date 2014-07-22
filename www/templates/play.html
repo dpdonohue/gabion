@@ -1,9 +1,38 @@
 <ion-view title="Gab" swipe-page>
   <ion-content has-header="true" has-tabs="true" padding="true">
+
+      <!--<div class="bar bar-header">-->
+          <!--<button class="button button-icon icon ion-arrow-left-a"></button>-->
+          <!--<div class="h1 title">Gab!</div>-->
+          <!--<button class="button button-clear button-positive">Edit</button>-->
+      <!--</div>-->
+
+      <!--<div class="gabi-float-left">-->
+          <!--<a ng-click="previousPage()">-->
+              <!--<img src="img/oxygen-left-24.png">-->
+          <!--</a>-->
+      <!--</div>-->
+      <!--<div class="gabi-float-right" ng-switch on="isPageFinished()">-->
+          <!--<div ng-switch-when="true" class="gabi-button-highlighted">-->
+              <!--<a ng-click="nextPage()">-->
+                  <!--<img src="img/oxygen-right-24.png">-->
+              <!--</a>-->
+          <!--</div>-->
+          <!--<div ng-switch-default class="gabi-button-old">-->
+              <!--<a ng-click="nextPage()">-->
+                  <!--<img src="img/oxygen-right-24.png">-->
+              <!--</a>-->
+          <!--</div>-->
+      <!--</div>-->
+
+
+
       <div class="bar bar-header bar-light">
           <h1 class="title">{{native.tit.txt[0]}}</h1>
       </div>
-      <img class="full-image" src="{{ settings.play.img }}"/>
+
+
+      <img class="full-image" src="{{ getPageImage() }}"/>
 
       <div>
           {{ getPageTitleNative() }}
@@ -16,19 +45,39 @@
               <div ng-switch-when="true">
                   <div class="row gabi-minusbottom" ng-show="lineIndex >= line.index">
                       <div class="col col-75 col-offset-25 gabi-right">
-                          <div ng-switch on="line.currentStatus">
-                              <button ng-switch-when="1" class="button button-block button-balanced" ng-click="record(line.index)">
-                                  {{ line.targetText }}
-                                    <i class="icon ion-checkmark-circled gabi-float-right"></i>
-                              </button>
-                              <button ng-switch-when="0" class="button button-block button-energized" ng-click="record(line.index)">
-                                  {{ line.nativeText }}
-                                  <i class="icon ion-android-microphone gabi-float-right"></i>
-                              </button>
-                              <button ng-switch-when="-1" class="button button-block button-assertive" ng-click="record(line.index)">
-                                  {{ line.nativeText }}
-                                  <i class="icon ion-close-circled gabi-float-right"></i>
-                              </button>
+                          <div ng-switch on="isActiveButton(line.index)">
+                              <div ng-switch-when="true">
+                                  <div ng-switch on="line.currentStatus">
+                                      <button ng-switch-when="1" class="button button-block button-balanced gabi-button-highlighted" ng-click="record(line.index)">
+                                          {{ line.targetText }}
+                                            <i class="icon ion-checkmark-circled gabi-float-right"></i>
+                                      </button>
+                                      <button ng-switch-when="0" class="button button-block button-energized gabi-button-highlighted" ng-click="record(line.index)">
+                                          {{ line.nativeText }}
+                                          <i class="icon ion-android-microphone gabi-float-right"></i>
+                                      </button>
+                                      <button ng-switch-when="-1" class="button button-block button-assertive gabi-button-highlighted" ng-click="record(line.index)">
+                                          {{ line.nativeText }}
+                                          <i class="icon ion-close-circled gabi-float-right"></i>
+                                      </button>
+                                  </div>
+                              </div>
+                              <div ng-switch-default>
+                                  <div ng-switch on="line.currentStatus">
+                                      <button ng-switch-when="1" class="button button-block button-balanced gabi-button-old" ng-click="record(line.index)">
+                                          {{ line.targetText }}
+                                          <i class="icon ion-checkmark-circled gabi-float-right"></i>
+                                      </button>
+                                      <button ng-switch-when="0" class="button button-block button-energized gabi-button-old" ng-click="record(line.index)">
+                                          {{ line.nativeText }}
+                                          <i class="icon ion-android-microphone gabi-float-right"></i>
+                                      </button>
+                                      <button ng-switch-when="-1" class="button button-block button-assertive gabi-button-old" ng-click="record(line.index)">
+                                          {{ line.nativeText }}
+                                          <i class="icon ion-close-circled gabi-float-right"></i>
+                                      </button>
+                                  </div>
+                              </div>
                           </div>
                       </div>
                   </div>
@@ -47,10 +96,16 @@
               <div ng-switch-default>
                   <div class="row gabi-minusbottom" ng-show="lineIndex >= line.index">
                       <div class="col col-75 button-calm gabi-left">
-                          <button class="button button-block button-calm" ng-click="playLine(line.index)">
-                              <i class="icon ion-speakerphone gabi-float-left"></i>
-                                {{ line.targetText }}
-                          </button>
+                          <div ng-switch on="isActiveButton(line.index)">
+                              <button ng-switch-when="true" class="button button-block button-calm gabi-button-highlighted" ng-click="playLine(line.index)">
+                                  <i class="icon ion-speakerphone gabi-float-left"></i>
+                                    {{ line.targetText }}
+                              </button>
+                              <button ng-switch-default class="button button-block button-calm gabi-button-old" ng-click="playLine(line.index)">
+                                  <i class="icon ion-speakerphone gabi-float-left"></i>
+                                  {{ line.targetText }}
+                              </button>
+                          </div>
                       </div>
                   </div>
                   <div class="row gabi-minusbottom" ng-show="lineIndex >= line.index">
@@ -70,6 +125,27 @@
               <!--</div>-->
           </div>
     </div>
+
+    <div class="gabi-spaceabove">
+      <div class="gabi-float-left">
+          <a ng-click="previousPage()">
+              <img src="img/oxygen-left-24.png">
+          </a>
+      </div>
+      <div class="gabi-float-right" ng-switch on="isPageFinished()">
+          <div ng-switch-when="true" class="gabi-button-highlighted">
+              <a ng-click="nextPage()">
+                  <img src="img/oxygen-right-24.png">
+              </a>
+          </div>
+          <div ng-switch-default class="gabi-button-old">
+              <a ng-click="nextPage()">
+                  <img src="img/oxygen-right-24.png">
+              </a>
+          </div>
+      </div>
+    </div>
+
   </ion-content>
 
 </ion-view>

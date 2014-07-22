@@ -116,3 +116,9 @@ ionic platform android
 ```
 Next, copy all your code and customizations into the new app.  E.g. add your customizations into index.html, style.css, config.xml.
 Add your new files and directories to the www folder.
+
+## Get latest supported languages ##
+### Languages supported by Google tranlsate ####
+https://www.googleapis.com/language/translate/v2/languages?key=AIzaSyBiP5o_Zvty1wte0P8BzVsDmW9hlJxVcz4&target=en
+
+### Languages supported by Android Speech Recognizer ###

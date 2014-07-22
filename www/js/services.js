@@ -139,7 +139,7 @@ angular.module("gabi.services", ["ionic"])
 /**
  * Perform Android-based speech recognition
  */
-.factory("AndroidSpeechRecognizer", function(LangUtil, Settings) {
+.factory("AndroidSpeechRecognizer", function(Settings) {
 
   var languages = new Array();
   return {
@@ -168,10 +168,10 @@ angular.module("gabi.services", ["ionic"])
         }
     },
 
-    recognizeSpeech: function(text, locale, callback, arg) {
+    recognizeSpeech: function(prompt, text, locale, callback, arg) {
         var maxMatches = 5;
 
-        var promptString = 'Say in ' + LangUtil.getLocaleDisplay(Settings.getNativeLanguage(), locale) + ': "' + text + '"'; // optional
+        var promptString = prompt + ': "' + text + '"'; // optional
         if (window.plugins && window.plugins.speechrecognizer ) {
             window.plugins.speechrecognizer.startRecognize(function(result){
                 callback(result, arg);
@@ -539,9 +539,6 @@ angular.module("gabi.services", ["ionic"])
 /* Google TTS http://translate.google.com/translate_tts?ie=UTF-8&tl=en&q= */
 .factory("GoogleTextToSpeech", function() {
 
-    var currentLanguage;
-    var initialized=false;
-
     return {
 
         getUrl: function(text, language) {
@@ -601,7 +598,7 @@ angular.module("gabi.services", ["ionic"])
 
 
 /* Client for the Gabs web service */
-.factory("LangUtil", function(GabsClient, Settings) {
+.factory("LangUtil", function(GabsClient, Settings, AndroidSpeechRecognizer) {
     var langMap = [];
     var langArr = [];
     return {
@@ -622,12 +619,11 @@ angular.module("gabi.services", ["ionic"])
             if (langMap && langMap[nativeLang]) return callback(langMap[nativeLang]);
             langMap[nativeLang] = { };
             this.getLanguageArray(nativeLang, function(larr) {
-                for (langi in larr) {
+                for (var langi in larr) {
                     var langObj = larr[langi];
 //                    alert("langObj=" + JSON.stringify(langObj));
                     var key = langObj.language;
-                    var name = langObj.name;
-                    langMap[nativeLang][key] = name;
+                    langMap[nativeLang][key] = langObj.name;
                 }
 //                alert("langMap[nativeLang]=" + langMap[nativeLang]);
                 callback(langMap[nativeLang]);
@@ -655,22 +651,58 @@ angular.module("gabi.services", ["ionic"])
                 if (lang == "nb") langName = this.getLanguageName(nativeLang, "no");
             }
             if (! country) return langName;
-            var langDisplay = langName + " (" + country + ")";
-            return langDisplay;
+            return langName + " (" + country + ")";
+        },
+
+        loadLanguageInfo: function() {
+//            alert("loadLanguageInfo()...");
+            var self = this;
+            if (Settings.supportedLanguages && Settings.supportedLanguages[Settings.getNativeLanguage()]) return;
+
+            self.getLanguageMap(Settings.getNativeLanguage(), function(map) {
+//            alert("Loaded language map: " + JSON.stringify(map));
+
+                Settings.supportedLanguages[Settings.getNativeLanguage()] = [];
+                AndroidSpeechRecognizer.getSupportedLanguages(function(languages) {
+                    for (var langi in languages) {
+                        var locale = languages[langi];
+//                    var lang = locale.substring(0,2);
+//                    var country = locale.substr(3);
+//                    var langName = LangUtil.getLanguageName(Settings.getNativeLanguage(), lang);
+//                    var langDisplay = langName + " (" + country + ")";
+                        var langDisplay = self.getLocaleDisplay(Settings.getNativeLanguage(), locale);
+                        Settings.supportedLanguages[Settings.getNativeLanguage()].push(
+                            {
+                                id: languages[langi],
+                                name: langDisplay
+                            }
+                        );
+                    }
+
+                    //sort the languages
+                    Settings.supportedLanguages[Settings.getNativeLanguage()].sort(function(a, b) {
+                        var textA = a.name.toUpperCase();
+                        var textB = b.name.toUpperCase();
+                        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                    });
+//                alert("Loaded supportedLanguages= " + Settings.supportedLanguages[Settings.getNativeLanguage()]);
+//              LangUtil.getSupportedLanguages(Settings.getNativeLanguage(), receiveLanguages);
+                });
+            });
         }
     }
 })
 
 
-    .factory("UI", function($http, Settings, GabsClient) {
+.factory("UI", function($http, Settings, GabsClient) {
 
-        return {
-            //TODO implement this
-            localize: function(english) {
-                return english;
-            }
+    return {
+        //TODO implement this
+        localize: function(english) {
+            return english;
         }
-    })
+    }
+})
 
 
 .directive("swipePage", function($ionicGesture, $state) {

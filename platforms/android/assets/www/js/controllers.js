@@ -213,44 +213,44 @@ angular.module("gabi.controllers", ["ionic"])
 ////        $scope.$apply();
 //    };
 
-    var loadLanguageInfo = function() {
-        if (Settings.supportedLanguages && Settings.supportedLanguages[Settings.getNativeLanguage()]) return;
-
-        LangUtil.getLanguageMap(Settings.getNativeLanguage(), function(map) {
-//            alert("Loaded language map: " + JSON.stringify(map));
-
-            Settings.supportedLanguages[Settings.getNativeLanguage()] = [];
-            AndroidSpeechRecognizer.getSupportedLanguages(function(languages) {
-                for (langi in languages) {
-                    var locale = languages[langi];
-//                    var lang = locale.substring(0,2);
-//                    var country = locale.substr(3);
-//                    var langName = LangUtil.getLanguageName(Settings.getNativeLanguage(), lang);
-//                    var langDisplay = langName + " (" + country + ")";
-                    var langDisplay = LangUtil.getLocaleDisplay(Settings.getNativeLanguage(), locale);
-                    Settings.supportedLanguages[Settings.getNativeLanguage()].push(
-                        {
-                            id: languages[langi],
-                            name: langDisplay
-                        }
-                    );
-                }
-
-                //sort the languages
-                Settings.supportedLanguages[Settings.getNativeLanguage()].sort(function(a, b) {
-                    var textA = a.name.toUpperCase();
-                    var textB = b.name.toUpperCase();
-                    return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
-                });
-//                alert("Loaded supportedLanguages= " + Settings.supportedLanguages[Settings.getNativeLanguage()]);
-//            LangUtil.getSupportedLanguages(Settings.getNativeLanguage(), receiveLanguages);
-            });
-        });
-    };
+//    var loadLanguageInfo = function() {
+//        if (Settings.supportedLanguages && Settings.supportedLanguages[Settings.getNativeLanguage()]) return;
+//
+//        LangUtil.getLanguageMap(Settings.getNativeLanguage(), function(map) {
+////            alert("Loaded language map: " + JSON.stringify(map));
+//
+//            Settings.supportedLanguages[Settings.getNativeLanguage()] = [];
+//            AndroidSpeechRecognizer.getSupportedLanguages(function(languages) {
+//                for (langi in languages) {
+//                    var locale = languages[langi];
+////                    var lang = locale.substring(0,2);
+////                    var country = locale.substr(3);
+////                    var langName = LangUtil.getLanguageName(Settings.getNativeLanguage(), lang);
+////                    var langDisplay = langName + " (" + country + ")";
+//                    var langDisplay = LangUtil.getLocaleDisplay(Settings.getNativeLanguage(), locale);
+//                    Settings.supportedLanguages[Settings.getNativeLanguage()].push(
+//                        {
+//                            id: languages[langi],
+//                            name: langDisplay
+//                        }
+//                    );
+//                }
+//
+//                //sort the languages
+//                Settings.supportedLanguages[Settings.getNativeLanguage()].sort(function(a, b) {
+//                    var textA = a.name.toUpperCase();
+//                    var textB = b.name.toUpperCase();
+//                    return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+//                });
+////                alert("Loaded supportedLanguages= " + Settings.supportedLanguages[Settings.getNativeLanguage()]);
+////            LangUtil.getSupportedLanguages(Settings.getNativeLanguage(), receiveLanguages);
+//            });
+//        });
+//    };
 
     $scope.listSupportedLanguages = function() {
         return Settings.supportedLanguages[Settings.getNativeLanguage()];
-    }
+    };
 
     $scope.displayNativeLanguage = function() {
         return LangUtil.getLanguageName(Settings.getNativeLanguage(), Settings.getNativeLanguage());
@@ -279,8 +279,7 @@ angular.module("gabi.controllers", ["ionic"])
     };
 
 //    Settings.skillLevels[Settings.targetLocale] = 1;
-
-    loadLanguageInfo();
+    LangUtil.loadLanguageInfo();
 })
 
 
@@ -327,7 +326,7 @@ angular.module("gabi.controllers", ["ionic"])
 
 
 
-.controller("PlayCtrl", function($scope, $state, $timeout, $ionicPopup, AndroidSpeechRecognizer, GoogleTextToSpeech, Settings, Util) {
+.controller("PlayCtrl", function($scope, $state, $timeout, $ionicPopup, AndroidSpeechRecognizer, GoogleTextToSpeech, Settings, Util, LangUtil, UI) {
     $scope.settings = Settings;
     $scope.native = Settings.nativeTranslation;
     $scope.target = Settings.targetTranslation;
@@ -344,6 +343,7 @@ angular.module("gabi.controllers", ["ionic"])
 //    };
 
     var my_media;
+
     //the src argument could be a (string) URL, or it could be fileEntry
     var playAudio = function(file, callback) {
         var src = file;
@@ -352,7 +352,8 @@ angular.module("gabi.controllers", ["ionic"])
         my_media = new Media(src, audioSucceeded, audioFailed);
         my_media.play();
         if (callback) {
-            $timeout(function(){callback()}, 2000);
+//            $timeout(function(){callback()}, 2000);
+            callback();
         }
     };
 
@@ -492,12 +493,13 @@ angular.module("gabi.controllers", ["ionic"])
 
     $scope.record = function(index) {
         var line = lines[index];
+        var prompt = UI.localize("Say in " + LangUtil.getLocaleDisplay(Settings.getNativeLanguage(), Settings.targetLocale));
         if (line.fail >= 2) {
             $scope.showTargetTexts(index, function() {
-                AndroidSpeechRecognizer.recognizeSpeech(line.nativeText, Settings.targetLocale, receiveRecognizedSpeech, index);
+                AndroidSpeechRecognizer.recognizeSpeech(prompt, line.nativeText, Settings.targetLocale, receiveRecognizedSpeech, index);
             })
         } else {
-            AndroidSpeechRecognizer.recognizeSpeech(line.nativeText, Settings.targetLocale, receiveRecognizedSpeech, index);
+            AndroidSpeechRecognizer.recognizeSpeech(prompt, line.nativeText, Settings.targetLocale, receiveRecognizedSpeech, index);
         }
     };
 
@@ -614,6 +616,10 @@ angular.module("gabi.controllers", ["ionic"])
         }
     };
 
+    $scope.showBottomNav = function() {
+        return $scope.lineIndex >= lines.length;
+    };
+
     //iheard can be a string or an array of strings
     var checkResponse = function(iheard, index) {
 //        alert("checkResponse(): iheard=" + iheard + "; index=" + index);
@@ -654,11 +660,28 @@ angular.module("gabi.controllers", ["ionic"])
 
     $scope.swipeRight = function(elem) {
         $scope.previousPage();
-    }
+    };
+
+    $scope.getPageImage = function() {
+        var page = Settings.play.pages[Settings.pageIndex];
+        if (page && page.img) return page.img;
+        return Settings.play.img;
+    };
+
+    $scope.isActiveButton = function(index) {
+//        if (endLine)
+        return index == $scope.lineIndex;
+    };
+
+    $scope.isPageFinished = function() {
+        var endLine = Settings.play.pages[Settings.pageIndex].eln;
+        return ($scope.lineIndex > endLine);
+    };
 
     //initialize
+    LangUtil.loadLanguageInfo();
     $scope.getLines();
-    if (! lines[$scope.lineIndex].isYou) {
-        playTargetAndAdvance($scope.lineIndex);
-    }
+//    if (! lines[$scope.lineIndex].isYou) {
+//        playTargetAndAdvance($scope.lineIndex);
+//    }
 });

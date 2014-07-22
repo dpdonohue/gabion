@@ -81,3 +81,55 @@
     margin-bottom: -40px;
     padding-bottom: -20px;
 }
+
+.gabi-button-highlighted {
+    border:5px solid #ff8c00;
+    -webkit-box-shadow:0 0 6px #007eff;
+    -moz-box-shadow:0 0 5px #007eff;
+    box-shadow:0 0 5px #007eff;
+
+    /*outline-style: solid;*/
+    /*outline-width: 10px;*/
+    /*outline-color: #ff8c00;*/
+    /*-webkit-animation-name: blinker;*/
+    /*-webkit-animation-duration: 2s;*/
+    /*-webkit-animation-timing-function: linear;*/
+    /*-webkit-animation-iteration-count: infinite;*/
+
+    /*-moz-animation-name: blinker;*/
+    /*-moz-animation-duration: 2s;*/
+    /*-moz-animation-timing-function: linear;*/
+    /*-moz-animation-iteration-count: infinite;*/
+
+    /*animation-name: blinker;*/
+    /*animation-duration: 2s;*/
+    /*animation-timing-function: linear;*/
+    /*animation-iteration-count: infinite;*/
+}
+
+.gabi-button-old {
+    border: 0px;
+    opacity: 0.75;
+}
+
+.gabi-spaceabove {
+    margin-top: 20px;
+}
+
+@-moz-keyframes blinker {
+    0% { opacity: 1.0; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1.0; }
+}
+
+@-webkit-keyframes blinker {
+    0% { opacity: 1.0; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1.0; }
+}
+
+@keyframes blinker {
+    0% { opacity: 1.0; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1.0; }
+}

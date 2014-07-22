@@ -47,6 +47,12 @@
 /Users/dd/ws/gabion/platforms/android/assets/www/img/leftarrow-blue-64.png \
 /Users/dd/ws/gabion/platforms/android/assets/www/img/mic-black-64.png \
 /Users/dd/ws/gabion/platforms/android/assets/www/img/mic-black-96.png \
+/Users/dd/ws/gabion/platforms/android/assets/www/img/oxygen-left-24.png \
+/Users/dd/ws/gabion/platforms/android/assets/www/img/oxygen-left-32.png \
+/Users/dd/ws/gabion/platforms/android/assets/www/img/oxygen-left-48.png \
+/Users/dd/ws/gabion/platforms/android/assets/www/img/oxygen-right-24.png \
+/Users/dd/ws/gabion/platforms/android/assets/www/img/oxygen-right-32.png \
+/Users/dd/ws/gabion/platforms/android/assets/www/img/oxygen-right-48.png \
 /Users/dd/ws/gabion/platforms/android/assets/www/img/rightarrow-blue-64.png \
 /Users/dd/ws/gabion/platforms/android/assets/www/img/x-red-32.png \
 /Users/dd/ws/gabion/platforms/android/assets/www/img/x-red-64.png \
