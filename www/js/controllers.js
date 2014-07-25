@@ -201,9 +201,8 @@ angular.module("gabi.controllers", ["ionic"])
 
 
 
-.controller("SettingsCtrl", function($scope, $state, AndroidSpeechRecognizer, Settings, LangUtil, UI) {
+.controller("SettingsCtrl", function($scope, $state, AndroidSpeechRecognizer, Settings, LangUtil, GabsClient) {
     $scope.settings = Settings;
-    $scope.ui = UI;
 
 //    $scope.supportedLanguages = [];
 
@@ -292,7 +291,7 @@ angular.module("gabi.controllers", ["ionic"])
 
 .controller("LetsgoCtrl", function($scope, $state, Settings, Util, GabsClient) {
     $scope.playList = Settings.playList;
-    GabsClient.listPlays(Settings.getNativeLanguage(), function(playList) {
+    GabsClient.listPlays(Settings.getNativeLanguage(), Settings.getSkillLevel(), function(playList) {
         Settings.playList = playList;
         $scope.playList = playList;
 //        $scope.$apply();
@@ -326,7 +325,7 @@ angular.module("gabi.controllers", ["ionic"])
 
 
 
-.controller("PlayCtrl", function($scope, $state, $timeout, $ionicPopup, AndroidSpeechRecognizer, GoogleTextToSpeech, Settings, Util, LangUtil, UI) {
+.controller("PlayCtrl", function($scope, $state, $timeout, $ionicPopup, AndroidSpeechRecognizer, GoogleTextToSpeech, Settings, Util, LangUtil, GabsClient) {
     $scope.settings = Settings;
     $scope.native = Settings.nativeTranslation;
     $scope.target = Settings.targetTranslation;
@@ -427,7 +426,7 @@ angular.module("gabi.controllers", ["ionic"])
     };
 
     // An alert dialog
-    $scope.showTargetTexts = function(index, callback) {
+    $scope.confirmSkip = function(index, callback) {
         var targetTexts = lines[index].targetTexts;
         var message = "";
         for (var ti in targetTexts) {
@@ -437,8 +436,8 @@ angular.module("gabi.controllers", ["ionic"])
         var confirmPopup = $ionicPopup.confirm({
             title: lines[index].nativeText,
             template: message,
-            cancelText: "Skip",
-            okText: "Try Again"
+            cancelText: $scope.localize("Skip"),
+            okText: $scope.localize("Try Again")
         });
         confirmPopup.then(function(res) {
             if(res) {
@@ -493,14 +492,15 @@ angular.module("gabi.controllers", ["ionic"])
 
     $scope.record = function(index) {
         var line = lines[index];
-        var prompt = UI.localize("Say in " + LangUtil.getLocaleDisplay(Settings.getNativeLanguage(), Settings.targetLocale));
-        if (line.fail >= 2) {
-            $scope.showTargetTexts(index, function() {
+        GabsClient.localize("Say in " + LangUtil.getLocaleDisplay(Settings.getNativeLanguage(), Settings.targetLocale), function(prompt) {
+            if (line.fail >= 2) {
+                $scope.confirmSkip(index, function() {
+                    AndroidSpeechRecognizer.recognizeSpeech(prompt, line.nativeText, Settings.targetLocale, receiveRecognizedSpeech, index);
+                })
+            } else {
                 AndroidSpeechRecognizer.recognizeSpeech(prompt, line.nativeText, Settings.targetLocale, receiveRecognizedSpeech, index);
-            })
-        } else {
-            AndroidSpeechRecognizer.recognizeSpeech(prompt, line.nativeText, Settings.targetLocale, receiveRecognizedSpeech, index);
-        }
+            }
+        });
     };
 
     $scope.nextPage = function() {
@@ -678,8 +678,16 @@ angular.module("gabi.controllers", ["ionic"])
         return ($scope.lineIndex > endLine);
     };
 
+    $scope.localize = function(english) {
+        GabsClient.localize(english, Settings.nativeLocale, Settings.getNativeLanguage, function(localizedText) {});
+        return Settings.getLocalizedText(english);
+    }
+
     //initialize
     LangUtil.loadLanguageInfo();
+    $scope.localize("Gab");
+    $scope.localize("Skip");
+    $scope.localize("Try Again");
     $scope.getLines();
 //    if (! lines[$scope.lineIndex].isYou) {
 //        playTargetAndAdvance($scope.lineIndex);

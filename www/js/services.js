@@ -13,6 +13,7 @@ angular.module("gabi.services", ["ionic"])
         pageIndex : 0,
         targetTranslation: {},
         nativeTranslation: {},
+        localizations: {},
         parseLanguageId: function(loc) {
             var divider = loc.lastIndexOf("-");
             if (divider < 0) return loc;
@@ -31,6 +32,17 @@ angular.module("gabi.services", ["ionic"])
 
         getNativeLanguage: function() {
             return this.parseLanguageId(this.nativeLocale);
+        },
+        getLocalizedText: function(english) {
+            if ("en" == this.getNativeLanguage()) return english;
+            if (localizations[this.getNativeLanguage()][english]) {
+                return localizations[this.getNativeLanguage()][english];
+            }
+            return english;
+        },
+        getSkillLevel: function() {
+            if (! this.skillLevels[this.getTargetLanguage()]) return 1;
+            return this.skillLevels[this.getTargetLanguage()];
         },
         skillLevels: {},
         supportedLanguages: []
@@ -564,8 +576,8 @@ angular.module("gabi.services", ["ionic"])
 /* Client for the Gabs web service */
 .factory("GabsClient", function($http, Settings) {
     return {
-        listPlays: function(lan, callback) {
-            $http.get("http://gabs-gablabio.rhcloud.com/play/list?lan=" + lan).then(function(result) {
+        listPlays: function(lan, lev, callback) {
+            $http.get("http://gabs-gablabio.rhcloud.com/play/list?lan=" + lan + "&lev=" + lev).then(function(result) {
                 var payload = result.data;
                 callback(payload.plays);
             });
@@ -589,6 +601,22 @@ angular.module("gabi.services", ["ionic"])
 //                //remove langauges not supported by Google translate
 //                delete languages["he-IL"];
                 callback(payload);
+            });
+        },
+
+        //TODO support localizations with locale rather than language
+        localize: function(english, tlo, tla, callback) {
+            if ("en"==tla) return callback(english);
+            if (! Settings.localizations[tla]) Settings.localizations[tla] = {};
+            if (Settings.localizations[tla][english]) return callback(Settings.localizations[tla][english]);
+            $http.get("http://gabs-gablabio.rhcloud.com/loc/localize?src=Gabi-UI-localize&nlo=en-US&nla=en&tlo=" + tlo + "&tla=" + tla + "&t=" + encodeURIComponent(english)).then(function(result) {
+                alert("localize received: " + JSON.stringify(result));
+                if (! result.data.trm.txt) {
+                    //unable to get localization
+                    return callback(english);
+                }
+                Settings.localizations[tla][english] = result.data.trm.txt;
+                callback(result.data.trm.txt);
             });
         }
     }
@@ -692,18 +720,6 @@ angular.module("gabi.services", ["ionic"])
         }
     }
 })
-
-
-.factory("UI", function($http, Settings, GabsClient) {
-
-    return {
-        //TODO implement this
-        localize: function(english) {
-            return english;
-        }
-    }
-})
-
 
 .directive("swipePage", function($ionicGesture, $state) {
     return {

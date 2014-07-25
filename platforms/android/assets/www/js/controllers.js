@@ -427,7 +427,7 @@ angular.module("gabi.controllers", ["ionic"])
     };
 
     // An alert dialog
-    $scope.showTargetTexts = function(index, callback) {
+    $scope.confirmSkip = function(index, callback) {
         var targetTexts = lines[index].targetTexts;
         var message = "";
         for (var ti in targetTexts) {
@@ -495,7 +495,7 @@ angular.module("gabi.controllers", ["ionic"])
         var line = lines[index];
         var prompt = UI.localize("Say in " + LangUtil.getLocaleDisplay(Settings.getNativeLanguage(), Settings.targetLocale));
         if (line.fail >= 2) {
-            $scope.showTargetTexts(index, function() {
+            $scope.confirmSkip(index, function() {
                 AndroidSpeechRecognizer.recognizeSpeech(prompt, line.nativeText, Settings.targetLocale, receiveRecognizedSpeech, index);
             })
         } else {
