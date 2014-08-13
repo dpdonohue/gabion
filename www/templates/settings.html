@@ -7,21 +7,25 @@
 
 
           <a class="item" ui-sref="tab.settings-native">
-              Your language: {{ displayNativeLocale() }}
+              {{ localize("Your language") }}: {{ displayNativeLocale() }}
           </a>
 
           <a class="item" ui-sref="tab.settings-target">
-              Learning: {{ displayTargetLocale() }}
+              {{ localize("Learning") }}: {{ displayTargetLocale() }}
           </a>
 
           <div class="item item-divider">
-              Skill Level in {{ displayTargetLocale() }}
+              {{ localize("Your proficiency level") }} (1 - 5)
           </div>
 
           <div class="item range range-positive">
               <i class="icon ion-ios7-star-outline"></i>
-              <input type="range" name="skill" min="1" max="10" ng-model="settings.skillLevels[Settings.targetLocale]">
+              <input type="range" name="skill" min="1" max="5" ng-model="settings.skillLevel">
               <i class="icon ion-ios7-star"></i>
+          </div>
+
+          <div>
+              <h2 class="gabi-centered">{{ localize("Your proficiency level") }}: {{ settings.skillLevel }}</h2>
           </div>
     </div>
 

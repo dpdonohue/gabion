@@ -108,7 +108,10 @@
 }
 
 .gabi-button-old {
-    border: 0px;
+    border:5px solid #ffffff;
+    -webkit-box-shadow:0 0 6px #ffffff;
+    -moz-box-shadow:0 0 5px #ffffff;
+    box-shadow:0 0 5px #ffffff;
     opacity: 0.75;
 }
 

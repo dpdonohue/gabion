@@ -6,13 +6,17 @@ angular.module("gabi.services", ["ionic"])
         targetLocale: "es-US",
         nativeLocale: "en-US",
         googleApiKey: "AIzaSyBiP5o_Zvty1wte0P8BzVsDmW9hlJxVcz4",
+//        gabsUrl: "http://gabs-gablabio.rhcloud.com/",
+        gabsUrl: "http://localhost:3000/",
         terms: [],
         currentPlay: "trip1.txt",
         playList: [],
+        loadedPlaysLevel: 0,
         play: {},
         pageIndex : 0,
         targetTranslation: {},
         nativeTranslation: {},
+        localizations: {},
         parseLanguageId: function(loc) {
             var divider = loc.lastIndexOf("-");
             if (divider < 0) return loc;
@@ -32,8 +36,68 @@ angular.module("gabi.services", ["ionic"])
         getNativeLanguage: function() {
             return this.parseLanguageId(this.nativeLocale);
         },
-        skillLevels: {},
+        getLocalizedText: function(english) {
+            if ("en" == this.getNativeLanguage()) return english;
+            if (localizations[this.getNativeLanguage()][english]) {
+                return localizations[this.getNativeLanguage()][english];
+            }
+            return english;
+        },
+//        getSkillLevel: function() {
+////            if (! this.skillLevels[this.getTargetLanguage()]) return 1;
+////            return this.skillLevels[this.getTargetLanguage()];
+//            return this.skillLevel;
+//        },
+        skillLevel: 3,
         supportedLanguages: []
+
+//        lines: [],
+//
+//        getLines: function() {
+//            if (!this.play) return;
+//
+//            var page = this.play.pages[this.pageIndex];
+//
+//            var startLine = page.sln;
+//            var endLine = page.eln;
+//
+//            var index = 0;
+//            for (var linei = startLine; linei <= endLine; linei++) {
+//                var actorIndex = this.play.lines[linei].act;
+//                var actorLabel = this.play.actors[actorIndex].lbl.toUpperCase();
+//                var nativeActor = this.nativeTranslation.actors[actorIndex].txt[0];
+//                if (! nativeActor) nativeActor = actorLabel;
+//                //ERROR BELOW SOMEWHERE
+//                var targetActor = this.targetTranslation.actors[actorIndex].txt[0];
+//                if (! targetActor) targetActor = actorLabel;
+//                var actorImg = this.play.actors[actorIndex].img;
+//                var nativeText = this.nativeTranslation.lines[linei].txt[0];
+//                var targetText = this.targetTranslation.lines[linei].txt[0];
+//                var targetTexts = this.targetTranslation.lines[linei].txt;
+//                if ( (actorLabel=="YOU") && !actorImg) {
+//                    actorImg = "http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/64/Emotes-face-smile-icon.png";
+//                }
+//                if (!actorImg) {
+//                    actorImg = "http://icons.iconarchive.com/icons/saki/nuoveXT-2/64/Apps-user-info-icon.png";
+//                }
+//                var line = {
+//                    index: index,
+//                    isYou: actorLabel=="YOU",
+//                    nativeActor: nativeActor,
+//                    targetActor: targetActor,
+//                    nativeText: nativeText,
+//                    targetText: targetText,
+//                    targetTexts: targetTexts,
+//                    actorImg: actorImg,
+//                    success: 0,
+//                    fail: 0,
+//                    currentStatus: 0
+//                };
+//                lines.push(line);
+//                index++;
+//            }
+//            this.lines = lines;
+//        }
     }
 })
 
@@ -564,17 +628,30 @@ angular.module("gabi.services", ["ionic"])
 /* Client for the Gabs web service */
 .factory("GabsClient", function($http, Settings) {
     return {
-        listPlays: function(lan, callback) {
-            $http.get("http://gabs-gablabio.rhcloud.com/play/list?lan=" + lan).then(function(result) {
-                var payload = result.data;
-                callback(payload.plays);
-            });
+        listPlays: function(lan, lev, callback) {
+            alert("GET: " + Settings.gabsUrl + "play/list?lan=" + lan + "&lev=" + lev);
+            $http.get(Settings.gabsUrl + "play/list?lan=" + lan + "&lev=" + lev)
+                .then(
+                    function(result) {
+                        alert("listPlays() received result: " + result);
+                        alert("listPlays() received result: " + JSON.stringify(result));
+                        if (!result || !result.data) {
+                            return callback([]);
+                        }
+                        var payload = result.data;
+
+                        return callback(payload.plays);
+                    }, function(error) {
+                        alert("listPlays() error: " + JSON.stringify(error));
+                        return callback([]);
+                    }
+                );
         },
 
         //TODO support locale
         getPlay: function(playid, nlo, nla, tlo, tla, callback) {
 //            $http.get("http://gabs-gablabio.rhcloud.com/play/load/" + playid + "?nlo=" + nlo + "&nla=" + nla + "&tlo=" + tlo + "&tla=" + tla).then(function(result) {
-            $http.get("http://gabs-gablabio.rhcloud.com/play/load/" + playid + "?nlo=" + nlo + "&nla=" + nla + "&tla=" + tla).then(function(result) {
+            $http.get(Settings.gabsUrl + "play/load/" + playid + "?nlo=" + nlo + "&nla=" + nla + "&tla=" + tla).then(function(result) {
                 var payload = result.data;
                 callback(payload);
             });
@@ -589,6 +666,22 @@ angular.module("gabi.services", ["ionic"])
 //                //remove langauges not supported by Google translate
 //                delete languages["he-IL"];
                 callback(payload);
+            });
+        },
+
+        //TODO support localizations with locale rather than language
+        localize: function(english, tlo, tla, callback) {
+            if ("en"==tla) return callback(english);
+            if (! Settings.localizations[tla]) Settings.localizations[tla] = {};
+            if (Settings.localizations[tla][english]) return callback(Settings.localizations[tla][english]);
+            $http.get(Settings.gabsUrl + "loc/localize?src=Gabi-UI-localize&nlo=en-US&nla=en&tlo=" + tlo + "&tla=" + tla + "&t=" + encodeURIComponent(english)).then(function(result) {
+                alert("localize received: " + JSON.stringify(result));
+                if (! result.data.trm.txt) {
+                    //unable to get localization
+                    return callback(english);
+                }
+                Settings.localizations[tla][english] = result.data.trm.txt;
+                callback(result.data.trm.txt);
             });
         }
     }
@@ -692,18 +785,6 @@ angular.module("gabi.services", ["ionic"])
         }
     }
 })
-
-
-.factory("UI", function($http, Settings, GabsClient) {
-
-    return {
-        //TODO implement this
-        localize: function(english) {
-            return english;
-        }
-    }
-})
-
 
 .directive("swipePage", function($ionicGesture, $state) {
     return {

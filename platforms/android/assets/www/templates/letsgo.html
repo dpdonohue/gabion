@@ -3,12 +3,13 @@
         <div class="list">
 
             <div class="item item-divider">
-                Select a Simulation
+                {{ localize("Select a Simulation") }}
             </div>
 
-            <a class="item item-thumbnail-left" ng-repeat="play in playList" href="#/{{ play._id }}" ng-click="goToPlay(play._id)">
+            <a class="item item-thumbnail-left item-text-wrap"
+               ng-repeat="play in playList" href="#/{{ play._id }}" ng-click="goToPlay(play._id)">
                 <img src="{{ play.img }}">
-                <h2>{{ play.txt }}</h2>
+                {{ play.txt }}
             </a>
 
         </div>
