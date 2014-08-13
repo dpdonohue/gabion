@@ -6,8 +6,8 @@ angular.module("gabi.services", ["ionic"])
         targetLocale: "es-US",
         nativeLocale: "en-US",
         googleApiKey: "AIzaSyBiP5o_Zvty1wte0P8BzVsDmW9hlJxVcz4",
-//        gabsUrl: "http://gabs-gablabio.rhcloud.com/",
-        gabsUrl: "http://localhost:3000/",
+        gabsUrl: "http://gabs-gablabio.rhcloud.com/",
+//        gabsUrl: "http://localhost:3000/",
         terms: [],
         currentPlay: "trip1.txt",
         playList: [],
@@ -240,7 +240,7 @@ angular.module("gabi.services", ["ionic"])
             window.plugins.speechrecognizer.startRecognize(function(result){
                 callback(result, arg);
             }, function(errorMessage){
-                alert("Error message: " + errorMessage);
+                alert("Error recognizing speech: " + errorMessage);
             }, maxMatches, promptString, locale);
         } else {
             alert("SpeechRecognizer plugin is NOT active");
@@ -629,12 +629,10 @@ angular.module("gabi.services", ["ionic"])
 .factory("GabsClient", function($http, Settings) {
     return {
         listPlays: function(lan, lev, callback) {
-            alert("GET: " + Settings.gabsUrl + "play/list?lan=" + lan + "&lev=" + lev);
+//            alert("GET: " + Settings.gabsUrl + "play/list?lan=" + lan + "&lev=" + lev);
             $http.get(Settings.gabsUrl + "play/list?lan=" + lan + "&lev=" + lev)
                 .then(
                     function(result) {
-                        alert("listPlays() received result: " + result);
-                        alert("listPlays() received result: " + JSON.stringify(result));
                         if (!result || !result.data) {
                             return callback([]);
                         }

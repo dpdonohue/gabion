@@ -338,7 +338,7 @@ angular.module("gabi.controllers", ["ionic"])
             Settings.playList = playList;
             Settings.loadedPlaysLevel = Settings.skillLevel;
             $scope.playList = playList;
-            alert("loaded plays: skill=" + Settings.skillLevel + "; play list has " + $scope.playList.length + "; Settings.loadedPlaysLevel=" + Settings.loadedPlaysLevel + "; applying...");
+//            alert("loaded plays: skill=" + Settings.skillLevel + "; play list has " + $scope.playList.length + "; Settings.loadedPlaysLevel=" + Settings.loadedPlaysLevel + "; applying...");
             $scope.$apply();
         });
     }

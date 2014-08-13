@@ -278,7 +278,7 @@ angular.module("gabi.controllers", ["ionic"])
     };
 
     $scope.localize = function(english) {
-        GabsClient.localize(english, Settings.nativeLocale, Settings.getNativeLanguage, function(localizedText) {});
+        GabsClient.localize(english, Settings.nativeLocale, Settings.getNativeLanguage(), function(localizedText) {});
         return Settings.getLocalizedText(english);
     }
 
@@ -318,7 +318,7 @@ angular.module("gabi.controllers", ["ionic"])
     };
 
     $scope.localize = function(english) {
-        GabsClient.localize(english, Settings.nativeLocale, Settings.getNativeLanguage, function(localizedText) {});
+        GabsClient.localize(english, Settings.nativeLocale, Settings.getNativeLanguage(), function(localizedText) {});
         return Settings.getLocalizedText(english);
     }
 
@@ -672,7 +672,7 @@ angular.module("gabi.controllers", ["ionic"])
 
         //Refactor from Englisg
     $scope.localize = function(english) {
-        GabsClient.localize(english, "en", Settings.getNativeLanguage, function(localizedText) {});
+        GabsClient.localize(english, "en", Settings.getNativeLanguage(), function(localizedText) {});
         return Settings.getLocalizedText(english);
     }
 
