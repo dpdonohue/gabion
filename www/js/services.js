@@ -49,55 +49,54 @@ angular.module("gabi.services", ["ionic"])
 //            return this.skillLevel;
 //        },
         skillLevel: 3,
-        supportedLanguages: []
+        supportedLanguages: [],
+        lines: [],
 
-//        lines: [],
-//
-//        getLines: function() {
-//            if (!this.play) return;
-//
-//            var page = this.play.pages[this.pageIndex];
-//
-//            var startLine = page.sln;
-//            var endLine = page.eln;
-//
-//            var index = 0;
-//            for (var linei = startLine; linei <= endLine; linei++) {
-//                var actorIndex = this.play.lines[linei].act;
-//                var actorLabel = this.play.actors[actorIndex].lbl.toUpperCase();
-//                var nativeActor = this.nativeTranslation.actors[actorIndex].txt[0];
-//                if (! nativeActor) nativeActor = actorLabel;
-//                //ERROR BELOW SOMEWHERE
-//                var targetActor = this.targetTranslation.actors[actorIndex].txt[0];
-//                if (! targetActor) targetActor = actorLabel;
-//                var actorImg = this.play.actors[actorIndex].img;
-//                var nativeText = this.nativeTranslation.lines[linei].txt[0];
-//                var targetText = this.targetTranslation.lines[linei].txt[0];
-//                var targetTexts = this.targetTranslation.lines[linei].txt;
-//                if ( (actorLabel=="YOU") && !actorImg) {
-//                    actorImg = "http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/64/Emotes-face-smile-icon.png";
-//                }
-//                if (!actorImg) {
-//                    actorImg = "http://icons.iconarchive.com/icons/saki/nuoveXT-2/64/Apps-user-info-icon.png";
-//                }
-//                var line = {
-//                    index: index,
-//                    isYou: actorLabel=="YOU",
-//                    nativeActor: nativeActor,
-//                    targetActor: targetActor,
-//                    nativeText: nativeText,
-//                    targetText: targetText,
-//                    targetTexts: targetTexts,
-//                    actorImg: actorImg,
-//                    success: 0,
-//                    fail: 0,
-//                    currentStatus: 0
-//                };
-//                lines.push(line);
-//                index++;
-//            }
-//            this.lines = lines;
-//        }
+        loadLines: function() {
+            if (!this.play || !this.nativeTranslation || !this.targetTranslation) return;
+
+            this.lines = [];
+            var page = this.play.pages[this.pageIndex];
+
+            var startLine = page.sln;
+            var endLine = page.eln;
+
+            var index = 0;
+            for (var linei = startLine; linei <= endLine; linei++) {
+                var actorIndex = this.play.lines[linei].act;
+                var actorLabel = this.play.actors[actorIndex].lbl.toUpperCase();
+                var nativeActor = this.nativeTranslation.actors[actorIndex].txt[0];
+                if (! nativeActor) nativeActor = actorLabel;
+                //ERROR BELOW SOMEWHERE
+                var targetActor = this.targetTranslation.actors[actorIndex].txt[0];
+                if (! targetActor) targetActor = actorLabel;
+                var actorImg = this.play.actors[actorIndex].img;
+                var nativeText = this.nativeTranslation.lines[linei].txt[0];
+                var targetText = this.targetTranslation.lines[linei].txt[0];
+                var targetTexts = this.targetTranslation.lines[linei].txt;
+                if ( (actorLabel=="YOU") && !actorImg) {
+                    actorImg = "http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/64/Emotes-face-smile-icon.png";
+                }
+                if (!actorImg) {
+                    actorImg = "http://icons.iconarchive.com/icons/saki/nuoveXT-2/64/Apps-user-info-icon.png";
+                }
+                var line = {
+                    index: index,
+                    isYou: actorLabel=="YOU",
+                    nativeActor: nativeActor,
+                    targetActor: targetActor,
+                    nativeText: nativeText,
+                    targetText: targetText,
+                    targetTexts: targetTexts,
+                    actorImg: actorImg,
+                    success: 0,
+                    fail: 0,
+                    currentStatus: 0
+                };
+                this.lines.push(line);
+                index++;
+            }
+        }
     }
 })
 
@@ -252,66 +251,62 @@ angular.module("gabi.services", ["ionic"])
 /**
  * AndroidTextToSpeech - DOES NOT WORK - A simple example service that returns some data.
  */
-.factory("AndroidTextToSpeech", function() {
+//.factory("AndroidTextToSpeech", function() {
+//
+//    var currentLanguage;
+//    var initialized=false;
+//
+//    return {
+//        init: function() {
+//            if (initialized) return;
+//            var tts;
+//            try {
+//                tts = cordova.require("cordova/plugin/tts");
+//            } catch (e) {
+//                alert("Error: " + e);
+//            }
+//            if (!tts ) {
+//                alert("AndroidTextToSpeech plugin is NOT active");
+//                return;
+//            }
+//            tts.startup(
+//                function() { alert('TTS started'); initialized = true; },
+//                function() { alert('Failed to startup Text to Speech')}
+//            );
+//        },
 
-    var currentLanguage;
-    var initialized=false;
-
-    return {
-        //TODO: NOT USED?
-        init: function() {
-            if (initialized) return;
-//            alert('cordova=' + cordova);
-            var tts;
-            try {
-                tts = cordova.require("cordova/plugin/tts");
-//                alert('tts=' + tts + '; window.plugins=' + JSON.stringify(window.plugins));
-            } catch (e) {
-                alert("Error: " + e);
-            }
-            if (!tts ) {
-                alert("AndroidTextToSpeech plugin is NOT active");
-                return;
-            }
-            tts.startup(
-                function() { alert('TTS started'); initialized = true; },
-                function() { alert('Failed to startup Text to Speech')}
-            );
-        },
-
-        setLanguage: function(language, callback) {
-            if (currentLanguage == language) {
-                callback(true);
-            } else {
-                var tts = cordova.require("cordova/plugin/tts");
-                alert('tts=' + tts + '; window.plugins=' + JSON.stringify(window.plugins));
-                if (!tts ) {
-                    alert("AndroidTextToSpeech plugin is NOT active");
-                    callback(false);
-                    return;
-                }
-
-                tts.isLanguageAvailable(language, function() {
-                        tts.setLanguage(language);
-                        currentLanguage = language;
-                    }, function() {
-                        alert("AndroidTextToSpeech plugin cannot set language: " + language);
-                        callback(false);
-                    });
-                callback(true);
-            }
-        },
-
-        speak: function(text) {
-            var tts = cordova.require("cordova/plugin/tts");
-            if (!tts ) {
-                alert("AndroidTextToSpeech plugin is NOT active");
-                return;
-            }
-            tts.speak(text);
-        }
-    }
-})
+//        setLanguage: function(language, callback) {
+//            if (currentLanguage == language) {
+//                callback(true);
+//            } else {
+//                var tts = cordova.require("cordova/plugin/tts");
+//                if (!tts ) {
+//                    alert("AndroidTextToSpeech plugin is NOT active");
+//                    callback(false);
+//                    return;
+//                }
+//
+//                tts.isLanguageAvailable(language, function() {
+//                        tts.setLanguage(language);
+//                        currentLanguage = language;
+//                    }, function() {
+//                        alert("AndroidTextToSpeech plugin cannot set language: " + language);
+//                        callback(false);
+//                    });
+//                callback(true);
+//            }
+//        },
+//
+//        speak: function(text) {
+//            var tts = cordova.require("cordova/plugin/tts");
+//            if (!tts ) {
+//                alert("AndroidTextToSpeech plugin is NOT active");
+//                return;
+//            }
+//            tts.speak(text);
+//        }
+//    }
+//})
 
 /**
  * Soundex and other text functions
@@ -648,7 +643,6 @@ angular.module("gabi.services", ["ionic"])
 
         //TODO support locale
         getPlay: function(playid, nlo, nla, tlo, tla, callback) {
-//            $http.get("http://gabs-gablabio.rhcloud.com/play/load/" + playid + "?nlo=" + nlo + "&nla=" + nla + "&tlo=" + tlo + "&tla=" + tla).then(function(result) {
             $http.get(Settings.gabsUrl + "play/load/" + playid + "?nlo=" + nlo + "&nla=" + nla + "&tla=" + tla).then(function(result) {
                 var payload = result.data;
                 callback(payload);
@@ -673,7 +667,7 @@ angular.module("gabi.services", ["ionic"])
             if (! Settings.localizations[tla]) Settings.localizations[tla] = {};
             if (Settings.localizations[tla][english]) return callback(Settings.localizations[tla][english]);
             $http.get(Settings.gabsUrl + "loc/localize?src=Gabi-UI-localize&nlo=en-US&nla=en&tlo=" + tlo + "&tla=" + tla + "&t=" + encodeURIComponent(english)).then(function(result) {
-                alert("localize received: " + JSON.stringify(result));
+//                alert("localize received: " + JSON.stringify(result));
                 if (! result.data.trm.txt) {
                     //unable to get localization
                     return callback(english);
