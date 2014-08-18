@@ -1,6 +1,6 @@
 <ion-view title="Gab" swipe-page>
   <ion-content has-header="true" has-tabs="true" padding="true">
-
+    <div ng-style="getPageBackgroundStyle()">
       <!--<div class="bar bar-header">-->
           <!--<button class="button button-icon icon ion-arrow-left-a"></button>-->
           <!--<div class="h1 title">Gab!</div>-->
@@ -28,14 +28,14 @@
 
 
       <div class="bar bar-header bar-light item-text-wrap">
-          <h1 class="title">{{native.tit.txt[0]}}</h1>
+          <h1 class="title item-text-wrap">{{native.tit.txt[0]}}</h1>
       </div>
 
 
       <img class="full-image" src="{{ getPageImage() }}"/>
 
       <div>
-          {{ getPageTitleNative() }}
+          <p>{{ getPageTitleNative() }}</p>
       </div>
 
       <div ng-repeat="line in getLines()">
@@ -127,25 +127,29 @@
     </div>
 
     <div class="gabi-spaceabove">
-      <div class="gabi-float-left">
-          <a ng-click="previousPage()">
-              <img src="img/oxygen-left-24.png">
-          </a>
+        <div class="gabi-centered">
+            <button ng-click="goBack()" class="button button-balanced gabi-button-highlighted" ng-show="isPlayFinished()">
+                <!--<img class="gabi-float-left" src="img/check-green-32.png">-->
+                <i class="icon ion-checkmark-round gabi-float-left"></i>
+                &nbsp;{{ localize("Finished") }}
+            </button>
+        </div>
+        <div class="row">
+      <div class="col col-50 gabi-left">
+          <button ng-click="previousPage()" ng-show="settings.pageIndex > 0" class="button button-light gabi-button-old">
+              <!--<img class="gabi-float-left" src="img/oxygen-left-32.png">-->
+              <i class="icon ion-arrow-left-a gabi-float-left"></i>
+              {{ localize("Previous") }}
+          </button>
       </div>
-      <div class="gabi-float-right" ng-switch on="isPageFinished()">
-          <div ng-switch-when="true" class="gabi-button-highlighted">
-              <a ng-click="nextPage()">
-                  <img src="img/oxygen-right-24.png">
-              </a>
-          </div>
-          <div ng-switch-default class="gabi-button-old">
-              <a ng-click="nextPage()">
-                  <img src="img/oxygen-right-24.png">
-              </a>
-          </div>
+      <div class="col col-50 gabi-right" ng-show="hasNextPage() && isPageFinished()">
+          <button ng-click="nextPage()" class="button button-energized gabi-button-highlighted">
+              <!--<img class="gabi-float-right" src="img/oxygen-right-32.png">-->
+              <i class="icon ion-arrow-right-a gabi-float-right"></i>
+              {{ localize("Next") }}
+          </button>
       </div>
     </div>
-
+    </div>
   </ion-content>
-
 </ion-view>

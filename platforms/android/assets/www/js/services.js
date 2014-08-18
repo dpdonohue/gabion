@@ -3,8 +3,9 @@ angular.module("gabi.services", ["ionic"])
 .factory("Settings", function() {
 
     return {
-        targetLocale: "es-US",
+        targetLocale: "es-MX",
         nativeLocale: "en-US",
+//        targetLocale: "cmn-Hans-CN",
         googleApiKey: "AIzaSyBiP5o_Zvty1wte0P8BzVsDmW9hlJxVcz4",
         gabsUrl: "http://gabs-gablabio.rhcloud.com/",
 //        gabsUrl: "http://localhost:3000/",
@@ -36,10 +37,21 @@ angular.module("gabi.services", ["ionic"])
         getNativeLanguage: function() {
             return this.parseLanguageId(this.nativeLocale);
         },
+
+        getGoogleTranslateLanguage: function(locale) {
+            if (locale == "cmn-Hans-CN") return "zh-CN";
+            if (locale == "cmn-Hans-HK") return "zh-HK";
+            if (locale == "cmn-Hant-TW") return "zh-TW";
+            return this.parseLanguageId(locale);
+        },
+
+
+        //TODO use locale as key for localizations rather than langId
         getLocalizedText: function(english) {
-            if ("en" == this.getNativeLanguage()) return english;
-            if (localizations[this.getNativeLanguage()][english]) {
-                return localizations[this.getNativeLanguage()][english];
+            var langId = this.getGoogleTranslateLanguage(this.nativeLocale);
+            if ("en" == langId) return english;
+            if (this.localizations[langId][english]) {
+                return this.localizations[langId][english];
             }
             return english;
         },
@@ -49,269 +61,108 @@ angular.module("gabi.services", ["ionic"])
 //            return this.skillLevel;
 //        },
         skillLevel: 3,
-        supportedLanguages: []
+        supportedLanguages: [],
+        lines: [],
 
-//        lines: [],
-//
-//        getLines: function() {
-//            if (!this.play) return;
-//
-//            var page = this.play.pages[this.pageIndex];
-//
-//            var startLine = page.sln;
-//            var endLine = page.eln;
-//
-//            var index = 0;
-//            for (var linei = startLine; linei <= endLine; linei++) {
-//                var actorIndex = this.play.lines[linei].act;
-//                var actorLabel = this.play.actors[actorIndex].lbl.toUpperCase();
-//                var nativeActor = this.nativeTranslation.actors[actorIndex].txt[0];
-//                if (! nativeActor) nativeActor = actorLabel;
-//                //ERROR BELOW SOMEWHERE
-//                var targetActor = this.targetTranslation.actors[actorIndex].txt[0];
-//                if (! targetActor) targetActor = actorLabel;
-//                var actorImg = this.play.actors[actorIndex].img;
-//                var nativeText = this.nativeTranslation.lines[linei].txt[0];
-//                var targetText = this.targetTranslation.lines[linei].txt[0];
-//                var targetTexts = this.targetTranslation.lines[linei].txt;
-//                if ( (actorLabel=="YOU") && !actorImg) {
-//                    actorImg = "http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/64/Emotes-face-smile-icon.png";
-//                }
-//                if (!actorImg) {
-//                    actorImg = "http://icons.iconarchive.com/icons/saki/nuoveXT-2/64/Apps-user-info-icon.png";
-//                }
-//                var line = {
-//                    index: index,
-//                    isYou: actorLabel=="YOU",
-//                    nativeActor: nativeActor,
-//                    targetActor: targetActor,
-//                    nativeText: nativeText,
-//                    targetText: targetText,
-//                    targetTexts: targetTexts,
-//                    actorImg: actorImg,
-//                    success: 0,
-//                    fail: 0,
-//                    currentStatus: 0
-//                };
-//                lines.push(line);
-//                index++;
-//            }
-//            this.lines = lines;
-//        }
+        loadLines: function() {
+            if (!this.play || !this.nativeTranslation || !this.targetTranslation) return;
+
+            this.lines = [];
+            var page = this.play.pages[this.pageIndex];
+
+            var startLine = page.sln;
+            var endLine = page.eln;
+
+            var index = 0;
+            for (var linei = startLine; linei <= endLine; linei++) {
+                var actorIndex = this.play.lines[linei].act;
+                var actorLabel = this.play.actors[actorIndex].lbl.toUpperCase();
+                var nativeActor = this.nativeTranslation.actors[actorIndex].txt[0];
+                if (! nativeActor) nativeActor = actorLabel;
+                //ERROR BELOW SOMEWHERE
+                var targetActor = this.targetTranslation.actors[actorIndex].txt[0];
+                if (! targetActor) targetActor = actorLabel;
+                var actorImg = this.play.actors[actorIndex].img;
+                var nativeText = this.nativeTranslation.lines[linei].txt[0];
+                var targetText = this.targetTranslation.lines[linei].txt[0];
+                var targetTexts = this.targetTranslation.lines[linei].txt;
+                if ( (actorLabel=="YOU") && !actorImg) {
+                    actorImg = "http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/64/Emotes-face-smile-icon.png";
+                }
+                if (!actorImg && this.play.lines[linei].img) {
+                    actorImg = this.play.lines[linei].img;
+                }
+                if (!actorImg) {
+                    actorImg = "http://icons.iconarchive.com/icons/saki/nuoveXT-2/64/Apps-user-info-icon.png";
+                }
+                var line = {
+                    index: index,
+                    isYou: actorLabel=="YOU",
+                    nativeActor: nativeActor,
+                    targetActor: targetActor,
+                    nativeText: nativeText,
+                    targetText: targetText,
+                    targetTexts: targetTexts,
+                    actorImg: actorImg,
+                    success: 0,
+                    fail: 0,
+                    currentStatus: 0
+                };
+                this.lines.push(line);
+                index++;
+            }
+        }
     }
 })
 
-
-/** Lookup terms from local CSV file (LEGACY) */
-//.factory("Lookup", ["$http", function($http){
-//    var url   = "lookup/terms-en.csv";
-//    var terms = new Array();
-//
-//    function csvToArray( strData, strDelimiter ){
-//        // Check to see if the delimiter is defined. If not,
-//        // then default to comma.
-//        strDelimiter = (strDelimiter || ",");
-//
-//        // Create a regular expression to parse the CSV values.
-//        var objPattern = new RegExp(
-//            (
-//                // Delimiters.
-//                "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
-//
-//                    // Quoted fields.
-//                    "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
-//
-//                    // Standard fields.
-//                    "([^\"\\" + strDelimiter + "\\r\\n]*))"
-//                ),
-//            "gi"
-//        );
-//
-//
-//        // Create an array to hold our data. Give the array
-//        // a default empty first row.
-//        var arrData = [[]];
-//
-//        // Create an array to hold our individual pattern
-//        // matching groups.
-//        var arrMatches = null;
-//
-//
-//        // Keep looping over the regular expression matches
-//        // until we can no longer find a match.
-//        while (arrMatches = objPattern.exec( strData )){
-//
-//            // Get the delimiter that was found.
-//            var strMatchedDelimiter = arrMatches[ 1 ];
-//
-//            // Check to see if the given delimiter has a length
-//            // (is not the start of string) and if it matches
-//            // field delimiter. If id does not, then we know
-//            // that this delimiter is a row delimiter.
-//            if (
-//                strMatchedDelimiter.length &&
-//                    (strMatchedDelimiter != strDelimiter)
-//                ){
-//
-//                // Since we have reached a new row of data,
-//                // add an empty row to our data array.
-//                arrData.push( [] );
-//
-//            }
-//
-//
-//            // Now that we have our delimiter out of the way,
-//            // let"s check to see which kind of value we
-//            // captured (quoted or unquoted).
-//            if (arrMatches[ 2 ]){
-//
-//                // We found a quoted value. When we capture
-//                // this value, unescape any double quotes.
-//                var strMatchedValue = arrMatches[ 2 ].replace(
-//                    new RegExp( "\"\"", "g" ),
-//                    "\""
-//                );
-//
-//            } else {
-//
-//                // We found a non-quoted value.
-//                var strMatchedValue = arrMatches[ 3 ];
-//
-//            }
-//
-//
-//            // Now that we have our value string, let"s add
-//            // it to the data array.
-//            arrData[ arrData.length - 1 ].push( strMatchedValue );
-//        }
-//
-//        // Return the parsed data.
-//        return( arrData );
-//    }
-//
-//    return {
-//        getTerms: function(callback) {
-//            $http.get(url).then(function(response){
-//            terms = response.data;
-////            alert("read file: " + response.data);
-//            callback(csvToArray(response.data, ";"));
-//        });
-//      }
-//    }
-//}])
 
 /**
  * Perform Android-based speech recognition
  */
 .factory("AndroidSpeechRecognizer", function(Settings) {
 
-  var languages = new Array();
-  return {
+        var languages = new Array();
+        return {
 
-    getSupportedLanguages: function(callback) {
-        if (languages.length > 0) {
-            callback(languages);
-        } else {
-            if (window.plugins && window.plugins.speechrecognizer ) {
-                window.plugins.speechrecognizer.getSupportedLanguages(function(foundLanguages){
-                    //remove langauges not supported by Google translate
-                    languages = [];
-                    for (languagei in foundLanguages) {
-//                        var languageObj = languages[languagei];
-                        if(["he-IL", "yue-Hant-HK"].indexOf(foundLanguages[languagei]) == -1) {
-                            languages.push(foundLanguages[languagei]);
-                        }
-                    }
+            getSupportedLanguages: function (callback) {
+                if (languages.length > 0) {
                     callback(languages);
-                }, function(error){
-                    alert("Could not retrieve the supported languages : " + error);
-                });
-            } else {
-                alert("SpeechRecognizer plugin is NOT active");
-            }
-        }
-    },
-
-    recognizeSpeech: function(prompt, text, locale, callback, arg) {
-        var maxMatches = 5;
-
-        var promptString = prompt + ': "' + text + '"'; // optional
-        if (window.plugins && window.plugins.speechrecognizer ) {
-            window.plugins.speechrecognizer.startRecognize(function(result){
-                callback(result, arg);
-            }, function(errorMessage){
-                alert("Error recognizing speech: " + errorMessage);
-            }, maxMatches, promptString, locale);
-        } else {
-            alert("SpeechRecognizer plugin is NOT active");
-        }
-    }
-  }
-})
-
-/**
- * AndroidTextToSpeech - DOES NOT WORK - A simple example service that returns some data.
- */
-.factory("AndroidTextToSpeech", function() {
-
-    var currentLanguage;
-    var initialized=false;
-
-    return {
-        //TODO: NOT USED?
-        init: function() {
-            if (initialized) return;
-//            alert('cordova=' + cordova);
-            var tts;
-            try {
-                tts = cordova.require("cordova/plugin/tts");
-//                alert('tts=' + tts + '; window.plugins=' + JSON.stringify(window.plugins));
-            } catch (e) {
-                alert("Error: " + e);
-            }
-            if (!tts ) {
-                alert("AndroidTextToSpeech plugin is NOT active");
-                return;
-            }
-            tts.startup(
-                function() { alert('TTS started'); initialized = true; },
-                function() { alert('Failed to startup Text to Speech')}
-            );
-        },
-
-        setLanguage: function(language, callback) {
-            if (currentLanguage == language) {
-                callback(true);
-            } else {
-                var tts = cordova.require("cordova/plugin/tts");
-                alert('tts=' + tts + '; window.plugins=' + JSON.stringify(window.plugins));
-                if (!tts ) {
-                    alert("AndroidTextToSpeech plugin is NOT active");
-                    callback(false);
-                    return;
+                } else {
+                    if (window.plugins && window.plugins.speechrecognizer) {
+                        window.plugins.speechrecognizer.getSupportedLanguages(function (foundLanguages) {
+                            //remove langauges not supported by Google translate
+                            languages = [];
+                            for (languagei in foundLanguages) {
+//                        var languageObj = languages[languagei];
+                                if (["he-IL", "yue-Hant-HK"].indexOf(foundLanguages[languagei]) == -1) {
+                                    languages.push(foundLanguages[languagei]);
+                                }
+                            }
+                            callback(languages);
+                        }, function (error) {
+                            alert("Could not retrieve the supported languages : " + error);
+                        });
+                    } else {
+                        console.log("SpeechRecognizer plugin is NOT active.  Maybe needs a little more time");
+                    }
                 }
+            },
 
-                tts.isLanguageAvailable(language, function() {
-                        tts.setLanguage(language);
-                        currentLanguage = language;
-                    }, function() {
-                        alert("AndroidTextToSpeech plugin cannot set language: " + language);
-                        callback(false);
-                    });
-                callback(true);
-            }
-        },
+            recognizeSpeech: function (prompt, text, locale, callback, arg) {
+                var maxMatches = 5;
 
-        speak: function(text) {
-            var tts = cordova.require("cordova/plugin/tts");
-            if (!tts ) {
-                alert("AndroidTextToSpeech plugin is NOT active");
-                return;
+                if (window.plugins && window.plugins.speechrecognizer) {
+                    window.plugins.speechrecognizer.startRecognize(function (result) {
+                        callback(result, arg);
+                    }, function (errorMessage) {
+                        alert("Error recognizing speech: " + errorMessage);
+                    }, maxMatches, prompt, locale);
+                } else {
+                    alert("SpeechRecognizer plugin is NOT active");
+                }
             }
-            tts.speak(text);
         }
-    }
-})
+    })
 
 /**
  * Soundex and other text functions
@@ -434,7 +285,8 @@ angular.module("gabi.services", ["ionic"])
                                 callback(filePath);
                             },
                             function (error) {
-                                alert("ERROR downloading File: " + filePath + "; error=" + error);
+//                                alert("ERROR downloading File: " + filePath + "; error=" + error);
+                                //unable to download the file.  possibly too large
                             }
                         );
                     },
@@ -484,6 +336,263 @@ angular.module("gabi.services", ["ionic"])
         }
     }
 })
+
+
+/* Google TTS http://translate.google.com/translate_tts?ie=UTF-8&tl=en&q= */
+.factory("GoogleTextToSpeech", function() {
+
+    return {
+
+        getUrl: function(text, language) {
+            var url = "http://translate.google.com/translate_tts?ie=UTF-8&tl=";
+            url += language;
+            url += "&q=";
+            url += encodeURIComponent(text);
+            return url;
+        }
+    }
+})
+
+///* DB Operations */
+//.factory("DeviceDB", function () {
+//    var db = window.openDatabase("gablabdb", "1.0", "Gablab Database", 2000000);
+//    return {
+//        ensureCreated: function() {
+//            tx.executeSql('CREATE TABLE IF NOT EXISTS DEMO (id unique, data)');
+//        }
+//    }
+//})
+
+/* Client for the Gabs web service */
+.factory("GabsClient", function($http, Settings) {
+    return {
+        listPlays: function(loc, lev, callback) {
+            var lan = Settings.getGoogleTranslateLanguage(loc);
+//            alert("GET: " + Settings.gabsUrl + "play/list?lan=" + lan + "&lev=" + lev);
+            $http.get(Settings.gabsUrl + "play/list?lan=" + lan + "&lev=" + lev)
+                .then(
+                    function(result) {
+                        if (!result || !result.data) {
+                            return callback([]);
+                        }
+                        var payload = result.data;
+//                        alert("GET: " + Settings.gabsUrl + "play/list?lan=" + lan + "&lev=" + lev + "\n Received: " + JSON.stringify(payload));
+                        return callback(payload.plays);
+                    }, function(error) {
+                        alert("listPlays() error: " + JSON.stringify(error));
+                        return callback([]);
+                    }
+                );
+        },
+
+        //TODO support locale
+        getPlay: function(playid, nlo, tlo, callback) {
+            var nla = Settings.getGoogleTranslateLanguage(nlo);
+            var tla = Settings.getGoogleTranslateLanguage(tlo);
+            $http.get(Settings.gabsUrl + "play/load/" + playid + "?nlo=" + nlo + "&nla=" + nla + "&tla=" + tla).then(function(result) {
+                var payload = result.data;
+                callback(payload);
+            });
+        },
+
+        //TODO load this from Gabs
+        //get languages supported by Google Translate
+        getSupportedLanguages: function(loc, callback) {
+            var nla = Settings.getGoogleTranslateLanguage(loc);
+            var url = "https://www.googleapis.com/language/translate/v2/languages?key=" + Settings.googleApiKey + "&target=" + nla;
+            $http.get(url).then(function(result) {
+                var payload = result.data.data.languages;
+//                //remove langauges not supported by Google translate
+//                delete languages["he-IL"];
+                callback(payload);
+            });
+        },
+
+        //TODO support localizations with locale rather than language
+//        localize: function(english, tlo, tla, callback) {
+//            if ("en"==tla) return callback(english);
+//            if (! Settings.localizations[tla]) Settings.localizations[tla] = {};
+//            if (Settings.localizations[tla][english]) return callback(Settings.localizations[tla][english]);
+//            $http.get(Settings.gabsUrl + "loc/localize?src=Gabi-UI-localize&nlo=en-US&nla=en&tlo=" + tlo + "&tla=" + tla + "&t=" + encodeURIComponent(english)).then(function(result) {
+//                alert("localize received: " + result.data.trm.txt);
+//                if (! result.data.trm.txt) {
+//                    //unable to get localization
+//                    return callback(english);
+//                }
+//                Settings.localizations[tla][english] = result.data.trm.txt;
+//                callback(result.data.trm.txt);
+//            });
+//        }
+
+        prepareLocalizations: function(englishArray) {
+            var tlo = Settings.nativeLocale;
+            var tla = Settings.getGoogleTranslateLanguage(tlo);
+            if ("en"==tla) return;
+            if (! Settings.localizations[tla]) Settings.localizations[tla] = {};
+            for (var termI in englishArray) {
+                var term = englishArray[termI];
+                if (Settings.localizations[tla][term]) continue;
+
+                this.lookupLocalization(term);
+            }
+        },
+
+        lookupLocalization: function(term) {
+            var tla = Settings.getGoogleTranslateLanguage(Settings.nativeLocale);
+            var tlo = Settings.nativeLocale;
+            $http.get(Settings.gabsUrl + "loc/localize?src=Gabi-UI-localize&nlo=en-US&nla=en&tlo=" + tlo + "&tla=" + tla + "&t=" + encodeURIComponent(term)).then(function(result) {
+                console.log("localize received: " + JSON.stringify(result.data));
+                if (! result.data.trm.txt) {
+                    console.log("Unable to localize: " + term);
+                }
+                Settings.localizations[tla][term] = result.data.trm.txt;
+                console.log("Localized " + term + " to " + result.data.trm.txt);
+            });
+        }
+    }
+})
+
+
+
+
+/* Client for the Gabs web service */
+.factory("LangUtil", function(GabsClient, Settings, AndroidSpeechRecognizer) {
+    var langMap = [];
+    var langArr = [];
+    return {
+
+        getLanguageArray: function(nativeLoc, callback) {
+            if (langArr && langArr[nativeLoc]) callback(langArr[nativeLoc]);
+            GabsClient.getSupportedLanguages(nativeLoc, function(languages) {
+                langArr[nativeLoc] = languages;
+//                alert("langArr[nativeLang]=" + JSON.stringify(langArr[nativeLang]));
+                callback(languages);
+            });
+        },
+
+        /**
+         * LangMap contains key-value pair, where key = the languageId (for the purposes of Google Translate API)
+         * and value = the name of the language - in the current language
+         * @param nativeLocale
+         * @param callback
+         * @returns {*}
+         */
+        getLanguageMap: function(nativeLocale, callback) {
+            if (langMap && langMap[nativeLocale]) return callback(langMap[nativeLocale]);
+            langMap[nativeLocale] = { };
+            this.getLanguageArray(nativeLocale, function(larr) {
+                for (var langi in larr) {
+                    var langObj = larr[langi];
+//                    alert("langObj=" + JSON.stringify(langObj));
+                    var key = langObj.language;
+                    langMap[nativeLocale][key] = langObj.name;
+                }
+//                alert("langMap=" + JSON.stringify(langMap));
+                callback(langMap[nativeLocale]);
+            });
+        },
+
+        //assumes we have already loaded the map for nativeLang
+        getLanguageName: function(nativeLocale,targetLocale) {
+            var languageId = this.getLanguageId(targetLocale);
+            if (langMap && langMap[nativeLocale] && langMap[nativeLocale][languageId]) return langMap[nativeLocale][languageId];
+            console.log("Failed to look up the name for language: " + languageId + " in " + nativeLocale);
+            return languageId;
+        },
+
+        /**
+         * Get the language ID for the purposes of lookup of supported languages
+         * @param loc
+         * @returns {*}
+         * TODO not used
+         */
+        getLanguageId: function(loc) {
+            var lang = Settings.parseLanguageId(loc);
+            if (lang == "cmn-Hans") return "zh";
+            if (lang == "cmn-Hant") return "zh-TW";
+            if (lang == "fil") return "tl";
+            if (lang == "nb") return "no";
+            return lang;
+        },
+
+        //assumes we have already loaded the map for nativeLang
+        getLocaleDisplay: function(nativeLocale, targetLocale, hideCountry) {
+//            var divider = locale.indexOf("-");
+//            var lang = locale.substring(0,divider);
+            var nativeLangId = this.getLanguageId(nativeLocale);
+            var targetLangId = this.getLanguageId(targetLocale);
+            var country = Settings.parseCountry(targetLocale);
+            var langName = this.getLanguageName(nativeLocale, targetLocale);
+//            if (! langName || langName == targetLangId) {
+//                if (targetLangId == "cmn-Hans") langName = this.getLanguageName(nativeLangId, "zh");
+//                if (targetLangId == "cmn-Hant") langName = this.getLanguageName(nativeLangId, "zh-TW");
+//                if (targetLangId == "fil") langName = this.getLanguageName(nativeLangId, "tl");
+//                if (targetLangId == "nb") langName = this.getLanguageName(nativeLangId, "no");
+//            }
+            if (! country || hideCountry) return langName;
+            return langName + " (" + country + ")";
+        },
+
+        /**
+         * create the supportedLanguages object for key: native langId
+         * @param nativeLocale
+         */
+        loadLanguageInfo: function(nativeLocale) {
+            if (! nativeLocale) nativeLocale = Settings.nativeLocale;
+            var languageId = this.getLanguageId(nativeLocale);
+            var self = this;
+
+            if (Settings.supportedLanguages && Settings.supportedLanguages[languageId]) return;
+
+            self.getLanguageMap(nativeLocale, function(map) {
+//            alert("Loaded language map: " + JSON.stringify(map));
+
+                Settings.supportedLanguages[languageId] = [];
+                AndroidSpeechRecognizer.getSupportedLanguages(function(languages) {
+                    for (var langi in languages) {
+                        var aLocale = languages[langi];
+//                    var lang = locale.substring(0,2);
+//                    var country = locale.substr(3);
+//                    var langName = LangUtil.getLanguageName(Settings.getNativeLanguage(), lang);
+//                    var langDisplay = langName + " (" + country + ")";
+                        var langDisplay = self.getLocaleDisplay(nativeLocale, aLocale);
+                        Settings.supportedLanguages[languageId].push(
+                            {
+                                id: languages[langi],
+                                name: langDisplay
+                            }
+                        );
+                    }
+
+                    //sort the languages
+                    Settings.supportedLanguages[languageId].sort(function(a, b) {
+                        var textA = a.name.toUpperCase();
+                        var textB = b.name.toUpperCase();
+                        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                    });
+//                alert("Loaded supportedLanguages= " + Settings.supportedLanguages[Settings.getNativeLanguage()]);
+//              LangUtil.getSupportedLanguages(Settings.getNativeLanguage(), receiveLanguages);
+                });
+            });
+        }
+    }
+})
+
+.directive("swipePage", function($ionicGesture, $state) {
+    return {
+        restrict : 'A',
+        link : function(scope, elem, attr) {
+            $ionicGesture.on("swipeleft", scope.swipeLeft, elem);
+            $ionicGesture.on("swiperight", scope.swipeRight, elem);
+
+        }
+    }
+});
+
+
+
+
+
 
 
 /* Google OAuth2 - not tested*/
@@ -600,199 +709,163 @@ angular.module("gabi.services", ["ionic"])
 //    }
 //})
 
-/* Google TTS http://translate.google.com/translate_tts?ie=UTF-8&tl=en&q= */
-.factory("GoogleTextToSpeech", function() {
 
-    return {
-
-        getUrl: function(text, language) {
-            var url = "http://translate.google.com/translate_tts?ie=UTF-8&tl=";
-            url += language;
-            url += "&q=";
-            url += encodeURIComponent(text);
-            return url;
-        }
-    }
-})
-
-///* DB Operations */
-//.factory("DeviceDB", function () {
-//    var db = window.openDatabase("gablabdb", "1.0", "Gablab Database", 2000000);
+/**
+ * AndroidTextToSpeech - DOES NOT WORK
+ */
+//.factory("AndroidTextToSpeech", function() {
+//
+//    var currentLanguage;
+//    var initialized=false;
+//
 //    return {
-//        ensureCreated: function() {
-//            tx.executeSql('CREATE TABLE IF NOT EXISTS DEMO (id unique, data)');
+//        init: function() {
+//            if (initialized) return;
+//            var tts;
+//            try {
+//                tts = cordova.require("cordova/plugin/tts");
+//            } catch (e) {
+//                alert("Error: " + e);
+//            }
+//            if (!tts ) {
+//                alert("AndroidTextToSpeech plugin is NOT active");
+//                return;
+//            }
+//            tts.startup(
+//                function() { alert('TTS started'); initialized = true; },
+//                function() { alert('Failed to startup Text to Speech')}
+//            );
+//        },
+
+//        setLanguage: function(language, callback) {
+//            if (currentLanguage == language) {
+//                callback(true);
+//            } else {
+//                var tts = cordova.require("cordova/plugin/tts");
+//                if (!tts ) {
+//                    alert("AndroidTextToSpeech plugin is NOT active");
+//                    callback(false);
+//                    return;
+//                }
+//
+//                tts.isLanguageAvailable(language, function() {
+//                        tts.setLanguage(language);
+//                        currentLanguage = language;
+//                    }, function() {
+//                        alert("AndroidTextToSpeech plugin cannot set language: " + language);
+//                        callback(false);
+//                    });
+//                callback(true);
+//            }
+//        },
+//
+//        speak: function(text) {
+//            var tts = cordova.require("cordova/plugin/tts");
+//            if (!tts ) {
+//                alert("AndroidTextToSpeech plugin is NOT active");
+//                return;
+//            }
+//            tts.speak(text);
 //        }
 //    }
 //})
 
-/* Client for the Gabs web service */
-.factory("GabsClient", function($http, Settings) {
-    return {
-        listPlays: function(lan, lev, callback) {
-//            alert("GET: " + Settings.gabsUrl + "play/list?lan=" + lan + "&lev=" + lev);
-            $http.get(Settings.gabsUrl + "play/list?lan=" + lan + "&lev=" + lev)
-                .then(
-                    function(result) {
-                        if (!result || !result.data) {
-                            return callback([]);
-                        }
-                        var payload = result.data;
-
-                        return callback(payload.plays);
-                    }, function(error) {
-                        alert("listPlays() error: " + JSON.stringify(error));
-                        return callback([]);
-                    }
-                );
-        },
-
-        //TODO support locale
-        getPlay: function(playid, nlo, nla, tlo, tla, callback) {
-//            $http.get("http://gabs-gablabio.rhcloud.com/play/load/" + playid + "?nlo=" + nlo + "&nla=" + nla + "&tlo=" + tlo + "&tla=" + tla).then(function(result) {
-            $http.get(Settings.gabsUrl + "play/load/" + playid + "?nlo=" + nlo + "&nla=" + nla + "&tla=" + tla).then(function(result) {
-                var payload = result.data;
-                callback(payload);
-            });
-        },
-
-        //TODO load this from Gabs
-        //get languages supported by Google Translate
-        getSupportedLanguages: function(targ, callback) {
-            var url = "https://www.googleapis.com/language/translate/v2/languages?key=" + Settings.googleApiKey + "&target=" + targ;
-            $http.get(url).then(function(result) {
-                var payload = result.data.data.languages;
-//                //remove langauges not supported by Google translate
-//                delete languages["he-IL"];
-                callback(payload);
-            });
-        },
-
-        //TODO support localizations with locale rather than language
-        localize: function(english, tlo, tla, callback) {
-            if ("en"==tla) return callback(english);
-            if (! Settings.localizations[tla]) Settings.localizations[tla] = {};
-            if (Settings.localizations[tla][english]) return callback(Settings.localizations[tla][english]);
-            $http.get(Settings.gabsUrl + "loc/localize?src=Gabi-UI-localize&nlo=en-US&nla=en&tlo=" + tlo + "&tla=" + tla + "&t=" + encodeURIComponent(english)).then(function(result) {
-                alert("localize received: " + JSON.stringify(result));
-                if (! result.data.trm.txt) {
-                    //unable to get localization
-                    return callback(english);
-                }
-                Settings.localizations[tla][english] = result.data.trm.txt;
-                callback(result.data.trm.txt);
-            });
-        }
-    }
-})
 
 
-
-
-/* Client for the Gabs web service */
-.factory("LangUtil", function(GabsClient, Settings, AndroidSpeechRecognizer) {
-    var langMap = [];
-    var langArr = [];
-    return {
-
-        getLanguageArray: function(nativeLang, callback) {
-            if (langArr && langArr[nativeLang]) callback(langArr[nativeLang]);
-
-//            alert("getLanguageArray()...");
-            GabsClient.getSupportedLanguages(nativeLang, function(languages) {
-
-                langArr[nativeLang] = languages;
-//                alert("langArr[nativeLang]=" + JSON.stringify(langArr[nativeLang]));
-                callback(languages);
-            });
-        },
-
-        getLanguageMap: function(nativeLang, callback) {
-            if (langMap && langMap[nativeLang]) return callback(langMap[nativeLang]);
-            langMap[nativeLang] = { };
-            this.getLanguageArray(nativeLang, function(larr) {
-                for (var langi in larr) {
-                    var langObj = larr[langi];
-//                    alert("langObj=" + JSON.stringify(langObj));
-                    var key = langObj.language;
-                    langMap[nativeLang][key] = langObj.name;
-                }
-//                alert("langMap[nativeLang]=" + langMap[nativeLang]);
-                callback(langMap[nativeLang]);
-            });
-        },
-
-        //assumes we have already loaded the map for nativeLang
-        getLanguageName: function(nativeLang,languageId) {
-            if (langMap && langMap[nativeLang] && langMap[nativeLang][languageId]) return langMap[nativeLang][languageId];
-            console.log("Failed to look up the name for language: " + languageId + " in " + nativeLang);
-            return languageId;
-        },
-
-        //assumes we have already loaded the map for nativeLang
-        getLocaleDisplay: function(nativeLang, locale) {
-//            var divider = locale.indexOf("-");
-//            var lang = locale.substring(0,divider);
-            var lang = Settings.parseLanguageId(locale);
-            var country = Settings.parseCountry(locale);
-            var langName = this.getLanguageName(nativeLang, lang);
-            if (! langName || langName == lang) {
-                if (lang == "cmn-Hans") langName = this.getLanguageName(nativeLang, "zh");
-                if (lang == "cmn-Hant") langName = this.getLanguageName(nativeLang, "zh-TW");
-                if (lang == "fil") langName = this.getLanguageName(nativeLang, "tl");
-                if (lang == "nb") langName = this.getLanguageName(nativeLang, "no");
-            }
-            if (! country) return langName;
-            return langName + " (" + country + ")";
-        },
-
-        loadLanguageInfo: function() {
-//            alert("loadLanguageInfo()...");
-            var self = this;
-            if (Settings.supportedLanguages && Settings.supportedLanguages[Settings.getNativeLanguage()]) return;
-
-            self.getLanguageMap(Settings.getNativeLanguage(), function(map) {
-//            alert("Loaded language map: " + JSON.stringify(map));
-
-                Settings.supportedLanguages[Settings.getNativeLanguage()] = [];
-                AndroidSpeechRecognizer.getSupportedLanguages(function(languages) {
-                    for (var langi in languages) {
-                        var locale = languages[langi];
-//                    var lang = locale.substring(0,2);
-//                    var country = locale.substr(3);
-//                    var langName = LangUtil.getLanguageName(Settings.getNativeLanguage(), lang);
-//                    var langDisplay = langName + " (" + country + ")";
-                        var langDisplay = self.getLocaleDisplay(Settings.getNativeLanguage(), locale);
-                        Settings.supportedLanguages[Settings.getNativeLanguage()].push(
-                            {
-                                id: languages[langi],
-                                name: langDisplay
-                            }
-                        );
-                    }
-
-                    //sort the languages
-                    Settings.supportedLanguages[Settings.getNativeLanguage()].sort(function(a, b) {
-                        var textA = a.name.toUpperCase();
-                        var textB = b.name.toUpperCase();
-                        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
-                    });
-//                alert("Loaded supportedLanguages= " + Settings.supportedLanguages[Settings.getNativeLanguage()]);
-//              LangUtil.getSupportedLanguages(Settings.getNativeLanguage(), receiveLanguages);
-                });
-            });
-        }
-    }
-})
-
-.directive("swipePage", function($ionicGesture, $state) {
-    return {
-        restrict : 'A',
-        link : function(scope, elem, attr) {
-            $ionicGesture.on("swipeleft", scope.swipeLeft, elem);
-            $ionicGesture.on("swiperight", scope.swipeRight, elem);
-
-        }
-    }
-})
-
-;
+/** Lookup terms from local CSV file (LEGACY) */
+//.factory("Lookup", ["$http", function($http){
+//    var url   = "lookup/terms-en.csv";
+//    var terms = new Array();
+//
+//    function csvToArray( strData, strDelimiter ){
+//        // Check to see if the delimiter is defined. If not,
+//        // then default to comma.
+//        strDelimiter = (strDelimiter || ",");
+//
+//        // Create a regular expression to parse the CSV values.
+//        var objPattern = new RegExp(
+//            (
+//                // Delimiters.
+//                "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+//
+//                    // Quoted fields.
+//                    "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+//
+//                    // Standard fields.
+//                    "([^\"\\" + strDelimiter + "\\r\\n]*))"
+//                ),
+//            "gi"
+//        );
+//
+//
+//        // Create an array to hold our data. Give the array
+//        // a default empty first row.
+//        var arrData = [[]];
+//
+//        // Create an array to hold our individual pattern
+//        // matching groups.
+//        var arrMatches = null;
+//
+//
+//        // Keep looping over the regular expression matches
+//        // until we can no longer find a match.
+//        while (arrMatches = objPattern.exec( strData )){
+//
+//            // Get the delimiter that was found.
+//            var strMatchedDelimiter = arrMatches[ 1 ];
+//
+//            // Check to see if the given delimiter has a length
+//            // (is not the start of string) and if it matches
+//            // field delimiter. If id does not, then we know
+//            // that this delimiter is a row delimiter.
+//            if (
+//                strMatchedDelimiter.length &&
+//                    (strMatchedDelimiter != strDelimiter)
+//                ){
+//
+//                // Since we have reached a new row of data,
+//                // add an empty row to our data array.
+//                arrData.push( [] );
+//
+//            }
+//
+//
+//            // Now that we have our delimiter out of the way,
+//            // let"s check to see which kind of value we
+//            // captured (quoted or unquoted).
+//            if (arrMatches[ 2 ]){
+//
+//                // We found a quoted value. When we capture
+//                // this value, unescape any double quotes.
+//                var strMatchedValue = arrMatches[ 2 ].replace(
+//                    new RegExp( "\"\"", "g" ),
+//                    "\""
+//                );
+//
+//            } else {
+//
+//                // We found a non-quoted value.
+//                var strMatchedValue = arrMatches[ 3 ];
+//
+//            }
+//
+//
+//            // Now that we have our value string, let"s add
+//            // it to the data array.
+//            arrData[ arrData.length - 1 ].push( strMatchedValue );
+//        }
+//
+//        // Return the parsed data.
+//        return( arrData );
+//    }
+//
+//    return {
+//        getTerms: function(callback) {
+//            $http.get(url).then(function(response){
+//            terms = response.data;
+////            alert("read file: " + response.data);
+//            callback(csvToArray(response.data, ";"));
+//        });
+//      }
+//    }
+//}])

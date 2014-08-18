@@ -121,4 +121,10 @@ Add your new files and directories to the www folder.
 ### Languages supported by Google tranlsate ####
 https://www.googleapis.com/language/translate/v2/languages?key=AIzaSyBiP5o_Zvty1wte0P8BzVsDmW9hlJxVcz4&target=en
 
+Chinese (Traditional - Hong Kong/Macau)	zh-HK   corresponds to: cmn-Hans-HK
+Chinese (Simplified)	zh-CN                   corresponds to: cmn-Hans-CN
+Chinese (Traditional)	zh-TW                   corresponds to: cmn-Hant-TW
+
+
 ### Languages supported by Android Speech Recognizer ###
+cmn-Hans-CN, cmn-Hans-HK, cmn-Hant-TW, yue-Hant-HK
