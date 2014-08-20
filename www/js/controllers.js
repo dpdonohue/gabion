@@ -5,7 +5,7 @@ angular.module("gabi.controllers", ["ionic"])
     $scope.settings = Settings;
 
     $scope.listSupportedLanguages = function() {
-//        alert("Settings.getNativeLanguage()=" + Settings.getNativeLanguage() + ": " + );
+//        alert("Settings.supportedLanguages=" + JSON.stringify(Settings.supportedLanguages));
         return Settings.supportedLanguages[LangUtil.getLanguageId(Settings.nativeLocale)];
     };
 
@@ -103,13 +103,14 @@ angular.module("gabi.controllers", ["ionic"])
 
     GabsClient.prepareLocalizations(["Select a Simulation"]);
 
-    if (Settings.loadedPlaysLevel == Settings.skillLevel) {
+    if (Settings.loadedPlaysLevel == Settings.skillLevel && Settings.loadedPlaysLoc == Settings.nativeLocale) {
         $scope.playList = Settings.playList;
     } else {
         GabsClient.listPlays(Settings.nativeLocale, Settings.skillLevel, function (playList) {
             if (!playList) playList = [];
             Settings.playList = playList;
             Settings.loadedPlaysLevel = Settings.skillLevel;
+            Settings.loadedPlaysLoc = Settings.nativeLocale;
             $scope.playList = playList;
 //            alert("loaded plays: skill=" + Settings.skillLevel + "; play list has " + $scope.playList.length + "; Settings.loadedPlaysLevel=" + Settings.loadedPlaysLevel + "; applying...");
 //            $scope.$apply();
@@ -135,7 +136,14 @@ angular.module("gabi.controllers", ["ionic"])
 
     $scope.recognizedSpeech = [];
 
-    $scope.lineIndex = 0;
+//    $scope.lineIndex = 0;
+
+    if (Settings.play.pages && Settings.play.pages.length > Settings.pageIndex) {
+        $scope.lineIndex = Settings.play.pages[Settings.pageIndex].sln;
+    } else {
+        $scope.lineIndex = 0;
+    }
+
 //    var audioFiles = [];
     var preparedLines = [];
 //    var lines = [];
@@ -258,7 +266,18 @@ angular.module("gabi.controllers", ["ionic"])
     };
 
     $scope.getLines = function() {
-        return Settings.lines;
+        try {
+            var page = Settings.play.pages[Settings.pageIndex];
+//            alert("page=" + JSON.stringify(page));
+            var linesArray = [];
+            for (var linei=page.sln; linei <= page.eln; linei++) {
+                linesArray.push(Settings.lines[linei]);
+            }
+            return linesArray;
+        } catch (err) {
+            alert(err);
+        }
+
     };
 
     $scope.getPageTitleNative = function() {
@@ -279,6 +298,7 @@ angular.module("gabi.controllers", ["ionic"])
     };
 
     var playTarget = function(index, callback) {
+//        alert("playTarget(" + index + ") " + JSON.stringify(Settings.lines));
         playOrDownloadAudio(Settings.lines[index].targetText, Settings.targetLocale, callback);
     };
 
@@ -290,9 +310,15 @@ angular.module("gabi.controllers", ["ionic"])
         });
     };
 
+        /**
+         * This is called from play.html when the other person speaks
+         * @param index
+         */
     $scope.playLine = function(index) {
         playTarget(index, function() {
+            Settings.lines[index].currentStatus = 1;
             if (index >= $scope.lineIndex) {
+//                alert("index=" + index + "; set currentStatus to 1");
                 return advanceLine();
             }
         });
@@ -329,6 +355,7 @@ angular.module("gabi.controllers", ["ionic"])
         Settings.pageIndex++;
         if (Settings.pageIndex >= Settings.play.pages.length) Settings.pageIndex = $scope.settings.play.pages.length - 1;
         $scope.lineIndex = Settings.play.pages[Settings.pageIndex].sln;
+//        Settings.loadLines();
 //        var lines = $scope.getLines();
 //        $scope.$apply();
         $state.go("tab.play", {}, {reload: true});
@@ -342,6 +369,7 @@ angular.module("gabi.controllers", ["ionic"])
         }
 
         $scope.lineIndex = Settings.play.pages[Settings.pageIndex].sln;
+//        Settings.loadLines();
 //        $scope.getLines();
 //        $scope.$apply();
         $state.go("tab.play", {}, {reload: true});
@@ -383,6 +411,9 @@ angular.module("gabi.controllers", ["ionic"])
     };
 
     var advanceLine = function() {
+//        alert("Advancing to line index: " + $scope.lineIndex + 1);
+//        $scope.lineIndex++;
+//        $scope.$apply();
         if ($scope.lineIndex < Settings.lines.length) {
             $scope.lineIndex++;
             $scope.$apply();
@@ -395,7 +426,8 @@ angular.module("gabi.controllers", ["ionic"])
     };
 
     $scope.isPageFinished = function() {
-        return $scope.lineIndex >= Settings.lines.length;
+        var page = Settings.play.pages[Settings.pageIndex];
+        return $scope.lineIndex > page.eln;
     };
 
     //iheard can be a string or an array of strings
@@ -457,10 +489,24 @@ angular.module("gabi.controllers", ["ionic"])
 //        return ($scope.lineIndex > endLine);
 //    };
 
+        /**
+         * The play is finished when the last line is complete
+         * @returns {*|line.currentStatus|number|Settings.lines.currentStatus}
+         */
     $scope.isPlayFinished = function() {
-        if (! Settings.play.pages) return true;
-        var endLine = Settings.play.lines.length - 1;
-        return ($scope.lineIndex > endLine);
+        try {
+            var endLine = Settings.lines[Settings.lines.length - 1];
+            return (endLine && endLine.currentStatus);
+
+//        if (! Settings.play.pages) return true;
+//        var atLastLine = $scope.lineIndex >= (Settings.lines.length - 1);
+//            var lastLineFinished = Settings.lines[$scope.lineIndex] && Settings.lines[$scope.lineIndex].currentStatus;
+//        return atLastLine && lastLineFinished;
+//            alert("$scope.lineIndex=" + $scope.lineIndex + "; endLine=" + endLine + "; lastLineFinished=" + lastLineFinished);
+//            return ($scope.lineIndex >= endLine && lastLineFinished);
+        } catch (err) {
+            alert(err);
+        }
     };
 
     $scope.hasNextPage = function() {

@@ -139,14 +139,14 @@
           <button ng-click="previousPage()" ng-show="settings.pageIndex > 0" class="button button-light gabi-button-old">
               <!--<img class="gabi-float-left" src="img/oxygen-left-32.png">-->
               <i class="icon ion-arrow-left-a gabi-float-left"></i>
-              {{ localize("Previous") }}
+              &nbsp;{{ localize("Previous") }}
           </button>
       </div>
       <div class="col col-50 gabi-right" ng-show="hasNextPage() && isPageFinished()">
           <button ng-click="nextPage()" class="button button-energized gabi-button-highlighted">
               <!--<img class="gabi-float-right" src="img/oxygen-right-32.png">-->
               <i class="icon ion-arrow-right-a gabi-float-right"></i>
-              {{ localize("Next") }}
+              {{ localize("Next") }}&nbsp;
           </button>
       </div>
     </div>

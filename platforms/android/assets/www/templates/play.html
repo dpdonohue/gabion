@@ -128,23 +128,25 @@
 
     <div class="gabi-spaceabove">
         <div class="gabi-centered">
-            <!--ng-show="isPlayFinished()"-->
-            <button ng-click="goBack()" class="button button-energized gabi-button-highlighted">
-                <img class="gabi-float-left" src="img/check-green-32.png">
-                <h4>{{ localize("Finished") }}</h4>
+            <button ng-click="goBack()" class="button button-balanced gabi-button-highlighted" ng-show="isPlayFinished()">
+                <!--<img class="gabi-float-left" src="img/check-green-32.png">-->
+                <i class="icon ion-checkmark-round gabi-float-left"></i>
+                &nbsp;{{ localize("Finished") }}
             </button>
         </div>
         <div class="row">
       <div class="col col-50 gabi-left">
           <button ng-click="previousPage()" ng-show="settings.pageIndex > 0" class="button button-light gabi-button-old">
-              <img class="gabi-float-left" src="img/oxygen-left-32.png">
-              <h4>{{ localize("Previous") }}</h4>
+              <!--<img class="gabi-float-left" src="img/oxygen-left-32.png">-->
+              <i class="icon ion-arrow-left-a gabi-float-left"></i>
+              &nbsp;{{ localize("Previous") }}
           </button>
       </div>
       <div class="col col-50 gabi-right" ng-show="hasNextPage() && isPageFinished()">
           <button ng-click="nextPage()" class="button button-energized gabi-button-highlighted">
-              <img class="gabi-float-right" src="img/oxygen-right-32.png">
-              <h4>{{ localize("Next") }}</h4>
+              <!--<img class="gabi-float-right" src="img/oxygen-right-32.png">-->
+              <i class="icon ion-arrow-right-a gabi-float-right"></i>
+              {{ localize("Next") }}&nbsp;
           </button>
       </div>
     </div>

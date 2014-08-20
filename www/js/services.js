@@ -11,9 +11,10 @@ angular.module("gabi.services", ["ionic"])
         gabsUrl: "http://gabs-gablabio.rhcloud.com/",
 //        gabsUrl: "http://localhost:3000/",
         terms: [],
-        currentPlay: "trip1.txt",
+//        currentPlay: "trip1.txt",
         playList: [],
         loadedPlaysLevel: 0,
+        loadedPlaysLoc: null,
         play: {},
         pageIndex : 0,
         targetTranslation: {},
@@ -65,17 +66,19 @@ angular.module("gabi.services", ["ionic"])
         supportedLanguages: [],
         lines: [],
 
+        /**
+         * Load all lines for the play
+         */
         loadLines: function() {
             if (!this.play || !this.nativeTranslation || !this.targetTranslation) return;
 
             this.lines = [];
-            var page = this.play.pages[this.pageIndex];
+            var lastPage = this.play.pages[this.play.pages.length - 1];
 
-            var startLine = page.sln;
-            var endLine = page.eln;
+            var endLine = lastPage.eln;
 
-            var index = 0;
-            for (var linei = startLine; linei <= endLine; linei++) {
+//            var index = 0;
+            for (var linei = 0; linei <= endLine; linei++) {
                 var actorIndex = this.play.lines[linei].act;
                 var actorLabel = this.play.actors[actorIndex].lbl.toUpperCase();
                 var nativeActor = this.nativeTranslation.actors[actorIndex].txt[0];
@@ -97,7 +100,7 @@ angular.module("gabi.services", ["ionic"])
                     actorImg = "http://icons.iconarchive.com/icons/saki/nuoveXT-2/64/Apps-user-info-icon.png";
                 }
                 var line = {
-                    index: index,
+                    index: linei,
                     isYou: actorLabel=="YOU",
                     nativeActor: nativeActor,
                     targetActor: targetActor,
@@ -110,7 +113,7 @@ angular.module("gabi.services", ["ionic"])
                     currentStatus: 0
                 };
                 this.lines.push(line);
-                index++;
+//                index++;
             }
         }
     }

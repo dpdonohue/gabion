@@ -3,16 +3,18 @@ angular.module("gabi.services", ["ionic"])
 .factory("Settings", function() {
 
     return {
-        targetLocale: "es-MX",
         nativeLocale: "en-US",
+//        nativeLocale: "de-DE",
+        targetLocale: "es-MX",
 //        targetLocale: "cmn-Hans-CN",
         googleApiKey: "AIzaSyBiP5o_Zvty1wte0P8BzVsDmW9hlJxVcz4",
         gabsUrl: "http://gabs-gablabio.rhcloud.com/",
 //        gabsUrl: "http://localhost:3000/",
         terms: [],
-        currentPlay: "trip1.txt",
+//        currentPlay: "trip1.txt",
         playList: [],
         loadedPlaysLevel: 0,
+        loadedPlaysLoc: null,
         play: {},
         pageIndex : 0,
         targetTranslation: {},
@@ -64,17 +66,19 @@ angular.module("gabi.services", ["ionic"])
         supportedLanguages: [],
         lines: [],
 
+        /**
+         * Load all lines for the play
+         */
         loadLines: function() {
             if (!this.play || !this.nativeTranslation || !this.targetTranslation) return;
 
             this.lines = [];
-            var page = this.play.pages[this.pageIndex];
+            var lastPage = this.play.pages[this.play.pages.length - 1];
 
-            var startLine = page.sln;
-            var endLine = page.eln;
+            var endLine = lastPage.eln;
 
-            var index = 0;
-            for (var linei = startLine; linei <= endLine; linei++) {
+//            var index = 0;
+            for (var linei = 0; linei <= endLine; linei++) {
                 var actorIndex = this.play.lines[linei].act;
                 var actorLabel = this.play.actors[actorIndex].lbl.toUpperCase();
                 var nativeActor = this.nativeTranslation.actors[actorIndex].txt[0];
@@ -96,7 +100,7 @@ angular.module("gabi.services", ["ionic"])
                     actorImg = "http://icons.iconarchive.com/icons/saki/nuoveXT-2/64/Apps-user-info-icon.png";
                 }
                 var line = {
-                    index: index,
+                    index: linei,
                     isYou: actorLabel=="YOU",
                     nativeActor: nativeActor,
                     targetActor: targetActor,
@@ -109,7 +113,7 @@ angular.module("gabi.services", ["ionic"])
                     currentStatus: 0
                 };
                 this.lines.push(line);
-                index++;
+//                index++;
             }
         }
     }
@@ -429,24 +433,35 @@ angular.module("gabi.services", ["ionic"])
             var tla = Settings.getGoogleTranslateLanguage(tlo);
             if ("en"==tla) return;
             if (! Settings.localizations[tla]) Settings.localizations[tla] = {};
+//            var englishArray = englishPipeList.split("|");
+            var englishTermsToLookup = [];
             for (var termI in englishArray) {
                 var term = englishArray[termI];
                 if (Settings.localizations[tla][term]) continue;
-
-                this.lookupLocalization(term);
+                englishTermsToLookup.push(term);
             }
+            if (! englishTermsToLookup || englishTermsToLookup.length == 0) return;
+//            var newEnglishPipelist = englishTermsToLookup.join("|");
+            this.lookupLocalization(englishTermsToLookup);
         },
 
-        lookupLocalization: function(term) {
+        lookupLocalization: function(terms) {
+            var termsPipeList = terms.join("|");
+//            this.lookupLocalization(newEnglishPipelist);
             var tla = Settings.getGoogleTranslateLanguage(Settings.nativeLocale);
             var tlo = Settings.nativeLocale;
-            $http.get(Settings.gabsUrl + "loc/localize?src=Gabi-UI-localize&nlo=en-US&nla=en&tlo=" + tlo + "&tla=" + tla + "&t=" + encodeURIComponent(term)).then(function(result) {
-                console.log("localize received: " + JSON.stringify(result.data));
-                if (! result.data.trm.txt) {
-                    console.log("Unable to localize: " + term);
+            $http.get(Settings.gabsUrl + "loc/localize?src=Gabi-UI-localize&nlo=en-US&nla=en&tlo=" +
+                tlo + "&tla=" + tla + "&t=" + encodeURIComponent(termsPipeList)).then(function(result) {
+                console.log("lookupLocalization received: " + JSON.stringify(result));
+                if (! result.data) {
+                    console.log("Unable to localize: " + termsPipeList);
                 }
-                Settings.localizations[tla][term] = result.data.trm.txt;
-                console.log("Localized " + term + " to " + result.data.trm.txt);
+                for (var termIx in result.data) {
+                    var targetTerm = result.data[termIx].txt;
+                    var englishTerm = terms[termIx];
+                    Settings.localizations[tla][englishTerm] = targetTerm;
+                    console.log("Localized " + englishTerm + " to " + targetTerm);
+                }
             });
         }
     }
