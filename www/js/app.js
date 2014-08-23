@@ -68,28 +68,48 @@ angular.module('gabi', ['ionic', 'ui.router', 'gabi.services', 'gabi.controllers
                 }
             })
 
-            .state('tab.letsgo', {
-                url: '/letsgo',
+            .state('tab.drills', {
+                url: '/drills',
                 views: {
-                    'letsgo-tab': {
-                        templateUrl: 'templates/letsgo.html',
-                        controller: 'LetsgoCtrl'
+                    'drills-tab': {
+                        templateUrl: 'templates/drills.html',
+                        controller: 'DrillsCtrl'
                     }
                 }
             })
 
-            .state('tab.play', {
-                url: '/play',
+            .state('tab.drill-go', {
+                url: '/drill-go',
                 views: {
-                    'play-tab': {
-                        templateUrl: 'templates/play.html',
+                    'drills-tab': {
+                        templateUrl: 'templates/drill-go.html',
+                        controller: 'PlayCtrl'
+                    }
+                }
+            })
+
+            .state('tab.sims', {
+                url: '/sims',
+                views: {
+                    'sims-tab': {
+                        templateUrl: 'templates/sims.html',
+                        controller: 'SimsCtrl'
+                    }
+                }
+            })
+
+            .state('tab.sim-go', {
+                url: '/sim-go',
+                views: {
+                    'sims-tab': {
+                        templateUrl: 'templates/sim-go.html',
                         controller: 'PlayCtrl'
                     }
                 }
             });
 
         // if none of the above states are matched, use this as the fallback
-        $urlRouterProvider.otherwise('/tab/letsgo');
+        $urlRouterProvider.otherwise('/tab/drills');
 
     })
 

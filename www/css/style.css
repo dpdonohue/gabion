@@ -120,12 +120,39 @@
 }
 
 .gabi-page-finished {
-    background-color: dddddd;
+    background-color: #dddddd;
+}
+.gabi-img-small {
+    width: 40px;
+    height: 40px;
+    /*margin-top: -12px;*/
+    /*margin-right: -10px;*/
+    /*vertical-align: middle;*/
 }
 
+/*.gabi-valign {*/
+    /*display: table;*/
+    /*border: 1px solid red;*/
+/*}*/
 
+/*.gabi-valign img {*/
+    /*display: table-cell;*/
+    /*vertical-align: middle;*/
+    /*text-align: center;*/
+/*}*/
 
-
+/*.gabi-vmiddle-align{*/
+    /*width:500px;*/
+    /*margin:0 auto;*/
+    /*border:1px solid blue;*/
+    /*overflow:hidden;*/
+/*}*/
+/*.gabi-vmiddle-align div{*/
+    /*display:inline-block;*/
+    /*vertical-align:middle;*/
+    /*float: right;*/
+    /*width:49%;*/
+/*}*/
 
 
 

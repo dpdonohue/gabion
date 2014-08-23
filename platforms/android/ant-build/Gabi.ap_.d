@@ -41,6 +41,7 @@
 /Users/dd/ws/gabion/platforms/android/assets/www/README.md \
 /Users/dd/ws/gabion/platforms/android/assets/www/templates \
 /Users/dd/ws/gabion/platforms/android/assets/www/css/style.css \
+/Users/dd/ws/gabion/platforms/android/assets/www/img/Blank.JPG \
 /Users/dd/ws/gabion/platforms/android/assets/www/img/check-green-32.png \
 /Users/dd/ws/gabion/platforms/android/assets/www/img/check-green-64.png \
 /Users/dd/ws/gabion/platforms/android/assets/www/img/ionic.png \
@@ -168,12 +169,13 @@
 /Users/dd/ws/gabion/platforms/android/assets/www/plugins/org.apache.cordova.media/www \
 /Users/dd/ws/gabion/platforms/android/assets/www/plugins/org.apache.cordova.media/www/Media.js \
 /Users/dd/ws/gabion/platforms/android/assets/www/plugins/org.apache.cordova.media/www/MediaError.js \
+/Users/dd/ws/gabion/platforms/android/assets/www/templates/drill-go.html \
+/Users/dd/ws/gabion/platforms/android/assets/www/templates/drills.html \
 /Users/dd/ws/gabion/platforms/android/assets/www/templates/info.html \
 /Users/dd/ws/gabion/platforms/android/assets/www/templates/language-native.html \
 /Users/dd/ws/gabion/platforms/android/assets/www/templates/language-target.html \
-/Users/dd/ws/gabion/platforms/android/assets/www/templates/letsgo.html \
-/Users/dd/ws/gabion/platforms/android/assets/www/templates/play.html \
 /Users/dd/ws/gabion/platforms/android/assets/www/templates/settings.html \
+/Users/dd/ws/gabion/platforms/android/assets/www/templates/sim-go.html \
+/Users/dd/ws/gabion/platforms/android/assets/www/templates/sims.html \
 /Users/dd/ws/gabion/platforms/android/assets/www/templates/tabs.html \
-/Users/dd/ws/gabion/platforms/android/assets/www/templates/translate.html \
 /Users/dd/ws/gabion/platforms/android/ant-build/AndroidManifest.xml \

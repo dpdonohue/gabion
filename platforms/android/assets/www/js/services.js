@@ -13,25 +13,35 @@ angular.module("gabi.services", ["ionic"])
         terms: [],
 //        currentPlay: "trip1.txt",
         playList: [],
+        drillList: [],
         loadedPlaysLevel: 0,
         loadedPlaysLoc: null,
+        loadedDrillsLevel: 0,
+        loadedDrillsLoc: null,
         play: {},
         pageIndex : 0,
         targetTranslation: {},
         nativeTranslation: {},
         localizations: {},
+        skillLevel: 3,
+        supportedLanguages: [],
+        lines: [],
+        debugMode: true,
+
         parseLanguageId: function(loc) {
             var divider = loc.lastIndexOf("-");
             if (divider < 0) return loc;
             var lang = loc.substring(0,divider);
             return lang;
         },
+
         parseCountry: function(loc) {
             var divider = loc.lastIndexOf("-");
             if (divider < 0) return "";
             var country = loc.substring(divider + 1);
             return country;
         },
+
         getTargetLanguage: function() {
             return this.parseLanguageId(this.targetLocale);
         },
@@ -47,7 +57,6 @@ angular.module("gabi.services", ["ionic"])
             return this.parseLanguageId(locale);
         },
 
-
         //TODO use locale as key for localizations rather than langId
         getLocalizedText: function(english) {
             var langId = this.getGoogleTranslateLanguage(this.nativeLocale);
@@ -57,14 +66,6 @@ angular.module("gabi.services", ["ionic"])
             }
             return english;
         },
-//        getSkillLevel: function() {
-////            if (! this.skillLevels[this.getTargetLanguage()]) return 1;
-////            return this.skillLevels[this.getTargetLanguage()];
-//            return this.skillLevel;
-//        },
-        skillLevel: 3,
-        supportedLanguages: [],
-        lines: [],
 
         /**
          * Load all lines for the play
@@ -370,10 +371,10 @@ angular.module("gabi.services", ["ionic"])
 /* Client for the Gabs web service */
 .factory("GabsClient", function($http, Settings) {
     return {
-        listPlays: function(loc, lev, callback) {
+        listPlays: function(typ, loc, lev, callback) {
             var lan = Settings.getGoogleTranslateLanguage(loc);
 //            alert("GET: " + Settings.gabsUrl + "play/list?lan=" + lan + "&lev=" + lev);
-            $http.get(Settings.gabsUrl + "play/list?lan=" + lan + "&lev=" + lev)
+            $http.get(Settings.gabsUrl + "play/list?typ=" + typ + "&lan=" + lan + "&lev=" + lev)
                 .then(
                     function(result) {
                         if (!result || !result.data) {
