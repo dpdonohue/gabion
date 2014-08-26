@@ -171,6 +171,7 @@
 /Users/dd/ws/gabion/platforms/android/assets/www/plugins/org.apache.cordova.media/www/MediaError.js \
 /Users/dd/ws/gabion/platforms/android/assets/www/templates/drill-go.html \
 /Users/dd/ws/gabion/platforms/android/assets/www/templates/drills.html \
+/Users/dd/ws/gabion/platforms/android/assets/www/templates/home.html \
 /Users/dd/ws/gabion/platforms/android/assets/www/templates/info.html \
 /Users/dd/ws/gabion/platforms/android/assets/www/templates/language-native.html \
 /Users/dd/ws/gabion/platforms/android/assets/www/templates/language-target.html \

@@ -20,96 +20,88 @@ angular.module('gabi', ['ionic', 'ui.router', 'gabi.services', 'gabi.controllers
         // Each state's controller can be found in controllers.js
         $stateProvider
 
-            // setup an abstract state for the tabs directive
-            .state('tab', {
-                url: "/tab",
-                abstract: true,
-                templateUrl: "templates/tabs.html"
-            })
-
-
-//      .state('tab.translate', {
-//          url: '/translate',
-//          views: {
-//              'translate-tab': {
-//                  templateUrl: 'templates/translate.html',
-//                  controller: 'TranslateCtrl'
-//              }
-//          }
-//      })
-
-            .state('tab.settings', {
-                url: '/settings',
+            .state('home', {
+                url: '/home',
                 views: {
-                    'settings-tab': {
-                        templateUrl: 'templates/settings.html',
-                        controller: 'SettingsCtrl'
-                    }
-                }
-            })
-
-            .state('tab.settings-native', {
-                url: '/settings-native',
-                views: {
-                    'settings-tab': {
-                        templateUrl: 'templates/language-native.html',
-                        controller: 'SettingsCtrl'
-                    }
-                }
-            })
-
-            .state('tab.settings-target', {
-                url: '/settings-target',
-                views: {
-                    'settings-tab': {
-                        templateUrl: 'templates/language-target.html',
-                        controller: 'SettingsCtrl'
-                    }
-                }
-            })
-
-            .state('tab.drills', {
-                url: '/drills',
-                views: {
-                    'drills-tab': {
-                        templateUrl: 'templates/drills.html',
-                        controller: 'DrillsCtrl'
-                    }
-                }
-            })
-
-            .state('tab.drill-go', {
-                url: '/drill-go',
-                views: {
-                    'drills-tab': {
-                        templateUrl: 'templates/drill-go.html',
-                        controller: 'PlayCtrl'
-                    }
-                }
-            })
-
-            .state('tab.sims', {
-                url: '/sims',
-                views: {
-                    'sims-tab': {
-                        templateUrl: 'templates/sims.html',
-                        controller: 'SimsCtrl'
-                    }
-                }
-            })
-
-            .state('tab.sim-go', {
-                url: '/sim-go',
-                views: {
-                    'sims-tab': {
-                        templateUrl: 'templates/sim-go.html',
-                        controller: 'PlayCtrl'
+                    'home': {
+                        templateUrl: 'templates/home.html',
+                        controller: 'HomeCtrl'
                     }
                 }
             });
 
+//            .state('settings', {
+//                url: '/settings',
+//                views: {
+//                    'settings': {
+//                        templateUrl: 'templates/settings.html',
+//                        controller: 'SettingsCtrl'
+//                    }
+//                }
+//            })
+//
+//            .state('settings-native', {
+//                url: '/settings-native',
+//                views: {
+//                    'settings': {
+//                        templateUrl: 'templates/language-native.html',
+//                        controller: 'SettingsCtrl'
+//                    }
+//                }
+//            })
+//
+//            .state('settings-target', {
+//                url: '/settings-target',
+//                views: {
+//                    'settings': {
+//                        templateUrl: 'templates/language-target.html',
+//                        controller: 'SettingsCtrl'
+//                    }
+//                }
+//            })
+//
+//            .state('drills', {
+//                url: '/drills',
+//                views: {
+//                    'drills': {
+//                        templateUrl: 'templates/drills.html',
+//                        controller: 'DrillsCtrl'
+//                    }
+//                }
+//            })
+//
+//            .state('drill-go', {
+//                url: '/drill-go',
+//                views: {
+//                    'drills': {
+//                        templateUrl: 'templates/drill-go.html',
+//                        controller: 'PlayCtrl'
+//                    }
+//                }
+//            })
+//
+//            .state('sims', {
+//                url: '/sims',
+//                views: {
+//                    'sims': {
+//                        templateUrl: 'templates/sims.html',
+//                        controller: 'SimsCtrl'
+//                    }
+//                }
+//            })
+//
+//            .state('sim-go', {
+//                url: '/sim-go',
+//                views: {
+//                    'sims': {
+//                        templateUrl: 'templates/sim-go.html',
+//                        controller: 'PlayCtrl'
+//                    }
+//                }
+//            });
+
         // if none of the above states are matched, use this as the fallback
-        $urlRouterProvider.otherwise('/tab/drills');
+        $urlRouterProvider.otherwise('/home');
 
     })
 

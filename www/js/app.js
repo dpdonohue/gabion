@@ -1,14 +1,3 @@
-// Ionic Starter App
-
-//IonicModule.constant('$ionicNavViewConfig', {
-//    transition: 'slide-left-right-ios7'
-//});
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-// 'starter.services' is found in services.js
-// 'starter.controllers' is found in controllers.js
 angular.module('gabi', ['ionic', 'ui.router', 'gabi.services', 'gabi.controllers'])
 
 
@@ -20,96 +9,56 @@ angular.module('gabi', ['ionic', 'ui.router', 'gabi.services', 'gabi.controllers
         // Each state's controller can be found in controllers.js
         $stateProvider
 
-            // setup an abstract state for the tabs directive
-            .state('tab', {
-                url: "/tab",
-                abstract: true,
-                templateUrl: "templates/tabs.html"
+            .state('home', {
+                url: '/home',
+                templateUrl: 'templates/home.html',
+                controller: 'HomeCtrl'
             })
 
-
-//      .state('tab.translate', {
-//          url: '/translate',
-//          views: {
-//              'translate-tab': {
-//                  templateUrl: 'templates/translate.html',
-//                  controller: 'TranslateCtrl'
-//              }
-//          }
-//      })
-
-            .state('tab.settings', {
+            .state('settings', {
                 url: '/settings',
-                views: {
-                    'settings-tab': {
-                        templateUrl: 'templates/settings.html',
-                        controller: 'SettingsCtrl'
-                    }
-                }
+                templateUrl: 'templates/settings.html',
+                controller: 'SettingsCtrl'
             })
 
-            .state('tab.settings-native', {
+            .state('settings-native', {
                 url: '/settings-native',
-                views: {
-                    'settings-tab': {
-                        templateUrl: 'templates/language-native.html',
-                        controller: 'SettingsCtrl'
-                    }
-                }
+                templateUrl: 'templates/language-native.html',
+                controller: 'SettingsCtrl'
             })
 
-            .state('tab.settings-target', {
+            .state('settings-target', {
                 url: '/settings-target',
-                views: {
-                    'settings-tab': {
-                        templateUrl: 'templates/language-target.html',
-                        controller: 'SettingsCtrl'
-                    }
-                }
+                templateUrl: 'templates/language-target.html',
+                controller: 'SettingsCtrl'
             })
 
-            .state('tab.drills', {
+            .state('drills', {
                 url: '/drills',
-                views: {
-                    'drills-tab': {
-                        templateUrl: 'templates/drills.html',
-                        controller: 'DrillsCtrl'
-                    }
-                }
+                templateUrl: 'templates/drills.html',
+                controller: 'DrillsCtrl'
             })
 
-            .state('tab.drill-go', {
+            .state('drill-go', {
                 url: '/drill-go',
-                views: {
-                    'drills-tab': {
-                        templateUrl: 'templates/drill-go.html',
-                        controller: 'PlayCtrl'
-                    }
-                }
+                templateUrl: 'templates/drill-go.html',
+                controller: 'PlayCtrl'
             })
 
-            .state('tab.sims', {
+            .state('sims', {
                 url: '/sims',
-                views: {
-                    'sims-tab': {
-                        templateUrl: 'templates/sims.html',
-                        controller: 'SimsCtrl'
-                    }
-                }
+                templateUrl: 'templates/sims.html',
+                controller: 'SimsCtrl'
             })
 
-            .state('tab.sim-go', {
+            .state('sim-go', {
                 url: '/sim-go',
-                views: {
-                    'sims-tab': {
-                        templateUrl: 'templates/sim-go.html',
-                        controller: 'PlayCtrl'
-                    }
-                }
+                templateUrl: 'templates/sim-go.html',
+                controller: 'PlayCtrl'
             });
 
         // if none of the above states are matched, use this as the fallback
-        $urlRouterProvider.otherwise('/tab/drills');
+        $urlRouterProvider.otherwise('/home');
 
     })
 
@@ -125,3 +74,5 @@ angular.module('gabi', ['ionic', 'ui.router', 'gabi.services', 'gabi.controllers
             }
         });
     });
+
+//alert("app.js");

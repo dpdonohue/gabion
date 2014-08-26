@@ -1,0 +1,35 @@
+<!--
+  This template loads for the 'settings' state (app.js)
+-->
+<ion-view title="{{ localize('Settings') }}">
+  <ion-content has-header="true" has-tabs="true" padding="true">
+      <div class="list">
+
+
+          <a class="item" ui-sref="tab.settings-native">
+              {{ localize("Your Language") }}: {{ displayNativeLocale() }}
+          </a>
+
+          <a class="item" ui-sref="tab.settings-target">
+              {{ localize("Learning Language") }}: {{ displayTargetLocale() }}
+          </a>
+
+          <div class="item item-divider">
+              {{ localize("Your proficiency level") }} (1 - 5)
+          </div>
+
+          <div class="item range range-positive">
+              <i class="icon ion-ios7-star-outline"></i>
+              <input type="range" name="skill" min="1" max="5" ng-model="settings.skillLevel">
+              <i class="icon ion-ios7-star"></i>
+          </div>
+
+          <div>
+              <h2 class="gabi-centered">{{ localize("Your proficiency level") }}: {{ settings.skillLevel }}</h2>
+          </div>
+
+          <ion-toggle ng-model="settings.debugMode" toggle-class="toggle-calm">{{ localize("Debug Mode") }}</ion-toggle>
+    </div>
+
+  </ion-content>
+</ion-view>

@@ -1,4 +1,4 @@
-<ion-view title="{{ localize('Go') }}" swipe-page>
+<ion-view title="{{ localize('Go') }}" swipe-drill-page>
   <ion-content has-header="true" has-tabs="true" padding="true">
     <div class="{{ getPageBackgroundStyle() }}">
 
@@ -62,7 +62,7 @@
 
     <div class="gabi-spaceabove">
         <div class="gabi-centered">
-            <button ng-click="goBack()" class="button button-balanced gabi-button-highlighted" ng-show="isPlayFinished()">
+            <button ng-click="goToDrills()" class="button button-balanced gabi-button-highlighted" ng-show="isPlayFinished()">
                 <i class="icon ion-checkmark-round gabi-float-left"></i>
                 &nbsp;{{ localize("Finished") }}
             </button>

@@ -1,6 +1,43 @@
 angular.module("gabi.controllers", ["ionic"])
 
 
+.controller("HomeCtrl", function($scope, $state, AndroidSpeechRecognizer, Settings, LangUtil, GabsClient) {
+
+        $scope.getSkillLevel = function() {
+            return Settings.skillLevel;
+        };
+
+//        alert("HomeCtrl...");
+        $scope.displayNativeLanguage = function() {
+            return LangUtil.getLanguageName(Settings.nativeLocale, Settings.nativeLocale);
+        };
+
+        $scope.displayTargetLanguage = function() {
+            return LangUtil.getLanguageName(Settings.nativeLocale, Settings.targetLocale);
+        };
+
+        $scope.displayNativeLocale = function() {
+            return LangUtil.getLocaleDisplay(Settings.nativeLocale, Settings.nativeLocale);
+        };
+
+        $scope.displayTargetLocale = function() {
+            return LangUtil.getLocaleDisplay(Settings.nativeLocale, Settings.targetLocale);
+        };
+
+        $scope.localize = function(english) {
+            return Settings.getLocalizedText(english);
+        };
+
+
+        LangUtil.loadLanguageInfo();
+        LangUtil.loadLanguageInfo("en-US");
+
+        GabsClient.prepareLocalizations(["Home", "Settings", "Let\'s&nbsp;Go!", "Your Language", "Learning Language", "Learning", "Your proficiency level", "Level 1", "Level 2", "Level 3", "Level 4", "Level 5"]);
+})
+
+
+
+
 .controller("SettingsCtrl", function($scope, $state, AndroidSpeechRecognizer, Settings, LangUtil, GabsClient) {
     $scope.settings = Settings;
 
@@ -34,8 +71,6 @@ angular.module("gabi.controllers", ["ionic"])
     };
 
     $scope.localize = function(english) {
-//        alert("Existing localizations: " + JSON.stringify(Settings.localizations));
-//        GabsClient.localize(english, Settings.nativeLocale, Settings.getNativeLanguage(), function(localizedText) {});
         return Settings.getLocalizedText(english);
     };
 
@@ -61,7 +96,6 @@ angular.module("gabi.controllers", ["ionic"])
 
 .controller("SimsCtrl", function($scope, $state, Settings, Util, GabsClient, LangUtil) {
     $scope.playList = Settings.playList;
-
 
     $scope.goToPlay = function(playid) {
         GabsClient.getPlay(playid, Settings.nativeLocale,  Settings.targetLocale, function(payload) {
@@ -373,9 +407,15 @@ angular.module("gabi.controllers", ["ionic"])
 //        });
     };
 
-    $scope.goBack = function() {
+    $scope.goToTrips = function() {
         Settings.pageIndex = 0;
         $state.go("tab.sims");
+        return;
+    };
+
+    $scope.goToDrills = function() {
+        Settings.pageIndex = 0;
+        $state.go("tab.drills");
         return;
     };
 
@@ -389,18 +429,24 @@ angular.module("gabi.controllers", ["ionic"])
         $state.go("tab.sim-go", {}, {reload: true});
     };
 
-    $scope.previousPage = function() {
+    $scope.previousTripPage = function() {
         Settings.pageIndex--;
         if (Settings.pageIndex < 0) {
-            $scope.goBack();
+            $scope.goToTrips();
             return;
         }
-
         $scope.lineIndex = Settings.play.pages[Settings.pageIndex].sln;
-//        Settings.loadLines();
-//        $scope.getLines();
-//        $scope.$apply();
         $state.go("tab.sim-go", {}, {reload: true});
+    };
+
+    $scope.previousDrillPage = function() {
+        Settings.pageIndex--;
+        if (Settings.pageIndex < 0) {
+            $scope.goToDrills();
+            return;
+        }
+        $scope.lineIndex = Settings.play.pages[Settings.pageIndex].sln;
+        $state.go("tab.drill-go", {}, {reload: true});
     };
 
 //    $scope.getLines = function() {
@@ -492,12 +538,20 @@ angular.module("gabi.controllers", ["ionic"])
         return correct;
     };
 
-    $scope.swipeLeft = function(elem) {
+    $scope.swipeTripLeft = function(elem) {
         $scope.nextPage();
     };
 
-    $scope.swipeRight = function(elem) {
-        $scope.previousPage();
+    $scope.swipeTripRight = function(elem) {
+        $scope.previousTripPage();
+    };
+
+    $scope.swipeDrillLeft = function(elem) {
+        $scope.nextPage();
+    };
+
+    $scope.swipeDrillRight = function(elem) {
+        $scope.previousDrillPage();
     };
 
     $scope.getPageImage = function() {

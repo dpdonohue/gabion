@@ -594,12 +594,31 @@ angular.module("gabi.services", ["ionic"])
     }
 })
 
-.directive("swipePage", function($ionicGesture, $state) {
+.factory("UI", function(Settings, $state) {
+    return {
+        goHome: function() {
+            $state.go("home");
+        }
+    }
+})
+
+.directive("swipeTripPage", function($ionicGesture, $state) {
     return {
         restrict : 'A',
         link : function(scope, elem, attr) {
-            $ionicGesture.on("swipeleft", scope.swipeLeft, elem);
-            $ionicGesture.on("swiperight", scope.swipeRight, elem);
+            $ionicGesture.on("swipeleft", scope.swipeTripLeft, elem);
+            $ionicGesture.on("swiperight", scope.swipeTripRight, elem);
+
+        }
+    }
+})
+
+.directive("swipeDrillPage", function($ionicGesture, $state) {
+    return {
+        restrict : 'A',
+        link : function(scope, elem, attr) {
+            $ionicGesture.on("swipeleft", scope.swipeDrillLeft, elem);
+            $ionicGesture.on("swiperight", scope.swipeDrillRight, elem);
 
         }
     }
