@@ -28,11 +28,24 @@ angular.module("gabi.controllers", ["ionic"])
             return Settings.getLocalizedText(english);
         };
 
+        //TODO get this from progress object instead
+        $scope.getCompletenessForLevel = function() {
+            var count = 0;
+            var correct = 1;
+            if (! Settings.missionList || Settings.missionList.length==0) return "0%";
+            for (var missionIdx in Settings.missionList) {
+                count += Settings.missionList[missionIdx].len;
+            }
+            var pct = Math.round(correct/count * 100);
+            return pct + "%";
+        };
 
         LangUtil.loadLanguageInfo();
         LangUtil.loadLanguageInfo("en-US");
 
-        GabsClient.prepareLocalizations(["Home", "Settings", "Let\'s&nbsp;Go!", "Your Language", "Learning Language", "Learning", "Your proficiency level", "Level 1", "Level 2", "Level 3", "Level 4", "Level 5"]);
+        GabsClient.prepareLocalizations(["Home", "Settings", "Let\'s Go!", "Your Language", "Learning Language", "Learning", "Your proficiency level", "Level 1", "Level 2", "Level 3", "Level 4", "Level 5"]);
+
+        GabsClient.prepareMissions();
 })
 
 
@@ -84,12 +97,63 @@ angular.module("gabi.controllers", ["ionic"])
 
     GabsClient.prepareLocalizations(["Settings", "Your Language", "Learning Language", "Your proficiency level"]);
 
+
 })
 
 
 
 
+.controller("MissionsCtrl", function($scope, $state, Settings, Util, GabsClient, LangUtil) {
+    $scope.missionList = Settings.missionList;
 
+    $scope.goToPlay = function(playid) {
+        GabsClient.getPlay(playid, Settings.nativeLocale,  Settings.targetLocale, function(payload) {
+            Settings.play = payload.play;
+            if (payload.nativeTranslation) {
+                Settings.nativeTranslation = payload.nativeTranslation;
+            } else {
+                Settings.nativeTranslation = {};
+            }
+            Settings.targetTranslation = payload.targetTranslation;
+            Settings.loadLines();
+            if (payload.play.typ == "trip") {
+                return $state.go("trip-go");
+            }
+            return $state.go("drill-go");
+        });
+    };
+
+    $scope.localize = function(english) {
+        return Settings.getLocalizedText(english);
+    };
+
+    //TODO get this from progress object insteadz
+    $scope.getCompletenessForMission = function(missionIndex) {
+        var count = $scope.missionList[missionIndex].len;
+        var pct = Math.round(1/count * 100);
+        return pct + "%";
+    };
+
+    //initialize
+    LangUtil.loadLanguageInfo();
+    LangUtil.loadLanguageInfo("en-US");
+
+    GabsClient.prepareLocalizations(["Learn", "Go", "Select a Lesson", "Lesson"]);
+
+    if (Settings.loadedMissionsLevel == Settings.skillLevel && Settings.loadedMissionsLoc == Settings.nativeLocale) {
+        $scope.missionList = Settings.missionList;
+    } else {
+//        GabsClient.listMissions(Settings.nativeLocale, Settings.skillLevel, function (missionList) {
+//            if (!missionList) missionList = [];
+//            Settings.missionList = missionList;
+//            Settings.loadedMissionsLevel = Settings.skillLevel;
+//            Settings.loadedMissionsLoc = Settings.nativeLocale;
+//            $scope.missionList = missionList;
+//        });
+
+        GabsClient.prepareMissions();
+    };
+})
 
 
 

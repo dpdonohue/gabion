@@ -21,6 +21,12 @@ angular.module('gabi', ['ionic', 'ui.router', 'gabi.services', 'gabi.controllers
                 controller: 'SettingsCtrl'
             })
 
+            .state('missions', {
+                url: '/missions',
+                templateUrl: 'templates/missions.html',
+                controller: 'MissionsCtrl'
+            })
+
             .state('settings-native', {
                 url: '/settings-native',
                 templateUrl: 'templates/language-native.html',

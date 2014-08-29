@@ -13,9 +13,9 @@
                 <i class="icon ion-ios7-settings-strong"></i>
             </a>
             <!--<progress max="100" value="50"> </progress>-->
-            <div class="ui-progress-bar ui-container transition" id="progress_bar">
-                <div class="ui-progress" style="width: 50%;">
-                    <span class="ui-label">50%</span>
+            <div class="ui-progress-bar ui-container" id="progress_bar">
+                <div class="ui-progress" style="width: {{ getCompletenessForLevel() }};">
+                    <span class="ui-label">{{ getCompletenessForLevel() }}</span>
                 </div>
             </div>
         </div>
@@ -32,7 +32,7 @@
         <!--</div>-->
         <div class="gabi-centered">
             <button ui-sref="missions" class="button button-large button-energized gabi-button-highlighted icon icon-right">
-                <p>{{ localize("Let\'s&nbsp;Go!") }}</p>
+                {{ localize("Let\'s Go!") }}&nbsp;
                 <i class="icon ion-plane"></i>
             </button>
         </div>

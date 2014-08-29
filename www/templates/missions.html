@@ -1,0 +1,32 @@
+<ion-view title="{{ localize('Lessons') }}">
+    <ion-nav-buttons side="right">
+        <button class="button" ui-sref="home">
+            <i class="icon ion-home"></i>
+        </button>
+    </ion-nav-buttons>
+    <ion-content has-header="true" has-tabs="false" padding="true">
+
+        <div ng-repeat="mission in missionList">
+            <div class="list">
+                <div class="item item-divider">
+                    {{ mission.txt }}
+                </div>
+                <div class="ui-progress-bar ui-container" id="progress_bar">
+                    <div class="ui-progress" style="width: {{ getCompletenessForMission(mission.index) }};">
+                        <span class="ui-label">{{ getCompletenessForMission(mission.index) }}</span>
+                    </div>
+                </div>
+                <a class="item item-thumbnail-left item-text-wrap"
+                    ng-repeat="play in missionList[mission.index].plays" ng-click="goToPlay(play._id)">
+                    <img src="{{ play.img }}">
+                    ({{play.len}}) {{ play.txt }}
+                </a>
+            </div>
+        </div>
+
+        <div>
+            {{ JSON.stringify(missionList)}}
+        </div>
+
+    </ion-content>
+</ion-view>
