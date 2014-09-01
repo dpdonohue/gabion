@@ -1,37 +1,40 @@
-<script>alert("made it to here");</script>
-<ion-view title="Home">
-<!--<ion-view title="{{ localize('Home') }}">-->
+<ion-view title="Gabi {{ localize('Home') }}">
+    <ion-nav-buttons side="right">
+        <button class="button" ui-sref="settings">
+            <i class="icon ion-ios7-settings-strong"></i>
+        </button>
+    </ion-nav-buttons>
     <ion-content has-header="true" padding="true">
         <div class="list">
 
-
-            <!--<a class="item item-icon-left item-text-wrap" ui-sref="settings-native">-->
-                <!--<i class="icon ion-ios7-star"></i>-->
-                <!--<p>{{ localize("Your Language") }}: {{ displayNativeLocale() }}</p>-->
-            <!--</a>-->
-
-            <!--<a class="item item-icon-left item-text-wrap" ui-sref="settings-target">-->
+            <a class="item item-icon-right item-text-wrap" ui-sref="settings">
                 <!--<i class="icon ion-ios7-star-half"></i>-->
-                <!--<p>{{ localize("Learning Language") }}: {{ displayTargetLocale() }}</p>-->
-            <!--</a>-->
-
-            <!--<div class="item item-divider range range-positive">-->
-                <!--<i class="icon ion-university"></i>-->
-                <!--<p>{{ localize("Your proficiency level") }}: {{ settings.skillLevel }}</p>-->
-            <!--</div>-->
-            <!--<div class="item range range-positive">-->
-                <!--<i class="icon">1</i>-->
-                <!--<input type="range" name="skill" min="1" max="5" ng-model="settings.skillLevel">-->
-                <!--<i class="icon">5</i>-->
-            <!--</div>-->
-
-            <a class="item item-icon-left item-text-wrap" ui-sref="drills">
-                <i class="icon ion-plane"></i>
-                <p>Go!</p>
+                <h1 class="gabi-centered"><b>{{ displayTargetLocale() }}</b> {{ localize("Level " + getSkillLevel())}}</h1>
+                <i class="icon ion-ios7-settings-strong"></i>
             </a>
-
-            <!--<ion-toggle ng-model="settings.debugMode" toggle-class="toggle-calm">{{ localize("Debug Mode") }}</ion-toggle>-->
+            <!--<progress max="100" value="50"> </progress>-->
+            <div class="ui-progress-bar ui-container" id="progress_bar">
+                <div class="ui-progress" style="width: {{ getCompletenessForLevel() }};">
+                    <span class="ui-label">{{ getCompletenessForLevel() }}</span>
+                </div>
+            </div>
         </div>
 
+        <!--<div class="list">-->
+            <!--<div class="item item-divider">-->
+                <!--<p>{{ localize("Go!") }}-->
+            <!--</div>-->
+            <!--<a class="item item-icon-left item-icon-right item-text-wrap" ui-sref="drills">-->
+                <!--<i class="icon ion-plane"></i>-->
+                <!--<p>Go!</p>-->
+                <!--<i class="icon ion-ios7-arrow-forward"></i>-->
+            <!--</a>-->
+        <!--</div>-->
+        <div class="gabi-centered">
+            <button ui-sref="missions" class="button button-large button-energized gabi-button-highlighted icon icon-right">
+                {{ localize("Let\'s Go!") }}&nbsp;
+                <i class="icon ion-plane"></i>
+            </button>
+        </div>
     </ion-content>
 </ion-view>

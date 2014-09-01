@@ -117,7 +117,7 @@ angular.module("gabi.controllers", ["ionic"])
             Settings.targetTranslation = payload.targetTranslation;
             Settings.loadLines();
             if (payload.play.typ == "trip") {
-                return $state.go("trip-go");
+                return $state.go("sim-go");
             }
             return $state.go("drill-go");
         });
@@ -131,7 +131,7 @@ angular.module("gabi.controllers", ["ionic"])
     $scope.getCompletenessForMission = function(missionIndex) {
         var count = $scope.missionList[missionIndex].len;
         var pct = Math.round(1/count * 100);
-        return pct + "%";
+        return pct;
     };
 
     //initialize

@@ -14,10 +14,13 @@ angular.module("gabi.services", ["ionic"])
 //        currentPlay: "trip1.txt",
         playList: [],
         drillList: [],
+        missionList: [],
         loadedPlaysLevel: 0,
         loadedPlaysLoc: null,
         loadedDrillsLevel: 0,
         loadedDrillsLoc: null,
+        loadedMissionsLevel: 0,
+        loadedMissionsLoc: null,
         play: {},
         pageIndex : 0,
         targetTranslation: {},
@@ -390,6 +393,25 @@ angular.module("gabi.services", ["ionic"])
                 );
         },
 
+        listMissions: function(loc, lev, callback) {
+            var lan = Settings.getGoogleTranslateLanguage(loc);
+//            alert("GET: " + Settings.gabsUrl + "play/listmissions?lan=" + lan + "&lev=" + lev);
+            $http.get(Settings.gabsUrl + "play/listmissions?lan=" + lan + "&lev=" + lev)
+                .then(
+                function(result) {
+                    if (!result || !result.data) {
+                        return callback([]);
+                    }
+                    var payload = result.data;
+//                        alert("GET: " + Settings.gabsUrl + "play/list?lan=" + lan + "&lev=" + lev + "\n Received: " + JSON.stringify(payload));
+                    return callback(payload.missions);
+                }, function(error) {
+                    alert("listMissions() error: " + JSON.stringify(error));
+                    return callback([]);
+                }
+            );
+        },
+
         //TODO support locale
         getPlay: function(playid, nlo, tlo, callback) {
             var nla = Settings.getGoogleTranslateLanguage(nlo);
@@ -463,6 +485,16 @@ angular.module("gabi.services", ["ionic"])
                     Settings.localizations[tla][englishTerm] = targetTerm;
                     console.log("Localized " + englishTerm + " to " + targetTerm);
                 }
+            });
+        },
+
+        prepareMissions: function() {
+            this.listMissions(Settings.nativeLocale, Settings.skillLevel, function (missionList) {
+                if (!missionList) missionList = [];
+                Settings.missionList = missionList;
+                Settings.loadedMissionsLevel = Settings.skillLevel;
+                Settings.loadedMissionsLoc = Settings.nativeLocale;
+//                $scope.missionList = missionList;
             });
         }
     }
@@ -594,13 +626,13 @@ angular.module("gabi.services", ["ionic"])
     }
 })
 
-.factory("UI", function(Settings, $state) {
-    return {
-        goHome: function() {
-            $state.go("home");
-        }
-    }
-})
+//.factory("UI", function(Settings, $state) {
+//    return {
+//        goHome: function() {
+//            $state.go("home");
+//        }
+//    }
+//})
 
 .directive("swipeTripPage", function($ionicGesture, $state) {
     return {

@@ -1,14 +1,3 @@
-// Ionic Starter App
-
-//IonicModule.constant('$ionicNavViewConfig', {
-//    transition: 'slide-left-right-ios7'
-//});
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-// 'starter.services' is found in services.js
-// 'starter.controllers' is found in controllers.js
 angular.module('gabi', ['ionic', 'ui.router', 'gabi.services', 'gabi.controllers'])
 
 
@@ -22,83 +11,57 @@ angular.module('gabi', ['ionic', 'ui.router', 'gabi.services', 'gabi.controllers
 
             .state('home', {
                 url: '/home',
-                views: {
-                    'home': {
-                        templateUrl: 'templates/home.html',
-                        controller: 'HomeCtrl'
-                    }
-                }
-            });
+                templateUrl: 'templates/home.html',
+                controller: 'HomeCtrl'
+            })
 
-//            .state('settings', {
-//                url: '/settings',
-//                views: {
-//                    'settings': {
-//                        templateUrl: 'templates/settings.html',
-//                        controller: 'SettingsCtrl'
-//                    }
-//                }
-//            })
-//
-//            .state('settings-native', {
-//                url: '/settings-native',
-//                views: {
-//                    'settings': {
-//                        templateUrl: 'templates/language-native.html',
-//                        controller: 'SettingsCtrl'
-//                    }
-//                }
-//            })
-//
-//            .state('settings-target', {
-//                url: '/settings-target',
-//                views: {
-//                    'settings': {
-//                        templateUrl: 'templates/language-target.html',
-//                        controller: 'SettingsCtrl'
-//                    }
-//                }
-//            })
-//
-//            .state('drills', {
-//                url: '/drills',
-//                views: {
-//                    'drills': {
-//                        templateUrl: 'templates/drills.html',
-//                        controller: 'DrillsCtrl'
-//                    }
-//                }
-//            })
-//
-//            .state('drill-go', {
-//                url: '/drill-go',
-//                views: {
-//                    'drills': {
-//                        templateUrl: 'templates/drill-go.html',
-//                        controller: 'PlayCtrl'
-//                    }
-//                }
-//            })
-//
-//            .state('sims', {
-//                url: '/sims',
-//                views: {
-//                    'sims': {
-//                        templateUrl: 'templates/sims.html',
-//                        controller: 'SimsCtrl'
-//                    }
-//                }
-//            })
-//
-//            .state('sim-go', {
-//                url: '/sim-go',
-//                views: {
-//                    'sims': {
-//                        templateUrl: 'templates/sim-go.html',
-//                        controller: 'PlayCtrl'
-//                    }
-//                }
-//            });
+            .state('settings', {
+                url: '/settings',
+                templateUrl: 'templates/settings.html',
+                controller: 'SettingsCtrl'
+            })
+
+            .state('missions', {
+                url: '/missions',
+                templateUrl: 'templates/missions.html',
+                controller: 'MissionsCtrl'
+            })
+
+            .state('settings-native', {
+                url: '/settings-native',
+                templateUrl: 'templates/language-native.html',
+                controller: 'SettingsCtrl'
+            })
+
+            .state('settings-target', {
+                url: '/settings-target',
+                templateUrl: 'templates/language-target.html',
+                controller: 'SettingsCtrl'
+            })
+
+            .state('drills', {
+                url: '/drills',
+                templateUrl: 'templates/drills.html',
+                controller: 'DrillsCtrl'
+            })
+
+            .state('drill-go', {
+                url: '/drill-go',
+                templateUrl: 'templates/drill-go.html',
+                controller: 'PlayCtrl'
+            })
+
+            .state('sims', {
+                url: '/sims',
+                templateUrl: 'templates/sims.html',
+                controller: 'SimsCtrl'
+            })
+
+            .state('sim-go', {
+                url: '/sim-go',
+                templateUrl: 'templates/sim-go.html',
+                controller: 'PlayCtrl'
+            });
 
         // if none of the above states are matched, use this as the fallback
         $urlRouterProvider.otherwise('/home');
@@ -117,3 +80,5 @@ angular.module('gabi', ['ionic', 'ui.router', 'gabi.services', 'gabi.controllers
             }
         });
     });
+
+//alert("app.js");

@@ -40,6 +40,7 @@
 /Users/dd/ws/gabion/platforms/android/assets/www/plugins \
 /Users/dd/ws/gabion/platforms/android/assets/www/README.md \
 /Users/dd/ws/gabion/platforms/android/assets/www/templates \
+/Users/dd/ws/gabion/platforms/android/assets/www/css/progressbar.css \
 /Users/dd/ws/gabion/platforms/android/assets/www/css/style.css \
 /Users/dd/ws/gabion/platforms/android/assets/www/img/Blank.JPG \
 /Users/dd/ws/gabion/platforms/android/assets/www/img/check-green-32.png \
@@ -60,6 +61,7 @@
 /Users/dd/ws/gabion/platforms/android/assets/www/js/app.js \
 /Users/dd/ws/gabion/platforms/android/assets/www/js/app.js.orig.js \
 /Users/dd/ws/gabion/platforms/android/assets/www/js/controllers.js \
+/Users/dd/ws/gabion/platforms/android/assets/www/js/pace.min.js \
 /Users/dd/ws/gabion/platforms/android/assets/www/js/services.js \
 /Users/dd/ws/gabion/platforms/android/assets/www/lib/ionic \
 /Users/dd/ws/gabion/platforms/android/assets/www/lib/ionic/css \
@@ -175,6 +177,7 @@
 /Users/dd/ws/gabion/platforms/android/assets/www/templates/info.html \
 /Users/dd/ws/gabion/platforms/android/assets/www/templates/language-native.html \
 /Users/dd/ws/gabion/platforms/android/assets/www/templates/language-target.html \
+/Users/dd/ws/gabion/platforms/android/assets/www/templates/missions.html \
 /Users/dd/ws/gabion/platforms/android/assets/www/templates/settings.html \
 /Users/dd/ws/gabion/platforms/android/assets/www/templates/sim-go.html \
 /Users/dd/ws/gabion/platforms/android/assets/www/templates/sims.html \
