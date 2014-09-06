@@ -11,7 +11,7 @@
                 <div class="item item-divider">
                     {{ mission.txt }}
 
-                    <div class="ui-progress-bar ui-container" id="progress_bar">
+                    <div class="ui-progress-bar ui-container">
                         <div class="ui-progress" style="width: {{ getCompletenessForMission(mission.index) }}%;">
                             <span class="ui-label" ng-show="getCompletenessForMission(mission.index) > 10">{{ getCompletenessForMission(mission.index) }}%</span>
                         </div>
@@ -19,9 +19,15 @@
                 </div>
 
                 <a class="item item-thumbnail-left item-text-wrap"
-                    ng-repeat="play in missionList[mission.index].plays" ng-click="goToPlay(play._id)">
+                    ng-repeat="play in missionList[mission.index].plays" ng-click="goToPlay(play._id, missionList[mission.index])">
                     <img src="{{ play.img }}">
                     {{ play.txt }} ({{ play.len }})
+
+                    <div class="ui-progress-bar ui-container">
+                        <div class="ui-progress" style="width: {{ getCompletenessForPlay(play._id) }}%;">
+                            <span class="ui-label" ng-show="getCompletenessForMission(mission.index) > 10">{{ getCompletenessForMission(mission.index) }}%</span>
+                        </div>
+                    </div>
                 </a>
 
                 <div>

@@ -12,7 +12,7 @@ angular.module("gabi.services", ["ionic"])
 //        gabsUrl: "http://localhost:3000/",
         terms: [],
 //        currentPlay: "trip1.txt",
-        playList: [],
+//        playList: [],
         drillList: [],
         missionList: [],
         loadedPlaysLevel: 0,
@@ -22,6 +22,8 @@ angular.module("gabi.services", ["ionic"])
         loadedMissionsLevel: 0,
         loadedMissionsLoc: null,
         play: {},
+        mission: {},
+        lineIndex: 0,
         pageIndex : 0,
         targetTranslation: {},
         nativeTranslation: {},
@@ -30,6 +32,12 @@ angular.module("gabi.services", ["ionic"])
         supportedLanguages: [],
         lines: [],
         debugMode: true,
+        deviceInfo: {},
+        startTime: new Date().getTime(),
+        //progress objects for the current skill level
+        playProgress: {},
+        missionProgress: {},
+        levelProgress: {},
 
         parseLanguageId: function(loc) {
             var divider = loc.lastIndexOf("-");
@@ -70,20 +78,29 @@ angular.module("gabi.services", ["ionic"])
             return english;
         },
 
+        getPlayProgress: function() {
+           return Settings.playProgress[this.play._id];
+        },
+
+        getMissionProgress: function() {
+            return this.missionProgress[this.mission._id];
+        },
+
         /**
          * Load all lines for the play
          */
         loadLines: function() {
             if (!this.play || !this.nativeTranslation || !this.targetTranslation) return;
 
+            var progress = this.playProgress[this.play._id];
             this.lines = [];
             var lastPage = this.play.pages[this.play.pages.length - 1];
 
             var endLine = lastPage.eln;
 
 //            var index = 0;
-            for (var linei = 0; linei <= endLine; linei++) {
-                var actorIndex = this.play.lines[linei].act;
+            for (var lineIdx = 0; lineIdx <= endLine; lineIdx++) {
+                var actorIndex = this.play.lines[lineIdx].act;
                 var actorLabel = this.play.actors[actorIndex].lbl.toUpperCase();
                 var nativeActor = this.nativeTranslation.actors[actorIndex].txt[0];
                 if (! nativeActor) nativeActor = actorLabel;
@@ -91,20 +108,26 @@ angular.module("gabi.services", ["ionic"])
                 var targetActor = this.targetTranslation.actors[actorIndex].txt[0];
                 if (! targetActor) targetActor = actorLabel;
                 var actorImg = this.play.actors[actorIndex].img;
-                var nativeText = this.nativeTranslation.lines[linei].txt[0];
-                var targetText = this.targetTranslation.lines[linei].txt[0];
-                var targetTexts = this.targetTranslation.lines[linei].txt;
+                var nativeText = this.nativeTranslation.lines[lineIdx].txt[0];
+                var targetText = this.targetTranslation.lines[lineIdx].txt[0];
+                var targetTexts = this.targetTranslation.lines[lineIdx].txt;
                 if ( (actorLabel=="YOU") && !actorImg) {
                     actorImg = "http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/64/Emotes-face-smile-icon.png";
                 }
-                if (!actorImg && this.play.lines[linei].img) {
-                    actorImg = this.play.lines[linei].img;
+                if (!actorImg && this.play.lines[lineIdx].img) {
+                    actorImg = this.play.lines[lineIdx].img;
                 }
                 if (!actorImg) {
                     actorImg = "http://icons.iconarchive.com/icons/saki/nuoveXT-2/64/Apps-user-info-icon.png";
                 }
+                var currentStatus = 0;
+                if (progress.lines[lineIdx].suc > 0) {
+                    currentStatus = 1;
+                } else if (progress.lines[lineIdx].fai > 0) {
+                    currentStatus = -1;
+                }
                 var line = {
-                    index: linei,
+                    index: lineIdx,
                     isYou: actorLabel=="YOU",
                     nativeActor: nativeActor,
                     targetActor: targetActor,
@@ -112,13 +135,50 @@ angular.module("gabi.services", ["ionic"])
                     targetText: targetText,
                     targetTexts: targetTexts,
                     actorImg: actorImg,
-                    success: 0,
-                    fail: 0,
-                    currentStatus: 0
+                    success: progress.lines[lineIdx].suc,
+                    fail: progress.lines[lineIdx].fai,
+                    currentStatus: currentStatus
                 };
                 this.lines.push(line);
 //                index++;
             }
+        },
+
+        getDeviceInfo: function() {
+            if (this.deviceInfo) return this.deviceInfo;
+//            if (!window.plugins || ! window.plugins.device) {
+            if (!device) {
+                var tempDeviceInfo = {
+                    dui: "anonymous",
+                    dnm: "anonymous",
+                    dpl: "browser",
+                    dvr: "ver",
+                    dpg: "pg ver"
+                };
+                return tempDeviceInfo;
+            } else {
+                this.deviceInfo = {
+                    dui: device.uuid,
+                    dnm: device.name,
+                    dpl: device.platform,
+                    dvr: device.version,
+                    dpg: device.phonegap
+                }
+            }
+
+            return this.deviceInfo;
+        },
+
+        startTimer: function() {
+            this.startTime = new Date().getTime();
+        },
+
+        /**
+         * return the number of seconds elapsed
+         * @returns {number}
+         */
+        getElapsed: function() {
+            return (new Date().getTime() - this.startTime) / 1000;
         }
     }
 })
@@ -372,12 +432,13 @@ angular.module("gabi.services", ["ionic"])
 //})
 
 /* Client for the Gabs web service */
-.factory("GabsClient", function($http, Settings) {
+.factory("GabsClient", function($http, Settings, Storage) {
     return {
         listPlays: function(typ, loc, lev, callback) {
             var lan = Settings.getGoogleTranslateLanguage(loc);
 //            alert("GET: " + Settings.gabsUrl + "play/list?lan=" + lan + "&lev=" + lev);
-            $http.get(Settings.gabsUrl + "play/list?typ=" + typ + "&lan=" + lan + "&lev=" + lev)
+            var gabsUrl = this.getGabsUrl("play/list?typ=" + typ + "&lan=" + lan + "&lev=" + lev);
+            $http.get(gabsUrl)
                 .then(
                     function(result) {
                         if (!result || !result.data) {
@@ -393,30 +454,66 @@ angular.module("gabi.services", ["ionic"])
                 );
         },
 
-        listMissions: function(loc, lev, callback) {
+        getGabsUrl: function(str) {
+            var url = Settings.gabsUrl + str;
+            if (url.indexOf("?") < 0) url += "?zz=1";
+            if (Settings.getDeviceInfo().dui) url += "&dui=" + Settings.getDeviceInfo().dui;
+            if (Settings.getDeviceInfo().dnm) url += "&dnm=" + Settings.getDeviceInfo().dnm;
+            if (Settings.getDeviceInfo().dpl) url += "&dpl=" + Settings.getDeviceInfo().dpl;
+            if (Settings.getDeviceInfo().dvr) url += "&dvr=" + Settings.getDeviceInfo().dvr;
+            if (Settings.getDeviceInfo().dpg) url += "&dpg=" + Settings.getDeviceInfo().dpg;
+            return url;
+        },
+
+        requestMissions: function(loc, lev, callback) {
             var lan = Settings.getGoogleTranslateLanguage(loc);
 //            alert("GET: " + Settings.gabsUrl + "play/listmissions?lan=" + lan + "&lev=" + lev);
-            $http.get(Settings.gabsUrl + "play/listmissions?lan=" + lan + "&lev=" + lev)
+            var gabsUrl = this.getGabsUrl("play/listmissions?lan=" + lan + "&lev=" + lev);
+            $http.get(gabsUrl)
                 .then(
                 function(result) {
-                    if (!result || !result.data) {
+                    if (!result || !result.data || !result.data.missions) {
                         return callback([]);
                     }
-                    var payload = result.data;
+                    var missions = result.data.missions;
+//                    Settings.missionList = missions;
+//                    Storage.computeProgress(missions);
 //                        alert("GET: " + Settings.gabsUrl + "play/list?lan=" + lan + "&lev=" + lev + "\n Received: " + JSON.stringify(payload));
-                    return callback(payload.missions);
+                    return callback(missions);
                 }, function(error) {
-                    alert("listMissions() error: " + JSON.stringify(error));
+                    alert("requestMissions() error: " + JSON.stringify(error));
                     return callback([]);
                 }
             );
         },
 
+        preparePlay: function(playId, mission, nlo, tlo, callback) {
+            this.requestPlay(playId, nlo, tlo, function(payload) {
+                Settings.play = payload.play;
+                Settings.mission = mission;
+                Settings.play.prog = Settings.playProgress[playId];
+                Settings.lineIndex = 0;
+                if (Settings.play.prog.nxt) Settings.lineIndex = Settings.play.prog.nxt;
+                Settings.pageIndex = 0;
+                if (Settings.play.prog.pag) Settings.pageIndex = Settings.play.prog.pag;
+                if (payload.nativeTranslation) {
+                    Settings.nativeTranslation = payload.nativeTranslation;
+                } else {
+                    Settings.nativeTranslation = {};
+                }
+                Settings.targetTranslation = payload.targetTranslation;
+                Settings.loadLines();
+
+                callback(Settings.play);
+            });
+        },
+
         //TODO support locale
-        getPlay: function(playid, nlo, tlo, callback) {
+        requestPlay: function(playId, nlo, tlo, callback) {
             var nla = Settings.getGoogleTranslateLanguage(nlo);
             var tla = Settings.getGoogleTranslateLanguage(tlo);
-            $http.get(Settings.gabsUrl + "play/load/" + playid + "?nlo=" + nlo + "&nla=" + nla + "&tla=" + tla).then(function(result) {
+            var gabsUrl = this.getGabsUrl("play/load/" + playId + "?nlo=" + nlo + "&nla=" + nla + "&tla=" + tla);
+            $http.get(gabsUrl).then(function(result) {
                 var payload = result.data;
                 callback(payload);
             });
@@ -473,8 +570,8 @@ angular.module("gabi.services", ["ionic"])
 //            this.lookupLocalization(newEnglishPipelist);
             var tla = Settings.getGoogleTranslateLanguage(Settings.nativeLocale);
             var tlo = Settings.nativeLocale;
-            $http.get(Settings.gabsUrl + "loc/localize?src=Gabi-UI-localize&nlo=en-US&nla=en&tlo=" +
-                tlo + "&tla=" + tla + "&t=" + encodeURIComponent(termsPipeList)).then(function(result) {
+            var gabsUrl = this.getGabsUrl("loc/localize?src=Gabi-UI-localize&nlo=en-US&nla=en&tlo=" + tlo + "&tla=" + tla + "&t=" + encodeURIComponent(termsPipeList));
+            $http.get(gabsUrl).then(function(result) {
                 console.log("lookupLocalization received: " + JSON.stringify(result));
                 if (! result.data) {
                     console.log("Unable to localize: " + termsPipeList);
@@ -489,13 +586,120 @@ angular.module("gabi.services", ["ionic"])
         },
 
         prepareMissions: function() {
-            this.listMissions(Settings.nativeLocale, Settings.skillLevel, function (missionList) {
+            this.requestMissions(Settings.nativeLocale, Settings.skillLevel, function (missionList) {
                 if (!missionList) missionList = [];
                 Settings.missionList = missionList;
                 Settings.loadedMissionsLevel = Settings.skillLevel;
                 Settings.loadedMissionsLoc = Settings.nativeLocale;
-//                $scope.missionList = missionList;
+
+                //prepare the progress objects
+                Settings.playProgress = {};
+                Settings.missionProgress = {};
+                Settings.levelProgress = {
+                    len: 0, //total number of lines
+                    lat: 0, //number of lines attempted
+                    tat: 0, //number of total attempts
+                    lsc: 0, //number of lines succeeded
+                    tsc: 0, //total number of successes
+                    lfl: 0, //number of lines failed
+                    tfl: 0 //total number of fails
+                };
+                for (var missionIdx in missionList) {
+                    var mission = missionList[missionIdx];
+                    if (! mission) continue;
+                    Settings.missionProgress[mission._id] = {
+                        len: 0, //total number of lines
+                        lat: 0, //number of lines attempted
+                        tat: 0, //number of total attempts
+                        lsc: 0, //number of lines succeeded
+                        tsc: 0, //total number of successes
+                        lfl: 0, //number of lines failed
+                        tfl: 0 //total number of fails
+                    };
+                    for (var playIdx in mission.plays) {
+                        var play = mission.plays[playIdx];
+                        if (! play || ! play.prog) continue;
+                        Settings.playProgress[play._id] = play.prog;
+
+                        //sum up the counts into the mission progress
+                        Settings.missionProgress[mission._id].len += play.prog.len;
+                        Settings.missionProgress[mission._id].lat += play.prog.lat;
+                        Settings.missionProgress[mission._id].tat += play.prog.tat;
+                        Settings.missionProgress[mission._id].lsc += play.prog.lsc;
+                        Settings.missionProgress[mission._id].tsc += play.prog.tsc;
+                        Settings.missionProgress[mission._id].lfl += play.prog.lfl;
+                        Settings.missionProgress[mission._id].tfl += play.prog.tfl;
+
+                        //sum up the counts into the level progress
+                        Settings.levelProgress.len += play.prog.len;
+                        Settings.levelProgress.lat += play.prog.lat;
+                        Settings.levelProgress.tat += play.prog.tat;
+                        Settings.levelProgress.lsc += play.prog.lsc;
+                        Settings.levelProgress.tsc += play.prog.tsc;
+                        Settings.levelProgress.lfl += play.prog.lfl;
+                        Settings.levelProgress.tfl += play.prog.tfl;
+
+                        //remove the progress object to save memory
+                        delete play.prog;
+                    }
+                }
             });
+        },
+
+        //TODO what about other person answers?
+        saveAnswer: function(lineIndex, result, callback) {
+            var playProgress = Settings.getPlayProgress();
+            var missionProgress = Settings.getMissionProgress();
+            var levelProgress = Settings.levelProgress;
+            var progressLine = playProgress.lines[lineIndex];
+            var priorSuccess = progressLine.suc;
+            var priorFail = progressLine.fai;
+//            var line = Settings.lines[lineIndex];
+            var playLine = Settings.play.lines[lineIndex];
+            var score = 0;
+            if (result=="A" || result == "X") {
+                score = 1;
+            }
+            if (result=="F" || result == "D") {
+                score = -1;
+            }
+            if (score==1) {
+                progressLine.fai++;
+            }
+            playProgress.tat++;
+            if ((score==1 || score == -1) && priorSuccess <= 0 && priorFail <= 0) {
+                playProgress.lat++;
+            }
+            if (score==1) {
+                playProgress.tsc++;
+                if (priorSuccess <= 0) {
+                    playProgress.lsc++;
+                }
+                progressLine.suc++;
+            } else if (score == -1) {
+                playProgress.tfl++;
+                if (priorFail <= 0) {
+                    playProgress.lfl++;
+                }
+                progressLine.fai++;
+            }
+
+            var answer = {
+                ply: Settings.play._id, //the play
+                mis: Settings.mission._id, //optional; the mission
+                lix: lineIndex,
+                trm: playLine.trm, //the Term answered
+                res: result, //the result. K (ok) or F (fail) or _ (skip) or ? (too hard) or ! (you are wrong; I got it right)
+//                val: val, //the answer given
+                sco: score, //the score 0=wrong, 1=correct
+                tim: Settings.getElapsed() //the number of seconds
+            };
+
+            progress.tim = elapsed;
+            var url = this.getGabsUrl("prog/save?t=answer");
+            $http.post(url, answer, function(response) {
+                if (callback) callback(response);
+            })
         }
     }
 })
@@ -626,6 +830,66 @@ angular.module("gabi.services", ["ionic"])
     }
 })
 
+.factory("Storage", function($localForage) {
+    return {
+//        all: function() {
+//            var str = window.localStorage["gabi-progress"];
+//            if(str) {
+//                return angular.fromJson(str);
+//            }
+//            return [];
+//        },
+//        save: function(progress) {
+//            window.localStorage["gabi-progress"] = angular.toJson(progress);
+//        },
+//
+//        getPlayProgress: function(playId) {
+//            return window.localStorage["gabi-progress"].plays[playId];
+//        }
+
+
+        /**
+         * Get the progress object for a given play
+         * @param playId
+         * @param callback
+         */
+        getPlayProgress: function(playId, callback) {
+            var key = "play-" + playId;
+            $localForage.getItem(key).then(function(data) {
+                callback(data);
+            });
+        },
+
+        setPlayProgress: function(playId, playProgress) {
+            var key = "play-" + playId;
+            $localForage.setItem(key, playProgress);
+        },
+
+        computePlaySuccess: function(play, callback) {
+            this.getPlayProgress(play._id, function(playProgress) {
+                return callback(playProgress.lsc);
+            });
+        },
+
+        getItem: function(key, callback) {
+            $localForage.getItem(key).then(function(data) {
+                callback(data);
+            });
+        },
+
+        setItem: function(key, value) {
+            $localForage.setItem(key, value);
+        },
+
+        getMissionProgress: function(missionId, value, callback) {
+            var key = "mission-" + missionId;
+            $localForage.getItem(key).then(function(data) {
+                callback(data);
+            });
+        }
+    }
+})
+
 //.factory("UI", function(Settings, $state) {
 //    return {
 //        goHome: function() {
@@ -636,7 +900,7 @@ angular.module("gabi.services", ["ionic"])
 
 .directive("swipeTripPage", function($ionicGesture, $state) {
     return {
-        restrict : 'A',
+        restrict : "A",
         link : function(scope, elem, attr) {
             $ionicGesture.on("swipeleft", scope.swipeTripLeft, elem);
             $ionicGesture.on("swiperight", scope.swipeTripRight, elem);
@@ -647,7 +911,7 @@ angular.module("gabi.services", ["ionic"])
 
 .directive("swipeDrillPage", function($ionicGesture, $state) {
     return {
-        restrict : 'A',
+        restrict : "A",
         link : function(scope, elem, attr) {
             $ionicGesture.on("swipeleft", scope.swipeDrillLeft, elem);
             $ionicGesture.on("swiperight", scope.swipeDrillRight, elem);

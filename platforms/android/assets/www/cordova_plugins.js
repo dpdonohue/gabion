@@ -201,7 +201,7 @@ module.exports.metadata =
 {
     "com.ionic.keyboard": "1.0.2",
     "org.apache.cordova.console": "0.2.9",
-    "org.apache.cordova.device": "0.2.10",
+    "org.apache.cordova.device": "0.2.11",
     "com.phonegap.plugins.speech": "1.0.0",
     "org.apache.cordova.media": "0.2.12-dev",
     "org.apache.cordova.file-transfer": "0.4.5-dev",

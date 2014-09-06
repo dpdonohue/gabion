@@ -58,9 +58,11 @@
 /Users/dd/ws/gabion/platforms/android/assets/www/img/rightarrow-blue-64.png \
 /Users/dd/ws/gabion/platforms/android/assets/www/img/x-red-32.png \
 /Users/dd/ws/gabion/platforms/android/assets/www/img/x-red-64.png \
+/Users/dd/ws/gabion/platforms/android/assets/www/js/angular-localForage.min.js \
 /Users/dd/ws/gabion/platforms/android/assets/www/js/app.js \
 /Users/dd/ws/gabion/platforms/android/assets/www/js/app.js.orig.js \
 /Users/dd/ws/gabion/platforms/android/assets/www/js/controllers.js \
+/Users/dd/ws/gabion/platforms/android/assets/www/js/localforage.min.js \
 /Users/dd/ws/gabion/platforms/android/assets/www/js/pace.min.js \
 /Users/dd/ws/gabion/platforms/android/assets/www/js/services.js \
 /Users/dd/ws/gabion/platforms/android/assets/www/lib/ionic \

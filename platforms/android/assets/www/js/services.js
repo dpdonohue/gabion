@@ -30,6 +30,7 @@ angular.module("gabi.services", ["ionic"])
         supportedLanguages: [],
         lines: [],
         debugMode: true,
+        deviceInfo: {},
 
         parseLanguageId: function(loc) {
             var divider = loc.lastIndexOf("-");
@@ -119,6 +120,31 @@ angular.module("gabi.services", ["ionic"])
                 this.lines.push(line);
 //                index++;
             }
+        },
+
+        getDeviceInfo: function() {
+            if (this.deviceInfo) return this.deviceInfo;
+//            if (!window.plugins || ! window.plugins.device) {
+            if (!device) {
+                var tempDeviceInfo = {
+                    dui: "anonymous",
+                    dnm: "anonymous",
+                    dpl: "browser",
+                    dvr: "ver",
+                    dpg: "pg ver"
+                };
+                return tempDeviceInfo;
+            } else {
+                this.deviceInfo = {
+                    dui: device.uuid,
+                    dnm: device.name,
+                    dpl: device.platform,
+                    dvr: device.version,
+                    dpg: device.phonegap
+                }
+            }
+
+            return this.deviceInfo;
         }
     }
 })
@@ -377,7 +403,8 @@ angular.module("gabi.services", ["ionic"])
         listPlays: function(typ, loc, lev, callback) {
             var lan = Settings.getGoogleTranslateLanguage(loc);
 //            alert("GET: " + Settings.gabsUrl + "play/list?lan=" + lan + "&lev=" + lev);
-            $http.get(Settings.gabsUrl + "play/list?typ=" + typ + "&lan=" + lan + "&lev=" + lev)
+            var gabsUrl = this.getGabsUrl("play/list?typ=" + typ + "&lan=" + lan + "&lev=" + lev);
+            $http.get(gabsUrl)
                 .then(
                     function(result) {
                         if (!result || !result.data) {
@@ -393,10 +420,22 @@ angular.module("gabi.services", ["ionic"])
                 );
         },
 
-        listMissions: function(loc, lev, callback) {
+        getGabsUrl: function(str) {
+            var url = Settings.gabsUrl + str;
+            if (url.indexOf("?") < 0) url += "?zz=1";
+            if (Settings.getDeviceInfo().dui) url += "&dui=" + Settings.getDeviceInfo().dui;
+            if (Settings.getDeviceInfo().dnm) url += "&dnm=" + Settings.getDeviceInfo().dnm;
+            if (Settings.getDeviceInfo().dpl) url += "&dpl=" + Settings.getDeviceInfo().dpl;
+            if (Settings.getDeviceInfo().dvr) url += "&dvr=" + Settings.getDeviceInfo().dvr;
+            if (Settings.getDeviceInfo().dpg) url += "&dpg=" + Settings.getDeviceInfo().dpg;
+            return url;
+        },
+
+        requestMissions: function(loc, lev, callback) {
             var lan = Settings.getGoogleTranslateLanguage(loc);
 //            alert("GET: " + Settings.gabsUrl + "play/listmissions?lan=" + lan + "&lev=" + lev);
-            $http.get(Settings.gabsUrl + "play/listmissions?lan=" + lan + "&lev=" + lev)
+            var gabsUrl = this.getGabsUrl("play/listmissions?lan=" + lan + "&lev=" + lev);
+            $http.get(gabsUrl)
                 .then(
                 function(result) {
                     if (!result || !result.data) {
@@ -406,7 +445,7 @@ angular.module("gabi.services", ["ionic"])
 //                        alert("GET: " + Settings.gabsUrl + "play/list?lan=" + lan + "&lev=" + lev + "\n Received: " + JSON.stringify(payload));
                     return callback(payload.missions);
                 }, function(error) {
-                    alert("listMissions() error: " + JSON.stringify(error));
+                    alert("requestMissions() error: " + JSON.stringify(error));
                     return callback([]);
                 }
             );
@@ -416,7 +455,8 @@ angular.module("gabi.services", ["ionic"])
         getPlay: function(playid, nlo, tlo, callback) {
             var nla = Settings.getGoogleTranslateLanguage(nlo);
             var tla = Settings.getGoogleTranslateLanguage(tlo);
-            $http.get(Settings.gabsUrl + "play/load/" + playid + "?nlo=" + nlo + "&nla=" + nla + "&tla=" + tla).then(function(result) {
+            var gabsUrl = this.getGabsUrl("play/load/" + playid + "?nlo=" + nlo + "&nla=" + nla + "&tla=" + tla);
+            $http.get(gabsUrl).then(function(result) {
                 var payload = result.data;
                 callback(payload);
             });
@@ -473,8 +513,8 @@ angular.module("gabi.services", ["ionic"])
 //            this.lookupLocalization(newEnglishPipelist);
             var tla = Settings.getGoogleTranslateLanguage(Settings.nativeLocale);
             var tlo = Settings.nativeLocale;
-            $http.get(Settings.gabsUrl + "loc/localize?src=Gabi-UI-localize&nlo=en-US&nla=en&tlo=" +
-                tlo + "&tla=" + tla + "&t=" + encodeURIComponent(termsPipeList)).then(function(result) {
+            var gabsUrl = this.getGabsUrl("loc/localize?src=Gabi-UI-localize&nlo=en-US&nla=en&tlo=" + tlo + "&tla=" + tla + "&t=" + encodeURIComponent(termsPipeList));
+            $http.get(gabsUrl).then(function(result) {
                 console.log("lookupLocalization received: " + JSON.stringify(result));
                 if (! result.data) {
                     console.log("Unable to localize: " + termsPipeList);
@@ -489,7 +529,7 @@ angular.module("gabi.services", ["ionic"])
         },
 
         prepareMissions: function() {
-            this.listMissions(Settings.nativeLocale, Settings.skillLevel, function (missionList) {
+            this.requestMissions(Settings.nativeLocale, Settings.skillLevel, function (missionList) {
                 if (!missionList) missionList = [];
                 Settings.missionList = missionList;
                 Settings.loadedMissionsLevel = Settings.skillLevel;
@@ -626,6 +666,60 @@ angular.module("gabi.services", ["ionic"])
     }
 })
 
+.factory("Storage", function($localForage) {
+    return {
+//        all: function() {
+//            var str = window.localStorage["gabi-progress"];
+//            if(str) {
+//                return angular.fromJson(str);
+//            }
+//            return [];
+//        },
+//        save: function(progress) {
+//            window.localStorage["gabi-progress"] = angular.toJson(progress);
+//        },
+//
+//        getPlayProgress: function(playId) {
+//            return window.localStorage["gabi-progress"].plays[playId];
+//        }
+
+
+        /**
+         * Get the progress object for a given play
+         * @param playId
+         * @param callback
+         */
+        getPlayProgress: function(playId, callback) {
+            var key = "play-" + playId;
+            $localForage.getItem(key).then(function(data) {
+                callback(data);
+            });
+        },
+
+        setPlayProgress: function(playId, playProgress) {
+            var key = "play-" + playId;
+            $localForage.setItem(key, playProgress);
+        },
+
+        getItem: function(key, callback) {
+            $localForage.getItem(key).then(function(data) {
+                callback(data);
+            });
+        },
+
+        setItem: function(key, value) {
+            $localForage.setItem(key, value);
+        },
+
+        getMissionProgress: function(missionId, value, callback) {
+            var key = "mission-" + missionId;
+            $localForage.getItem(key).then(function(data) {
+                callback(data);
+            });
+        }
+    }
+})
+
 //.factory("UI", function(Settings, $state) {
 //    return {
 //        goHome: function() {
@@ -636,7 +730,7 @@ angular.module("gabi.services", ["ionic"])
 
 .directive("swipeTripPage", function($ionicGesture, $state) {
     return {
-        restrict : 'A',
+        restrict : "A",
         link : function(scope, elem, attr) {
             $ionicGesture.on("swipeleft", scope.swipeTripLeft, elem);
             $ionicGesture.on("swiperight", scope.swipeTripRight, elem);
@@ -647,7 +741,7 @@ angular.module("gabi.services", ["ionic"])
 
 .directive("swipeDrillPage", function($ionicGesture, $state) {
     return {
-        restrict : 'A',
+        restrict : "A",
         link : function(scope, elem, attr) {
             $ionicGesture.on("swipeleft", scope.swipeDrillLeft, elem);
             $ionicGesture.on("swiperight", scope.swipeDrillRight, elem);

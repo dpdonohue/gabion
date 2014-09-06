@@ -1,5 +1,14 @@
-angular.module('gabi', ['ionic', 'ui.router', 'gabi.services', 'gabi.controllers'])
+angular.module('gabi', ['ionic', 'ui.router', 'LocalForageModule', 'gabi.services', 'gabi.controllers'])
 
+    .config(['$localForageProvider', function($localForageProvider){
+        $localForageProvider.config({
+            driver      : 'localStorageWrapper', // if you want to force a driver
+            name        : 'gabi', // name of the database and prefix for your data
+            version     :  0.1, // version of the database, you shouldn't have to use this
+            storeName   : 'gabi-progress', // name of the table
+            description : 'stores the users progress'
+        });
+    }])
 
     .config(function($stateProvider, $urlRouterProvider) {
 
