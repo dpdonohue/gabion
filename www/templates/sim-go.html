@@ -51,7 +51,7 @@
               <!-- YOU -->
               <div ng-switch-when="true">
                   <div class="row gabi-minusbottom" ng-show="lineIndex >= line.index">
-                      <div class="col col-75 col-offset-25 gabi-right">
+                      <div class="col col-70 col-offset-20 col-67 gabi-right">
                           <div ng-switch on="isActiveButton(line.index)">
                               <div ng-switch-when="true">
                                   <div ng-switch on="line.currentStatus">
@@ -87,7 +87,14 @@
                               </div>
                           </div>
                       </div>
+
+                      <!-- Show the options menu -->
+                      <div class="col gabi-infobutton">
+                          <i class="icon ion-information-circled positive" ng-click="optionsMenu(line.index)"></i>
+                      </div>
+
                   </div>
+
                   <div class="row gabi-minusbottom" ng-show="lineIndex >= line.index">
                       <div class="col col-25 col-offset-75 gabi-right"> <!--col col-10 col-offset-90-->
                           <div class="gabi-centered">

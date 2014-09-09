@@ -130,6 +130,24 @@
     /*vertical-align: middle;*/
 }
 
+.gabi-infobutton {
+    margin: 12px 10px 0px 20px;
+}
+
+.gabi-infobutton i {
+    font-size: 50px;
+}
+
+.popup {
+    width: 600px;
+    height: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.gabi-skip-buttons {
+    width: 700px;
+}
 /*.gabi-valign {*/
     /*display: table;*/
     /*border: 1px solid red;*/

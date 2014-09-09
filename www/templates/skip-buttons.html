@@ -1,0 +1,25 @@
+<ion-content ng-controller="PlayCtrl">
+    <div class="button-bar gabi-skip-buttons">
+        <a class="button positive" ng-click="tooHard()">{{ localize("Too Hard!") }}</a>
+    </div>
+
+    <div class="button-bar gabi-skip-buttons">
+        <a class="button positive" ng-click="skip()">{{ localize("Skip") }}</a>
+    </div>
+
+    <div class="button-bar gabi-skip-buttons">
+        <a class="button positive" ng-click="tooEasy()">{{ localize("Too Easy!") }}</a>
+    </div>
+
+    <div class="button-bar gabi-skip-buttons positive-bg">
+        <a class="button" ng-click="gabiWrong()">{{ localize("I was right but you said I was wrong.") }}</a>
+    </div>
+
+    <ion-toggle ng-model="settings.hintMode" toggle-class="toggle-positive">{{ localize("Hint Mode") }}</ion-toggle>
+
+    <div class="button-bar gabi-skip-buttons">
+        <a class="button positive" ng-click="tryAgain()">{{ localize("OK") }}</a>
+    </div>
+
+
+</ion-content>

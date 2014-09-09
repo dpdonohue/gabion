@@ -32,6 +32,7 @@ angular.module("gabi.services", ["ionic"])
         supportedLanguages: [],
         lines: [],
         debugMode: true,
+        hintMode: true,
         deviceInfo: {},
         startTime: new Date().getTime(),
         //progress objects for the current skill level
@@ -79,7 +80,8 @@ angular.module("gabi.services", ["ionic"])
         },
 
         getPlayProgress: function() {
-           return Settings.playProgress[this.play._id];
+            if (!this.play || !this.play._id) return;
+           return this.playProgress[this.play._id];
         },
 
         getMissionProgress: function() {
@@ -89,6 +91,7 @@ angular.module("gabi.services", ["ionic"])
         /**
          * Load all lines for the play
          */
+            //TODO use new "you" property of line and actor
         loadLines: function() {
             if (!this.play || !this.nativeTranslation || !this.targetTranslation) return;
 
@@ -121,9 +124,13 @@ angular.module("gabi.services", ["ionic"])
                     actorImg = "http://icons.iconarchive.com/icons/saki/nuoveXT-2/64/Apps-user-info-icon.png";
                 }
                 var currentStatus = 0;
-                if (progress.lines[lineIdx].suc > 0) {
+                var success = 0;
+                var fail = 0;
+                if (progress && progress.lines && progress.lines[lineIdx].suc > 0) {
+                    success = progress.lines[lineIdx].suc;
                     currentStatus = 1;
-                } else if (progress.lines[lineIdx].fai > 0) {
+                } else if (progress && progress.lines[lineIdx].fai > 0) {
+                    fail = progress.lines[lineIdx].fai;
                     currentStatus = -1;
                 }
                 var line = {
@@ -135,8 +142,8 @@ angular.module("gabi.services", ["ionic"])
                     targetText: targetText,
                     targetTexts: targetTexts,
                     actorImg: actorImg,
-                    success: progress.lines[lineIdx].suc,
-                    fail: progress.lines[lineIdx].fai,
+                    success: success,
+                    fail: fail,
                     currentStatus: currentStatus
                 };
                 this.lines.push(line);
@@ -491,11 +498,32 @@ angular.module("gabi.services", ["ionic"])
             this.requestPlay(playId, nlo, tlo, function(payload) {
                 Settings.play = payload.play;
                 Settings.mission = mission;
+                if (!Settings.playProgress[playId]) {
+                    //todo: create new progress object
+                    var prog = {
+                        ply: Settings.play._id,
+                        lines: [],
+                        len: 0, //total number of lines
+                        lat: 0, //number of lines attempted
+                        tat: 0, //number of total attempts
+                        lsc: 0, //number of lines succeeded
+                        tsc: 0, //total number of successes
+                        lfl: 0, //number of lines failed
+                        tfl: 0 //total number of fails
+                    };
+                    for (var i=0; i< Settings.play.lines.length; i++) {
+                        prog.lines[i] = {
+                            suc: 0,
+                            fai: 0
+                        }
+                    }
+                    Settings.playProgress[playId] = prog;
+                }
                 Settings.play.prog = Settings.playProgress[playId];
                 Settings.lineIndex = 0;
-                if (Settings.play.prog.nxt) Settings.lineIndex = Settings.play.prog.nxt;
+                if (Settings.play.prog && Settings.play.prog.nxt) Settings.lineIndex = Settings.play.prog.nxt;
                 Settings.pageIndex = 0;
-                if (Settings.play.prog.pag) Settings.pageIndex = Settings.play.prog.pag;
+                if (Settings.play.prog && Settings.play.prog.pag) Settings.pageIndex = Settings.play.prog.pag;
                 if (payload.nativeTranslation) {
                     Settings.nativeTranslation = payload.nativeTranslation;
                 } else {
@@ -618,11 +646,17 @@ angular.module("gabi.services", ["ionic"])
                     };
                     for (var playIdx in mission.plays) {
                         var play = mission.plays[playIdx];
-                        if (! play || ! play.prog) continue;
+                        if (! play) continue;
+                        if (!play.len) play.len = play.lines.length;
+                        Settings.missionProgress[mission._id].len += play.len;
+                        Settings.levelProgress.len += play.len;
+
+                        if (!play.prog) continue;
+
                         Settings.playProgress[play._id] = play.prog;
 
                         //sum up the counts into the mission progress
-                        Settings.missionProgress[mission._id].len += play.prog.len;
+                        Settings.missionProgress[mission._id].len += play.len;
                         Settings.missionProgress[mission._id].lat += play.prog.lat;
                         Settings.missionProgress[mission._id].tat += play.prog.tat;
                         Settings.missionProgress[mission._id].lsc += play.prog.lsc;
@@ -631,7 +665,6 @@ angular.module("gabi.services", ["ionic"])
                         Settings.missionProgress[mission._id].tfl += play.prog.tfl;
 
                         //sum up the counts into the level progress
-                        Settings.levelProgress.len += play.prog.len;
                         Settings.levelProgress.lat += play.prog.lat;
                         Settings.levelProgress.tat += play.prog.tat;
                         Settings.levelProgress.lsc += play.prog.lsc;
@@ -652,15 +685,21 @@ angular.module("gabi.services", ["ionic"])
             var missionProgress = Settings.getMissionProgress();
             var levelProgress = Settings.levelProgress;
             var progressLine = playProgress.lines[lineIndex];
+            if (!progressLine.suc) {
+                progressLine = playProgress.lines[lineIndex] = {
+                    suc: 0,
+                    fai: 0
+                }
+            }
             var priorSuccess = progressLine.suc;
             var priorFail = progressLine.fai;
 //            var line = Settings.lines[lineIndex];
             var playLine = Settings.play.lines[lineIndex];
             var score = 0;
-            if (result=="A" || result == "X") {
+            if (result=="OK" || result == "TOO EASY" || result == "GABI WRONG") {
                 score = 1;
             }
-            if (result=="F" || result == "D") {
+            if (result=="FAIL" || result == "TOO HARD") {
                 score = -1;
             }
             if (score==1) {
@@ -686,6 +725,10 @@ angular.module("gabi.services", ["ionic"])
 
             var answer = {
                 ply: Settings.play._id, //the play
+                tlo: Settings.targetLocale,
+                tla: Settings.getTargetLanguage(),
+                nlo: Settings.nativeLocale,
+                nla: Settings.getNativeLanguage(),
                 mis: Settings.mission._id, //optional; the mission
                 lix: lineIndex,
                 trm: playLine.trm, //the Term answered
@@ -695,8 +738,8 @@ angular.module("gabi.services", ["ionic"])
                 tim: Settings.getElapsed() //the number of seconds
             };
 
-            progress.tim = elapsed;
-            var url = this.getGabsUrl("prog/save?t=answer");
+//            progress.tim = Settings.getElapsed();
+            var url = this.getGabsUrl("input/answer/" + Settings.play._id);
             $http.post(url, answer, function(response) {
                 if (callback) callback(response);
             })

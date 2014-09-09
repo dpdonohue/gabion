@@ -28,24 +28,33 @@
               <!-- YOU -->
               <div ng-switch-when="true">
                   <div ng-switch on="line.currentStatus">
-                      <a ng-switch-when="1" class="item item-icon-left item-text-wrap balanced-bg" ng-click="record(line.index)">
+                      <a ng-switch-when="1" class="item item-icon-left item-icon-right item-text-wrap balanced-bg" ng-click="record(line.index)">
                           <i class="icon ion-checkmark-circled gabi-float-left"></i>
                           <img src="{{ getMyIcon(line.index) }}" class="gabi-float-right gabi-img-small" />
                           {{ line.targetText }}
+                          <i class="icon ion-information-circled" ng-click="optionsMenu(line.index)"></i>
                       </a>
-                      <a ng-switch-when="0" class="item item-icon-left item-text-wrap energized-bg" ng-click="record(line.index)">
+                      <a ng-switch-when="0" class="item item-icon-left item-icon-right item-text-wrap energized-bg" ng-click="record(line.index)">
                           <i class="icon ion-android-microphone gabi-float-left"></i>
                           <!--<img src="{{ getMyIcon(line.index) }}" class="gabi-float-right gabi-img-small" />-->
                           {{ line.nativeText }}
+                          <p ng-show="settings.hintMode">
+                              "{{ line.targetText }}"
+                          </p>
+                          <i class="icon ion-information-circled" ng-click="optionsMenu(line.index)"></i>
                           <!--<div class="gabi-float-right gabi-valign">-->
 
                           <!--</div>-->
                           <!--<img src="img/Blank.JPG" class="gabi-float-right gabi-img-small" />-->
                       </a>
-                      <a ng-switch-when="-1" class="item item-icon-left item-text-wrap assertive-bg" ng-click="record(line.index)">
+                      <a ng-switch-when="-1" class="item item-icon-left item-icon-right item-text-wrap assertive-bg" ng-click="record(line.index)">
                           <i class="icon ion-android-microphone gabi-float-left"></i>
                           <img src="{{ getMyIcon(line.index) }}" class="gabi-float-right gabi-img-small"/>
                           {{ line.nativeText }}
+                          <p ng-show="settings.hintMode">
+                              "{{ line.targetText }}"
+                          </p>
+                          <i class="icon ion-information-circled" ng-click="optionsMenu(line.index)"></i>
                       </a>
                   </div>
               </div>
