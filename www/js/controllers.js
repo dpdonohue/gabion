@@ -1,7 +1,22 @@
-angular.module("gabi.controllers", ["ionic"])
+var controllers = angular.module("gabi.controllers", ["ionic"])
 
+var LineInfoCtrl = function($scope, $modalInstance, iHeard, Settings, GabsClient) {
 
-.controller("HomeCtrl", function($scope, $state, AndroidSpeechRecognizer, Settings, LangUtil, GabsClient) {
+    $scope.iHeard = iHeard;
+    $scope.settings = Settings;
+
+    $scope.clicked = function(val) {
+        $modalInstance.close(val);
+    };
+
+    $scope.localize = function(english) {
+        return Settings.getLocalizedText(english);
+    };
+
+    GabsClient.prepareLocalizations(["Learn", "Go", "Select a Lesson", "Lesson"]);
+};
+
+controllers.controller("HomeCtrl", function($scope, $state, AndroidSpeechRecognizer, Settings, LangUtil, GabsClient) {
 
         $scope.getSkillLevel = function() {
             return Settings.skillLevel;
@@ -160,89 +175,11 @@ angular.module("gabi.controllers", ["ionic"])
 })
 
 
-///**
-// * legacy
-// */
-//.controller("SimsCtrl", function($scope, $state, Settings, Util, GabsClient, LangUtil) {
-//    $scope.playList = Settings.playList;
-//
-//    $scope.goToPlay = function(playid) {
-//        GabsClient.requestPlay(playid, Settings.nativeLocale,  Settings.targetLocale, function(payload) {
-//            Settings.play = payload.play;
-//            if (payload.nativeTranslation) {
-//                Settings.nativeTranslation = payload.nativeTranslation;
-//            } else {
-//                Settings.nativeTranslation = {};
-//            }
-//            Settings.targetTranslation = payload.targetTranslation;
-//            Settings.loadLines();
-//            $state.go("tab.sim-go");
-//        });
-//    };
-//
-//    $scope.localize = function(english) {
-//        return Settings.getLocalizedText(english);
-//    };
-//
-//    //initialize
-//    LangUtil.loadLanguageInfo();
-//    LangUtil.loadLanguageInfo("en-US");
-//
-//    GabsClient.prepareLocalizations(["Travel", "Go", "Select a Simulation"]);
-//
-//    if (Settings.loadedPlaysLevel == Settings.skillLevel && Settings.loadedPlaysLoc == Settings.nativeLocale) {
-//        $scope.playList = Settings.playList;
-//    } else {
-//        GabsClient.listPlays("trip", Settings.nativeLocale, Settings.skillLevel, function (playList) {
-//            if (!playList) playList = [];
-//            Settings.playList = playList;
-//            Settings.loadedPlaysLevel = Settings.skillLevel;
-//            Settings.loadedPlaysLoc = Settings.nativeLocale;
-//            $scope.playList = playList;
-//        });
-//    };
-//})
 
-//
-//.controller("DrillsCtrl", function($scope, $state, Settings, Util, GabsClient, LangUtil) {
-//    $scope.drillList = Settings.drillList;
-//
-//    $scope.goToPlay = function(playid) {
-//        GabsClient.requestPlay(playid, Settings.nativeLocale,  Settings.targetLocale, function(payload) {
-//            Settings.play = payload.play;
-//            if (payload.nativeTranslation) {
-//                Settings.nativeTranslation = payload.nativeTranslation;
-//            } else {
-//                Settings.nativeTranslation = {};
-//            }
-//            Settings.targetTranslation = payload.targetTranslation;
-//            Settings.loadLines();
-//            $state.go("tab.drill-go");
-//        });
-//    };
-//
-//    $scope.localize = function(english) {
-//        return Settings.getLocalizedText(english);
-//    };
-//
-//    //initialize
-//    LangUtil.loadLanguageInfo();
-//    LangUtil.loadLanguageInfo("en-US");
-//
-//    GabsClient.prepareLocalizations(["Learn", "Go", "Select a Lesson", "Lesson"]);
-//
-//    if (Settings.loadedDrillsLevel == Settings.skillLevel && Settings.loadedDrillsLoc == Settings.nativeLocale) {
-//        $scope.drillList = Settings.drillList;
-//    } else {
-//        GabsClient.listPlays("drill", Settings.nativeLocale, Settings.skillLevel, function (drillList) {
-//            if (!drillList) drillList = [];
-//            Settings.drillList = drillList;
-//            Settings.loadedDrillsLevel = Settings.skillLevel;
-//            Settings.loadedDrillsLoc = Settings.nativeLocale;
-//            $scope.drillList = drillList;
-//        });
-//    };
-//})
+
+
+
+    .controller("LineInfoCtrl", LineInfoCtrl)
 
 
 
@@ -250,9 +187,7 @@ angular.module("gabi.controllers", ["ionic"])
 
 
 
-
-
-.controller("PlayCtrl", function($scope, $state, $timeout, $ionicPopup, AndroidSpeechRecognizer, GoogleTextToSpeech, Settings, Util, LangUtil, GabsClient) {
+.controller("PlayCtrl", function($scope, $state, $timeout, $modal, AndroidSpeechRecognizer, GoogleTextToSpeech, Settings, Util, LangUtil, GabsClient) {
     $scope.settings = Settings;
     $scope.native = Settings.nativeTranslation;
     $scope.target = Settings.targetTranslation;
@@ -267,6 +202,7 @@ angular.module("gabi.controllers", ["ionic"])
     $scope.vrBlocked = false;
     $scope.playAudioBlocked = false;
 
+//    $scope.infoPopup;
     $scope.skipIndex = 0;
 //    if (Settings.play.pages && Settings.play.pages.length > Settings.pageIndex) {
 //        $scope.lineIndex = Settings.play.pages[Settings.pageIndex].sln;
@@ -337,6 +273,7 @@ angular.module("gabi.controllers", ["ionic"])
     var receiveRecognizedSpeech = function(text, index) {
 
         var line = Settings.lines[index];
+        line.iHeard = text;
         $scope.recognizedSpeech = text;
 //        playAudio(lines[0], Settings.targetLocale);
         var correct = checkResponse(text, index);
@@ -407,20 +344,25 @@ angular.module("gabi.controllers", ["ionic"])
         });
     };
 
-    $scope.optionsMenu = function(index) {
+    $scope.lineInfoMenu = function(index) {
         $scope.vrBlocked = true;
         $scope.skipIndex = index;
-        var confirmPopup = $ionicPopup.show({
+//        $scope.infoPopup = $ionicPopup.show({
+        var iHeardVal = $scope.iHeard();
+        var infoPopup = $modal.open({
             title: Settings.lines[index].nativeText,
-            templateUrl: "templates/skip-buttons.html"
+            subTitle: Settings.lines[index].targetText,
+            controller: LineInfoCtrl,
+            templateUrl: "templates/skip-buttons.html",
+            resolve: { iHeard: function() { return iHeardVal }}
 //            buttons: [
 //                { text: $scope.localize("Skip"),
 //                type: "button-positive",
 //                onTap: function(e) { $scope.skip(index) } },
 //
-//                { text: $scope.localize("Try Again"),
+//                { text: $scope.localize("OK"),
 //                    type: "button-positive",
-//                    onTap: function(e) { $scope.vrBlocked = false; return; } },
+//                    onTap: function(e) { $scope.tryAgain() } }
 //
 //                { text: $scope.localize("Hint"),
 //                    type: "button-positive",
@@ -439,10 +381,25 @@ angular.module("gabi.controllers", ["ionic"])
 //                    onTap: function(e) { $scope.gabiWrong(index) } },
 //            ]
         });
+
+        infoPopup.result.then(function (val) {
+            alert(val);
+        }, function () {
+            console.log('Modal dismissed at: ' + new Date());
+        });
+    };
+
+    $scope.iHeard = function() {
+        if (! Settings.lines[$scope.skipIndex].iHeard) return "";
+        var str = $scope.localize("I heard:");
+        str += ' "' + Settings.lines[$scope.skipIndex].iHeard + '"';
+        return str;
     };
 
     $scope.tryAgain = function() {
+//        alert("tryAgain");
         $scope.vrBlocked = false;
+        if ($scope.infoPopup) $scope.infoPopup.close();
         return;
     };
 
@@ -645,7 +602,7 @@ angular.module("gabi.controllers", ["ionic"])
 //        $scope.$apply();
         if (Settings.lineIndex < Settings.lines.length) {
             Settings.lineIndex++;
-            Settings.getPlayProgress().nxt = Settings.lineIndex;
+            if (Settings.getPlayProgress()) Settings.getPlayProgress().nxt = Settings.lineIndex;
             Settings.startTimer();
             $scope.vrBlocked = false;
 //            $scope.$apply();
@@ -747,8 +704,10 @@ angular.module("gabi.controllers", ["ionic"])
             }
             $scope.playIsFinished = true;
             var playProgress = Settings.getPlayProgress();
-            playProgress.nxt = 0;
-            playProgress.fin++;
+            if (playProgress) {
+                playProgress.nxt = 0;
+                playProgress.fin++;
+            }
             return true;
 
 //        if (! Settings.play.pages) return true;
@@ -812,3 +771,97 @@ angular.module("gabi.controllers", ["ionic"])
 //        playTargetAndAdvance($scope.lineIndex);
 //    }
 });
+
+
+
+
+
+
+
+
+
+
+
+///**
+// * legacy
+// */
+//.controller("SimsCtrl", function($scope, $state, Settings, Util, GabsClient, LangUtil) {
+//    $scope.playList = Settings.playList;
+//
+//    $scope.goToPlay = function(playid) {
+//        GabsClient.requestPlay(playid, Settings.nativeLocale,  Settings.targetLocale, function(payload) {
+//            Settings.play = payload.play;
+//            if (payload.nativeTranslation) {
+//                Settings.nativeTranslation = payload.nativeTranslation;
+//            } else {
+//                Settings.nativeTranslation = {};
+//            }
+//            Settings.targetTranslation = payload.targetTranslation;
+//            Settings.loadLines();
+//            $state.go("tab.sim-go");
+//        });
+//    };
+//
+//    $scope.localize = function(english) {
+//        return Settings.getLocalizedText(english);
+//    };
+//
+//    //initialize
+//    LangUtil.loadLanguageInfo();
+//    LangUtil.loadLanguageInfo("en-US");
+//
+//    GabsClient.prepareLocalizations(["Travel", "Go", "Select a Simulation"]);
+//
+//    if (Settings.loadedPlaysLevel == Settings.skillLevel && Settings.loadedPlaysLoc == Settings.nativeLocale) {
+//        $scope.playList = Settings.playList;
+//    } else {
+//        GabsClient.listPlays("trip", Settings.nativeLocale, Settings.skillLevel, function (playList) {
+//            if (!playList) playList = [];
+//            Settings.playList = playList;
+//            Settings.loadedPlaysLevel = Settings.skillLevel;
+//            Settings.loadedPlaysLoc = Settings.nativeLocale;
+//            $scope.playList = playList;
+//        });
+//    };
+//})
+
+//
+//.controller("DrillsCtrl", function($scope, $state, Settings, Util, GabsClient, LangUtil) {
+//    $scope.drillList = Settings.drillList;
+//
+//    $scope.goToPlay = function(playid) {
+//        GabsClient.requestPlay(playid, Settings.nativeLocale,  Settings.targetLocale, function(payload) {
+//            Settings.play = payload.play;
+//            if (payload.nativeTranslation) {
+//                Settings.nativeTranslation = payload.nativeTranslation;
+//            } else {
+//                Settings.nativeTranslation = {};
+//            }
+//            Settings.targetTranslation = payload.targetTranslation;
+//            Settings.loadLines();
+//            $state.go("tab.drill-go");
+//        });
+//    };
+//
+//    $scope.localize = function(english) {
+//        return Settings.getLocalizedText(english);
+//    };
+//
+//    //initialize
+//    LangUtil.loadLanguageInfo();
+//    LangUtil.loadLanguageInfo("en-US");
+//
+//    GabsClient.prepareLocalizations(["Learn", "Go", "Select a Lesson", "Lesson"]);
+//
+//    if (Settings.loadedDrillsLevel == Settings.skillLevel && Settings.loadedDrillsLoc == Settings.nativeLocale) {
+//        $scope.drillList = Settings.drillList;
+//    } else {
+//        GabsClient.listPlays("drill", Settings.nativeLocale, Settings.skillLevel, function (drillList) {
+//            if (!drillList) drillList = [];
+//            Settings.drillList = drillList;
+//            Settings.loadedDrillsLevel = Settings.skillLevel;
+//            Settings.loadedDrillsLoc = Settings.nativeLocale;
+//            $scope.drillList = drillList;
+//        });
+//    };
+//})

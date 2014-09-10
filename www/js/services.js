@@ -1,4 +1,4 @@
-angular.module("gabi.services", ["ionic"])
+angular.module("gabi.services", ["ionic", "ui.bootstrap"])
 
 .factory("Settings", function() {
 
