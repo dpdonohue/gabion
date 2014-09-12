@@ -1,20 +1,22 @@
 var controllers = angular.module("gabi.controllers", ["ionic"])
 
-var LineInfoCtrl = function($scope, $modalInstance, iHeard, Settings, GabsClient) {
-
-    $scope.iHeard = iHeard;
-    $scope.settings = Settings;
-
-    $scope.clicked = function(val) {
-        $modalInstance.close(val);
-    };
-
-    $scope.localize = function(english) {
-        return Settings.getLocalizedText(english);
-    };
-
-    GabsClient.prepareLocalizations(["Learn", "Go", "Select a Lesson", "Lesson"]);
-};
+//var LineInfoCtrl = function($scope, $modalInstance, iHeard, title, subtitle, Settings, GabsClient) {
+//
+//    $scope.iHeard = iHeard;
+//    $scope.title = title;
+//    $scope.subtitle = subtitle;
+//    $scope.settings = Settings;
+//
+//    $scope.clicked = function(val) {
+//        $modalInstance.close(val);
+//    };
+//
+//    $scope.localize = function(english) {
+//        return Settings.getLocalizedText(english);
+//    };
+//
+//    GabsClient.prepareLocalizations(["Learn", "Go", "Select a Lesson", "Lesson"]);
+//};
 
 controllers.controller("HomeCtrl", function($scope, $state, AndroidSpeechRecognizer, Settings, LangUtil, GabsClient) {
 
@@ -52,7 +54,7 @@ controllers.controller("HomeCtrl", function($scope, $state, AndroidSpeechRecogni
                 count += Settings.missionList[missionIdx].len;
             }
             var pct = Math.round(correct/count * 100);
-            return pct + "%";
+            return pct;
         };
 
         LangUtil.loadLanguageInfo();
@@ -179,7 +181,7 @@ controllers.controller("HomeCtrl", function($scope, $state, AndroidSpeechRecogni
 
 
 
-    .controller("LineInfoCtrl", LineInfoCtrl)
+//    .controller("LineInfoCtrl", LineInfoCtrl)
 
 
 
@@ -187,7 +189,7 @@ controllers.controller("HomeCtrl", function($scope, $state, AndroidSpeechRecogni
 
 
 
-.controller("PlayCtrl", function($scope, $state, $timeout, $modal, AndroidSpeechRecognizer, GoogleTextToSpeech, Settings, Util, LangUtil, GabsClient) {
+.controller("PlayCtrl", function($scope, $state, $timeout, $ionicModal, AndroidSpeechRecognizer, GoogleTextToSpeech, Settings, Util, LangUtil, GabsClient) {
     $scope.settings = Settings;
     $scope.native = Settings.nativeTranslation;
     $scope.target = Settings.targetTranslation;
@@ -202,8 +204,8 @@ controllers.controller("HomeCtrl", function($scope, $state, AndroidSpeechRecogni
     $scope.vrBlocked = false;
     $scope.playAudioBlocked = false;
 
-//    $scope.infoPopup;
-    $scope.skipIndex = 0;
+    $scope.infoPopup;
+    $scope.selectedLineIndex = 0;
 //    if (Settings.play.pages && Settings.play.pages.length > Settings.pageIndex) {
 //        $scope.lineIndex = Settings.play.pages[Settings.pageIndex].sln;
 //    } else {
@@ -280,14 +282,14 @@ controllers.controller("HomeCtrl", function($scope, $state, AndroidSpeechRecogni
 
         $scope.vrBlocked = false;
         if (correct) {
-            line.currentStatus = 1;
-            line.success++;
+//            line.currentStatus = 1;
+//            line.success++;
             GabsClient.saveAnswer(index, "OK");
             if (Settings.debugMode) alert("Correct!  I heard:\n" + text);
             $scope.$apply();
         } else {
-            line.fail++;
-            line.currentStatus = -1;
+//            line.fail++;
+//            line.currentStatus = -1;
             GabsClient.saveAnswer(index, "FAIL");
             if (Settings.debugMode) alert("Whoops! # of Fails=" + line.fail + "\nI heard:\n" + text);
             $scope.$apply();
@@ -332,8 +334,8 @@ controllers.controller("HomeCtrl", function($scope, $state, AndroidSpeechRecogni
                 if (callback) callback();
             } else {
                 if (index >= Settings.lineIndex) {
-                    Settings.lines[index].fail++;
-                    Settings.lines[index].currentStatus = 0;
+//                    Settings.lines[index].fail++;
+//                    Settings.lines[index].currentStatus = 0;
                     GabsClient.saveAnswer(Settings.lineIndex, "SKIP");
                     playTarget(index, function() {
                         advanceLine();
@@ -345,16 +347,35 @@ controllers.controller("HomeCtrl", function($scope, $state, AndroidSpeechRecogni
     };
 
     $scope.lineInfoMenu = function(index) {
+
         $scope.vrBlocked = true;
-        $scope.skipIndex = index;
+        $scope.selectedLineIndex = index;
 //        $scope.infoPopup = $ionicPopup.show({
-        var iHeardVal = $scope.iHeard();
-        var infoPopup = $modal.open({
-            title: Settings.lines[index].nativeText,
-            subTitle: Settings.lines[index].targetText,
-            controller: LineInfoCtrl,
-            templateUrl: "templates/skip-buttons.html",
-            resolve: { iHeard: function() { return iHeardVal }}
+//        var iHeardVal = $scope.iHeard();
+//        var titleVal = Settings.lines[index].nativeText;
+//        var subtitleVal = Settings.lines[index].targetText;
+
+        $ionicModal.fromTemplateUrl("templates/skip-buttons.html", {
+            scope: $scope,
+            animation: 'slide-in-up',
+            options: {
+                backdropClickToClose: true
+            }
+        }).then(function(modal) {
+            $scope.infoPopup = modal;
+            $scope.openModal();
+        });
+
+//        $scope.infoPopup = $modal.open({
+//            title: Settings.lines[index].nativeText,
+//            subTitle: Settings.lines[index].targetText,
+//            controller: LineInfoCtrl,
+//            templateUrl: "templates/skip-buttons.html",
+//            resolve: {
+//                iHeard: function () { return iHeardVal; },
+//                title: function () { return titleVal; },
+//                subtitle: function () { return subtitleVal; }
+//            }
 //            buttons: [
 //                { text: $scope.localize("Skip"),
 //                type: "button-positive",
@@ -380,69 +401,109 @@ controllers.controller("HomeCtrl", function($scope, $state, AndroidSpeechRecogni
 //                    type: "button-positive",
 //                    onTap: function(e) { $scope.gabiWrong(index) } },
 //            ]
-        });
-
-        infoPopup.result.then(function (val) {
-            alert(val);
-        }, function () {
-            console.log('Modal dismissed at: ' + new Date());
-        });
+//        });
+//
+//        infoPopup.result.then(function (val) {
+//            if (val == "tooEasy") $scope.tooEasy();
+//            if (val == "tooHard") $scope.tooHard();
+//            if (val == "skip") $scope.skip();
+//            if (val == "gabiWrong") $scope.gabiWrong();
+//            if (val == "tryAgain") $scope.tryAgain();
+//            infoPopup.close();
+//        }, function () {
+//            console.log('Modal dismissed at: ' + new Date());
+//        });
     };
 
+    //Modal housekeeping
+    $scope.openModal = function() {
+        if ($scope.infoPopup) $scope.infoPopup.show();
+    };
+    $scope.closeModal = function() {
+        if ($scope.infoPopup) $scope.infoPopup.hide();
+    };
+    //Cleanup the modal when we're done with it!
+    $scope.$on('$destroy', function() {
+        if ($scope.infoPopup) $scope.infoPopup.remove();
+    });
+
+    $scope.lineNativeText = function(index) {
+        return Settings.lines[index].nativeText;
+    }
+
+    $scope.lineTargetText = function(index) {
+        return Settings.lines[index].targetText;
+    }
+
     $scope.iHeard = function() {
-        if (! Settings.lines[$scope.skipIndex].iHeard) return "";
+        if (! Settings.lines[$scope.selectedLineIndex].iHeard) return "";
         var str = $scope.localize("I heard:");
-        str += ' "' + Settings.lines[$scope.skipIndex].iHeard + '"';
+        str += ' "' + Settings.lines[$scope.selectedLineIndex].iHeard + '"';
         return str;
     };
 
     $scope.tryAgain = function() {
-//        alert("tryAgain");
+        $scope.closeModal();
         $scope.vrBlocked = false;
-        if ($scope.infoPopup) $scope.infoPopup.close();
+//        if ($scope.infoPopup) $scope.infoPopup.close();
         return;
     };
 
-    $scope.tooEasy = function() {
-        var index = $scope.skipIndex;
+    $scope.tooEasy = function(index) {
+        $scope.closeModal();
+//        var index = $scope.selectedLineIndex;
         $scope.vrBlocked = false;
-        Settings.lines[index].success++;
-        Settings.lines[index].currentStatus = 1;
+//        Settings.lines[index].success++;
+//        Settings.lines[index].currentStatus = 1;
         GabsClient.saveAnswer(Settings.lineIndex, "TOO EASY");
         if (index >= Settings.lineIndex) {
             advanceLine();
         }
     };
 
-    $scope.tooHard = function() {
-        var index = $scope.skipIndex;
+    $scope.tooHard = function(index) {
+        $scope.closeModal();
+//        var index = $scope.selectedLineIndex;
         $scope.vrBlocked = false;
-        Settings.lines[index].currentStatus = 0;
+//        Settings.lines[index].currentStatus = 0;
         GabsClient.saveAnswer(Settings.lineIndex, "TOO HARD");
         if (index >= Settings.lineIndex) {
             advanceLine();
         }
     };
 
-    $scope.skip = function() {
-        var index = $scope.skipIndex;
+    $scope.skip = function(index) {
+        $scope.closeModal();
+//        var index = $scope.selectedLineIndex;
         $scope.vrBlocked = false;
-        Settings.lines[index].currentStatus = 0;
+//        Settings.lines[index].currentStatus = 0;
         GabsClient.saveAnswer(Settings.lineIndex, "SKIP");
         if (index >= Settings.lineIndex) {
             advanceLine();
         }
     };
 
-    $scope.gabiWrong = function() {
-        var index = $scope.skipIndex;
+    $scope.gabiWrong = function(index) {
+        $scope.closeModal();
+//        var index = $scope.selectedLineIndex;
         $scope.vrBlocked = false;
-        Settings.lines[index].success++;
-        Settings.lines[index].currentStatus = 1;
+//        Settings.lines[index].success++;
+//        Settings.lines[index].currentStatus = 1;
         GabsClient.saveAnswer(Settings.lineIndex, "GABI WRONG");
         if (index >= Settings.lineIndex) {
             advanceLine();
         }
+    };
+
+    $scope.star = function(index) {
+        $scope.closeModal();
+//        var index = $scope.selectedLineIndex;
+        $scope.vrBlocked = false;
+//        Settings.lines[index].currentStatus = 0;
+        GabsClient.saveAnswer(Settings.lineIndex, "STAR");
+//        if (index >= Settings.lineIndex) {
+//            advanceLine();
+//        }
     };
 
     $scope.getLines = function() {
@@ -501,10 +562,10 @@ controllers.controller("HomeCtrl", function($scope, $state, AndroidSpeechRecogni
     $scope.playLine = function(index) {
         if ($scope.playAudioBlocked) return;
         playTarget(index, function() {
-            Settings.lines[index].currentStatus = 1;
+//            Settings.lines[index].currentStatus = 1;
             if (index >= Settings.lineIndex) {
 //                alert("index=" + index + "; set currentStatus to 1");
-                GabsClient.saveAnswer(Settings.lineIndex, "NOT MY LINE");
+//                GabsClient.saveAnswer(Settings.lineIndex, "NOT MY LINE");
                 return advanceLine();
             }
         });
@@ -566,17 +627,23 @@ controllers.controller("HomeCtrl", function($scope, $state, AndroidSpeechRecogni
 //    };
 
     $scope.getMyIcon = function(index) {
-        var line = Settings.lines[index];
         var emotion = "smile";
-        if (line.currentStatus==1) {
-            if (line.fail == 0) emotion = "smile-big";
-            if (line.fail == 1) emotion = "smile";
-            if (line.fail == 2) emotion = "wink";
-            if (line.fail == 3) emotion = "raspberry";
-            if (line.fail > 4) emotion = "uncertain";
+        var line = null;
+        try {
+            line = Settings.getPlayProgress().lines[index];
+        } catch (err) {
+            return "http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/64/Emotes-face-" + emotion + "-icon.png";
         }
 
-        if (line.currentStatus==-1) {
+        var balance = line.suc - line.fai;
+        if (line.suc > 0) {
+            if (line.fail == 0) emotion = "smile-big";
+            if (balance > 2) emotion = "smile-big";
+            if (balance==0 || balance==1) emotion = "smile";
+            if (balance == -1) emotion = "wink";
+            if (balance == -2) emotion = "raspberry";
+            if (balance < -2) emotion = "uncertain";
+        } else if (line.fai > 0) {
             if (line.fail == 1) emotion = "wink";
             if (line.fail == 2) emotion = "uncertain";
             if (line.fail == 3) emotion = "surprise";
@@ -692,15 +759,16 @@ controllers.controller("HomeCtrl", function($scope, $state, AndroidSpeechRecogni
          * The play is finished when the last line is complete
          * @returns {*|line.currentStatus|number|Settings.lines.currentStatus}
          */
+        //TODO fix this to use progress obj
     $scope.isPlayFinished = function() {
         if ($scope.playIsFinished) return true;
         try {
             for (var lineIx=Settings.lines.length-1; lineIx >= 0; lineIx--) {
                 var line = Settings.lines[lineIx];
-                if (! line.isYou) continue;
                 if (! line) return false;
-                if (! line.currentStatus) return false;
-                if ( line.currentStatus != 1) return false;
+                if (! line.isYou) continue;
+                if (!line.suc) return false;
+                if ( line.suc < 1) return false;
             }
             $scope.playIsFinished = true;
             var playProgress = Settings.getPlayProgress();

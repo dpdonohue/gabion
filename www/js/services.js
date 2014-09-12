@@ -103,7 +103,8 @@ angular.module("gabi.services", ["ionic", "ui.bootstrap"])
 
 //            var index = 0;
             for (var lineIdx = 0; lineIdx <= endLine; lineIdx++) {
-                var actorIndex = this.play.lines[lineIdx].act;
+                var playLine = this.play.lines[lineIdx];
+                var actorIndex = playLine.act;
                 var actorLabel = this.play.actors[actorIndex].lbl.toUpperCase();
                 var nativeActor = this.nativeTranslation.actors[actorIndex].txt[0];
                 if (! nativeActor) nativeActor = actorLabel;
@@ -117,35 +118,45 @@ angular.module("gabi.services", ["ionic", "ui.bootstrap"])
                 if ( (actorLabel=="YOU") && !actorImg) {
                     actorImg = "http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/64/Emotes-face-smile-icon.png";
                 }
-                if (!actorImg && this.play.lines[lineIdx].img) {
-                    actorImg = this.play.lines[lineIdx].img;
+                if (!actorImg && playLine.img) {
+                    actorImg = playLine.img;
                 }
                 if (!actorImg) {
                     actorImg = "http://icons.iconarchive.com/icons/saki/nuoveXT-2/64/Apps-user-info-icon.png";
                 }
-                var currentStatus = 0;
-                var success = 0;
-                var fail = 0;
-                if (progress && progress.lines && progress.lines[lineIdx].suc > 0) {
-                    success = progress.lines[lineIdx].suc;
-                    currentStatus = 1;
-                } else if (progress && progress.lines[lineIdx].fai > 0) {
-                    fail = progress.lines[lineIdx].fai;
-                    currentStatus = -1;
-                }
+
                 var line = {
                     index: lineIdx,
-                    isYou: actorLabel=="YOU",
+                    isYou: playLine.you,
                     nativeActor: nativeActor,
                     targetActor: targetActor,
                     nativeText: nativeText,
                     targetText: targetText,
                     targetTexts: targetTexts,
-                    actorImg: actorImg,
-                    success: success,
-                    fail: fail,
-                    currentStatus: currentStatus
+                    actorImg: actorImg
+//                    success: success,
+//                    fail: fail,
+//                    currentStatus: currentStatus
                 };
+
+//                var currentStatus = 0;
+
+//                //add line object from progress into this line
+//                var progressLine = null;
+//                if (progress && progress.lines && progress.lines[lineIdx]) {
+//                    progressLine = progress.lines[lineIdx];
+//                    for (prop in progressLine.props) {
+//                        line[prop] = progressLine[prop];
+//                    }
+//                }
+//                if (progress && progress.lines && progress.lines[lineIdx].suc > 0) {
+//                    success = progress.lines[lineIdx].suc;
+//                    currentStatus = 1;
+//                } else if (progress && progress.lines[lineIdx].fai > 0) {
+//                    fail = progress.lines[lineIdx].fai;
+//                    currentStatus = -1;
+//                }
+
                 this.lines.push(line);
 //                index++;
             }
@@ -685,12 +696,22 @@ angular.module("gabi.services", ["ionic", "ui.bootstrap"])
             var missionProgress = Settings.getMissionProgress();
             var levelProgress = Settings.levelProgress;
             var progressLine = playProgress.lines[lineIndex];
+            var star = (result=="STAR")? 1 : 0;
+            var wrong = (result=="GABI WRONG")? 1 : 0;
+            var easy = 0;
+            if (result=="TOO EASY") easy = 1;
+            if (result=="TOO HARD") easy = -1;
             if (!progressLine.suc) {
                 progressLine = playProgress.lines[lineIndex] = {
                     suc: 0,
                     fai: 0
                 }
             }
+            progressLine.res = result;
+            progressLine.sta = star;
+            progressLine.eas = easy;
+            progressLine.wro = wrong;
+
             var priorSuccess = progressLine.suc;
             var priorFail = progressLine.fai;
 //            var line = Settings.lines[lineIndex];

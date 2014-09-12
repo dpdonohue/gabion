@@ -1,36 +1,81 @@
-<ion-content ng-controller="PlayCtrl">
+<ion-modal-view>
+    <!--<ion-header-bar>-->
+        <!--<h1 class="title gabi-line-info-popup">{{ lineNativeText(selectedLineIndex) }}</h1>-->
 
-    <!--<div class="button-bar gabi-skip-buttons">-->
-        <!--<a class="button positive" ng-click="tooHard()">{{ localize("Too Hard!") }}</a>-->
-    <!--</div>-->
+    <!--</ion-header-bar>-->
 
-    <!--<div class="button-bar gabi-skip-buttons">-->
-        <!--<a class="button positive" ng-click="skip()">{{ localize("Skip") }}</a>-->
-    <!--</div>-->
+    <ion-content>
+        <div class="gabi-line-info-popup">
 
-    <!--<div class="button-bar gabi-skip-buttons">-->
-        <!--<a class="button positive" ng-click="tooEasy()">{{ localize("Too Easy!") }}</a>-->
-    <!--</div>-->
+            <div class="gabi-centered">
+                <h2 class="title">{{ lineNativeText(selectedLineIndex) }}</h2>
+                <h3>{{ lineTargetText(selectedLineIndex) }}</h3>
+            </div>
 
-    <!--<div class="button-bar gabi-skip-buttons positive-bg">-->
-        <!--<a class="button" ng-click="gabiWrong()">{{ localize("I was right but you said I was wrong.") }}</a>-->
-    <!--</div>-->
-
-    <!--<ion-toggle ng-model="settings.hintMode" toggle-class="toggle-positive">{{ localize("Hint Mode") }}</ion-toggle>-->
-
-    <!--<div class="button-bar gabi-skip-buttons">-->
-        <!--<a class="button positive" ng-click="tryAgain()">{{ localize("OK") }}</a>-->
-    <!--</div>-->
+            <!--<div class="modal-header text-center positive">-->
+            <!--<h3 class="modal-title">{{ title() }}</h3>-->
+            <!--</div>-->
 
 
-    <p>{{ iHeard() }}</p>
-    <div class="list">
-        <a class="item button positive" ng-click="clicked('tooHard')">{{ localize("Too Hard!") }}</a>
-        <a class="item button positive" ng-click="clicked('skip')">{{ localize("Skip") }}</a>
-        <a class="item button positive" ng-click="clicked('tooEasy')">{{ localize("Too Easy!") }}</a>
-        <a class="item button positive" ng-click="clicked('gabiWrong')">{{ localize("I was right but you said I was wrong.") }}</a>
-        <ion-toggle class="item" ng-model="settings.hintMode" toggle-class="toggle-positive">{{ localize("Hint Mode") }}</ion-toggle>
-        <a class="item button positive" ng-click="clicked('tryAgain')">{{ localize("OK") }}</a>
-    </div>
 
-</ion-content>
+            <!--<div class="button-bar gabi-skip-buttons">-->
+            <!--<a class="button positive" ng-click="tooHard()">{{ localize("Too Hard!") }}</a>-->
+            <!--</div>-->
+
+            <!--<div class="button-bar gabi-skip-buttons">-->
+            <!--<a class="button positive" ng-click="skip()">{{ localize("Skip") }}</a>-->
+            <!--</div>-->
+
+            <!--<div class="button-bar gabi-skip-buttons">-->
+            <!--<a class="button positive" ng-click="tooEasy()">{{ localize("Too Easy!") }}</a>-->
+            <!--</div>-->
+
+            <!--<div class="button-bar gabi-skip-buttons positive-bg">-->
+            <!--<a class="button" ng-click="gabiWrong()">{{ localize("I was right but you said I was wrong.") }}</a>-->
+            <!--</div>-->
+
+            <!--<ion-toggle ng-model="settings.hintMode" toggle-class="toggle-positive">{{ localize("Hint Mode") }}</ion-toggle>-->
+
+            <!--<div class="button-bar gabi-skip-buttons">-->
+            <!--<a class="button positive" ng-click="tryAgain()">{{ localize("OK") }}</a>-->
+            <!--</div>-->
+
+
+            <p>{{ iHeard() }}</p>
+            <div class="list">
+                <a class="item item-icon-left item-icon-right" ng-click="star(selectedLineIndex)">
+                    <i class="icon ion-star"></i>
+                    {{ localize("Remember") }}
+                    <i class="icon ion-ios7-arrow-forward"></i>
+                </a>
+                <a class="item item-icon-left item-icon-right" ng-click="tooHard(selectedLineIndex)">
+                    <i class="icon ion-sad"></i>
+                    {{ localize("Too Hard!") }}
+                    <i class="icon ion-ios7-arrow-forward"></i>
+                </a>
+                <!--<a class="item item-icon-left" ng-click="skip(selectedLineIndex)">-->
+                    <!--<i class="icon ion-sad"></i>-->
+                    <!--{{ localize("Skip") }}-->
+                <!--</a>-->
+                <a class="item item-icon-left item-icon-right" ng-click="tooEasy(selectedLineIndex)">
+                    <i class="icon ion-paper-airplane"></i>
+                    {{ localize("Too Easy!") }}
+                    <i class="icon ion-ios7-arrow-forward"></i>
+                </a>
+                <a class="item item-icon-left item-icon-right" ng-click="gabiWrong(selectedLineIndex)">
+                    <i class="icon ion-alert-circled"></i>
+                    {{ localize("I was right but you said I was wrong.") }}
+                    <i class="icon ion-ios7-arrow-forward"></i>
+                </a>
+
+                <ion-toggle class="item" ng-model="settings.hintMode" toggle-class="toggle-positive">{{ localize("Hint Mode") }}</ion-toggle>
+
+                <a class="item text-center" ng-click="tryAgain()">
+                    {{ localize("OK") }}
+                </a>
+            </div>
+
+        </div>
+
+    </ion-content>
+</ion-modal-view>
